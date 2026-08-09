@@ -8,7 +8,6 @@ const flexBoxObj: ViewStyle = {
 const globalStyles = StyleSheet.create({
   globalContainer: {
     paddingHorizontal: "5%",
-    paddingTop: "35%",
     height: "100%",
     width: "100%",
   },

@@ -24,6 +24,7 @@ type InputWithLabelProps = {
   ref?: RefObject<TextInput | null>;
   nextRef?: RefObject<TextInput | null>;
   isPassword?: boolean;
+  hasForgot?: boolean;
   autoFocus?: boolean;
 };
 
@@ -38,9 +39,11 @@ const InputWithLabel = ({
   ref,
   nextRef,
   isPassword,
+  hasForgot,
   autoFocus,
 }: InputWithLabelProps) => {
   const foreground = useColor("foreground");
+  const teal = useColor("teal")
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -58,14 +61,14 @@ const InputWithLabel = ({
         <Text style={{ color: foreground, fontSize: 18 }}>{label}</Text>
 
         {/* forgot password */}
-        {isPassword && (
+        {hasForgot && (
           <Pressable
             onPress={() => console.log("Fogrot presssed")}
             hitSlop={10}
           >
             <Text
               style={{
-                color: useColor("teal"),
+                color: teal,
                 fontSize: 14,
               }}
             >
@@ -84,7 +87,7 @@ const InputWithLabel = ({
         placeholder={placeholderText}
         containerStyle={{ marginTop: 3 }}
         autoFocus={autoFocus}
-        secureTextEntry={!showPassword}
+        secureTextEntry={!showPassword && isPassword}
         enterKeyHint={entryKeyHint ?? "done"}
         returnKeyType={returnKeyType ?? "default"}
         onSubmitEditing={() => nextRef?.current?.focus()}

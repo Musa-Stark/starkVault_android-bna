@@ -6,13 +6,20 @@ const AuthPrompt = ({
   prompt,
   linkText,
   route,
+  onPress,
 }: {
-  prompt: string;
-  linkText: string;
-  route: string;
+  prompt?: string;
+  linkText?: string;
+  route?: string;
+  onPress?: () => void;
 }) => {
   const muted = useColor("textMuted");
   const foreground = useColor("foreground");
+
+  const handlePress = () => {
+    if (route) console.log(`Push to ${route}`);
+    if (onPress) onPress();
+  };
 
   return (
     <View
@@ -23,26 +30,30 @@ const AuthPrompt = ({
         marginTop: 20,
       }}
     >
-      <Text
-        style={{
-          color: muted,
-          fontSize: 14,
-        }}
-      >
-        {`${prompt} `}
-      </Text>
-
-      <Pressable hitSlop={10} onPress={() => console.log(`Push to ${route}`)}>
+      {prompt && (
         <Text
           style={{
-            color: foreground,
+            color: muted,
             fontSize: 14,
-            fontWeight: "600",
           }}
         >
-          {linkText}
+          {`${prompt} `}
         </Text>
-      </Pressable>
+      )}
+
+      {linkText && (
+        <Pressable hitSlop={10} onPress={handlePress}>
+          <Text
+            style={{
+              color: foreground,
+              fontSize: 14,
+              fontWeight: "600",
+            }}
+          >
+            {linkText}
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 };

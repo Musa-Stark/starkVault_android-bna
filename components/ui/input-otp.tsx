@@ -1,13 +1,13 @@
-import { Text } from '@/components/ui/text';
-import { useColor } from '@/hooks/useColor';
-import { CORNERS, FONT_SIZE } from '@/theme/globals';
+import { Text } from "@/components/ui/text";
+import { useColor } from "@/hooks/useColor";
+import { CORNERS, FONT_SIZE } from "@/theme/globals";
 import React, {
   forwardRef,
   useCallback,
   useImperativeHandle,
   useRef,
   useState,
-} from 'react';
+} from "react";
 import {
   NativeSyntheticEvent,
   Pressable,
@@ -17,11 +17,11 @@ import {
   TextStyle,
   View,
   ViewStyle,
-} from 'react-native';
+} from "react-native";
 
 export interface InputOTPProps extends Omit<
   TextInputProps,
-  'style' | 'value' | 'onChangeText'
+  "style" | "value" | "onChangeText"
 > {
   /** Number of OTP digits */
   length?: number;
@@ -60,7 +60,7 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
   (
     {
       length = 6,
-      value = '',
+      value = "",
       onChangeText,
       onComplete,
       error,
@@ -75,20 +75,19 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
       onBlur,
       ...textInputProps
     },
-    ref
+    ref,
   ) => {
     const [isFocused, setIsFocused] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
     const inputRef = useRef<TextInput>(null);
 
     // Theme colors
-    const cardColor = useColor('card');
-    const textColor = useColor('text');
-    const muted = useColor('textMuted');
-    const borderColor = useColor('border');
-    const primary = useColor('primary');
-    const danger = useColor('red');
-    const background = useColor('background');
+    const cardColor = useColor("card");
+    const textColor = useColor("text");
+    const muted = useColor("textMuted");
+    const borderColor = useColor("border");
+    const primary = useColor("primary");
+    const danger = useColor("red");
 
     // Normalize value to ensure it doesn't exceed length
     const normalizedValue = value.slice(0, length);
@@ -101,7 +100,7 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
       focus: () => inputRef.current?.focus(),
       blur: () => inputRef.current?.blur(),
       clear: () => {
-        onChangeText?.('');
+        onChangeText?.("");
         setActiveIndex(0);
       },
       getValue: () => normalizedValue,
@@ -110,7 +109,7 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
     const handleChangeText = useCallback(
       (text: string) => {
         // Only allow numeric input
-        const cleanText = text.replace(/[^0-9]/g, '');
+        const cleanText = text.replace(/[^0-9]/g, "");
         const limitedText = cleanText.slice(0, length);
 
         onChangeText?.(limitedText);
@@ -121,20 +120,20 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
           onComplete?.(limitedText);
         }
       },
-      [length, onChangeText, onComplete]
+      [length, onChangeText, onComplete],
     );
 
     const handleKeyPress = useCallback(
       (e: NativeSyntheticEvent<TextInputKeyPressEventData>) => {
         const { key } = e.nativeEvent;
 
-        if (key === 'Backspace' && normalizedValue.length > 0) {
+        if (key === "Backspace" && normalizedValue.length > 0) {
           const newValue = normalizedValue.slice(0, -1);
           onChangeText?.(newValue);
           setActiveIndex(Math.max(0, newValue.length));
         }
       },
-      [normalizedValue, onChangeText]
+      [normalizedValue, onChangeText],
     );
 
     const handleFocus = useCallback(
@@ -143,7 +142,7 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
         setActiveIndex(normalizedValue.length);
         onFocus?.(e);
       },
-      [normalizedValue.length, onFocus]
+      [normalizedValue.length, onFocus],
     );
 
     const handleBlur = useCallback(
@@ -151,13 +150,18 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
         setIsFocused(false);
         onBlur?.(e);
       },
-      [onBlur]
+      [onBlur],
     );
 
     const handleSlotPress = useCallback(() => {
-      if (!disabled) {
+      if (disabled) return;
+
+      // Android often keeps the input focused after keyboard dismiss.
+      // blur → focus forces the soft keyboard to appear again.
+      inputRef.current?.blur();
+      setTimeout(() => {
         inputRef.current?.focus();
-      }
+      }, 50);
     }, [disabled]);
 
     // Generate slots
@@ -166,9 +170,9 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
       const isActive = isFocused && index === currentActiveIndex;
       const displayValue = hasValue
         ? masked
-          ? '•'
+          ? "•"
           : normalizedValue[index]
-        : '';
+        : "";
 
       return (
         <React.Fragment key={index}>
@@ -188,9 +192,9 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
                     : hasValue
                       ? borderColor
                       : borderColor,
-                backgroundColor: disabled ? muted + '20' : cardColor,
-                justifyContent: 'center',
-                alignItems: 'center',
+                backgroundColor: disabled ? muted + "20" : cardColor,
+                justifyContent: "center",
+                alignItems: "center",
                 opacity: disabled ? 0.6 : 1,
               },
               slotStyle,
@@ -199,7 +203,7 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
             <Text
               style={{
                 fontSize: FONT_SIZE + 2,
-                fontWeight: '600',
+                fontWeight: "600",
                 color: error ? danger : hasValue ? textColor : muted,
               }}
             >
@@ -210,7 +214,7 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
             {showCursor && isActive && !hasValue && (
               <View
                 style={{
-                  position: 'absolute',
+                  position: "absolute",
                   width: 2,
                   height: 20,
                   backgroundColor: primary,
@@ -238,12 +242,12 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
           onKeyPress={handleKeyPress}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          keyboardType='numeric'
+          keyboardType="numeric"
           maxLength={length}
           editable={!disabled}
-          selectionColor='transparent'
+          selectionColor="transparent"
           style={{
-            position: 'absolute',
+            position: "absolute",
             left: -9999,
             opacity: 0,
           }}
@@ -253,9 +257,9 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
         {/* OTP Slots */}
         <View
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
             gap: separator ? 0 : 8,
           }}
         >
@@ -267,7 +271,7 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
           <Text
             style={[
               {
-                textAlign: 'center',
+                textAlign: "center",
                 marginTop: 8,
                 fontSize: 14,
                 color: danger,
@@ -282,23 +286,23 @@ export const InputOTP = forwardRef<InputOTPRef, InputOTPProps>(
     );
 
     return renderContent();
-  }
+  },
 );
 
-InputOTP.displayName = 'InputOTP';
+InputOTP.displayName = "InputOTP";
 
 // Optional: Export a preset with separator
 export const InputOTPWithSeparator = forwardRef<
   InputOTPRef,
-  Omit<InputOTPProps, 'separator'>
+  Omit<InputOTPProps, "separator">
 >((props, ref) => (
   <InputOTP
     ref={ref}
     separator={
-      <Text style={{ fontSize: 18, color: useColor('textMuted') }}>-</Text>
+      <Text style={{ fontSize: 18, color: useColor("textMuted") }}>-</Text>
     }
     {...props}
   />
 ));
 
-InputOTPWithSeparator.displayName = 'InputOTPWithSeparator';
+InputOTPWithSeparator.displayName = "InputOTPWithSeparator";

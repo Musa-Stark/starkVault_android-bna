@@ -15,20 +15,26 @@ import AuthDivider from "@/components/starkUI/AuthDivider";
 const Login = () => {
   const background = useColor("background");
 
+  const nameRef = useRef<any>(null);
   const emailRef = useRef<any>(null);
   const passwordRef = useRef<any>(null);
+  const confirmPasswordRef = useRef<any>(null);
 
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isOAuthLoading, setIsOAuthLoading] = useState(false);
 
-  const disabled = !email || !password;
+  const disabled = !email || !password || password !== confirmPassword;
 
   const handleSubmit = () => {
-    console.log({ email, password });
+    console.log({ fullName, email, password });
+    setFullName("")
     setEmail("");
     setPassword("");
+    setConfirmPassword("")
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -47,7 +53,7 @@ const Login = () => {
     <View
       style={[
         globalStyles.globalContainer,
-        { backgroundColor: background, paddingTop: "35%" },
+        { backgroundColor: background, paddingTop: "20%" },
       ]}
     >
       {/* Logo */}
@@ -55,8 +61,20 @@ const Login = () => {
 
       {/* Banner */}
       <Banner
-        heading="Welcome back"
-        message="Enter your master credentials to unlock the vault."
+        heading="Create your vault"
+      />
+
+      {/* fullName */}
+      <InputWithLabel
+        label="Full Name"
+        placeholderText="e.g, Musa Stark"
+        value={fullName}
+        setValue={setFullName}
+        ref={nameRef}
+        entryKeyHint="next"
+        autoFocus={true}
+        returnKeyType="next"
+        nextRef={emailRef}
       />
 
       {/* Email */}
@@ -67,7 +85,6 @@ const Login = () => {
         setValue={setEmail}
         ref={emailRef}
         entryKeyHint="next"
-        autoFocus={true}
         inputMode="email"
         returnKeyType="next"
         nextRef={passwordRef}
@@ -81,6 +98,17 @@ const Login = () => {
         value={password}
         ref={passwordRef}
         isPassword={true}
+        entryKeyHint="next"
+        returnKeyType="next"
+        nextRef={confirmPasswordRef}
+      />
+      <InputWithLabel
+        label="Confirm Password"
+        placeholderText="••••••••••••"
+        setValue={setConfirmPassword}
+        value={confirmPassword}
+        ref={confirmPasswordRef}
+        isPassword={true}
       />
 
       {/* Submit */}
@@ -91,7 +119,7 @@ const Login = () => {
         loading={isLoading}
       >
         <Text style={{ fontWeight: "500", color: background }}>
-          Unlock Vault
+          Create Vault
         </Text>
       </Button>
 
@@ -109,9 +137,9 @@ const Login = () => {
 
       {/* AuthPrompt */}
       <AuthPrompt
-        linkText="Create an account"
-        prompt="New to Stark Vault?"
-        route="/signup"
+        prompt="Already have an account?"
+        linkText="Login"
+        route="/login"
       />
     </View>
   );
