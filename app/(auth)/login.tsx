@@ -4,19 +4,24 @@ import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useColor } from "@/hooks/useColor";
 import { Eye, EyeOff } from "lucide-react-native";
+import globalStyles from "@/starkwind/globalStyle";
+import AuthLogo from "@/components/starkUI/AuthLogo";
+import Banner from "@/components/starkUI/Banner";
+import InputWithLabel from "@/components/starkUI/InputWithLabel";
+import AuthPrompt from "@/components/starkUI/AuthPrompt";
+import OAuthButton from "@/components/starkUI/OAuthButton";
+import AuthDivider from "@/components/starkUI/AuthDivider";
 
 const Login = () => {
-  const foreground = useColor("foreground");
-  const muted = useColor("textMuted");
   const background = useColor("background");
 
   const emailRef = useRef<any>(null);
   const passwordRef = useRef<any>(null);
 
-  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isOAuthLoading, setIsOAuthLoading] = useState(false);
 
   const disabled = !email || !password;
 
@@ -25,123 +30,54 @@ const Login = () => {
     setEmail("");
     setPassword("");
     setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  };
+
+  const handleOAuthPress = () => {
+    console.log("OAuth button pressed");
+    setIsOAuthLoading(true)
+    setTimeout(() => {
+      setIsOAuthLoading(false)
+    }, 3000);
   };
 
   return (
     <View
-      style={{
-        backgroundColor: background,
-        paddingHorizontal: "10%",
-        paddingTop: "35%",
-        height: "100%",
-        width: "100%",
-      }}
+      style={[globalStyles.globalContainer, { backgroundColor: background }]}
     >
       {/* Logo */}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 10,
-        }}
-      >
-        <Image
-          source={require("@/assets/images/icon.png")}
-          style={{ width: 60, height: 60 }}
-        />
+      <AuthLogo />
 
-        <Text style={{ color: foreground, fontSize: 25, fontWeight: "600" }}>
-          Stark Vault
-        </Text>
-      </View>
-
-      {/* Welcome */}
-      <Text
-        style={{
-          color: foreground,
-          fontSize: 33,
-          fontWeight: "600",
-          textAlign: "center",
-          marginTop: 20,
-        }}
-      >
-        Welcome back
-      </Text>
-
-      <Text
-        style={{
-          color: muted,
-          fontSize: 18,
-          marginTop: 5,
-          textAlign: "center",
-        }}
-      >
-        Enter your master credentials to unlock the vault.
-      </Text>
+      {/* Banner */}
+      <Banner
+        heading="Welcome back"
+        message="Enter your master credentials to unlock the vault."
+      />
 
       {/* Email */}
-      <Text style={{ color: foreground, fontSize: 18, marginTop: 20 }}>
-        Email
-      </Text>
-
-      <Input
-        ref={emailRef}
+      <InputWithLabel
+        label="Email"
+        placeholderText="you@example.com"
         value={email}
-        onChangeText={setEmail}
+        setValue={setEmail}
+        ref={emailRef}
+        entryKeyHint="next"
+        autoFocus={true}
         inputMode="email"
-        placeholder="you@example.com"
-        containerStyle={{ marginTop: 3 }}
-        // autoFocus
-        enterKeyHint="next"
         returnKeyType="next"
-        onSubmitEditing={() => passwordRef.current?.focus()}
+        nextRef={passwordRef}
       />
 
       {/* Password */}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginTop: 15,
-        }}
-      >
-        <Text style={{ color: foreground, fontSize: 18 }}>Password</Text>
-
-        <Pressable onPress={() => console.log("Fogrot presssed")} hitSlop={10}>
-          <Text
-            style={{
-              color: useColor("teal"),
-              fontSize: 14,
-            }}
-          >
-            Forgot Password?
-          </Text>
-        </Pressable>
-      </View>
-
-      <Input
-        ref={passwordRef}
-        inputMode="text"
+      <InputWithLabel
+        label="Password"
+        placeholderText="••••••••••••"
+        setValue={setPassword}
         value={password}
-        onChangeText={setPassword}
-        secureTextEntry={!showPassword}
-        placeholder="••••••••••••"
-        containerStyle={{ marginTop: 3 }}
-        returnKeyType="done"
-        rightComponent={
-          <Pressable
-            onPress={() => setShowPassword((prev) => !prev)}
-            hitSlop={10}
-          >
-            {showPassword ? (
-              <EyeOff size={20} color={foreground} />
-            ) : (
-              <Eye size={20} color={foreground} />
-            )}
-          </Pressable>
-        }
+        ref={passwordRef}
+        isPassword={true}
       />
 
       {/* Submit */}
@@ -157,77 +93,23 @@ const Login = () => {
       </Button>
 
       {/* Divider */}
-      <View
-        style={{
-          marginTop: 20,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 12,
-        }}
-      >
-        <View
-          style={{
-            flex: 1,
-            height: 1,
-            backgroundColor: muted,
-          }}
-        />
-
-        <Text style={{ color: muted, fontSize: 14 }}>OR</Text>
-
-        <View
-          style={{
-            flex: 1,
-            height: 1,
-            backgroundColor: muted,
-          }}
-        />
-      </View>
+      <AuthDivider />
 
       {/* Google sign in */}
-      <Button variant="outline" style={{ marginTop: 20 }}>
-        <Image
-          source={require("@/assets/images/google.png")}
-          style={{
-            width: 25,
-            aspectRatio: 1,
-            marginRight: 10,
-          }}
-        />
+      <OAuthButton
+        text="Continue with Github"
+        imgSource={require("@/assets/images/google.png")}
+        variant="outline"
+        onPress={handleOAuthPress}
+        loading={isOAuthLoading}
+      />
 
-        <Text style={{ color: foreground }}>Continue with Google</Text>
-      </Button>
-
-      {/* suggestion */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: 20,
-        }}
-      >
-        <Text
-          style={{
-            color: muted,
-            fontSize: 14,
-          }}
-        >
-          New to Stark Vault?{" "}
-        </Text>
-
-        <Pressable>
-          <Text
-            style={{
-              color: foreground,
-              fontSize: 14,
-              fontWeight: "600",
-            }}
-          >
-            Create an account
-          </Text>
-        </Pressable>
-      </View>
+      {/* AuthPrompt */}
+      <AuthPrompt
+        linkText="Create an account"
+        prompt="New to Stark Vault?"
+        route="/signup"
+      />
     </View>
   );
 };
