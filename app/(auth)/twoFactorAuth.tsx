@@ -13,7 +13,6 @@ const TwoFactorAuth = () => {
 
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isOAuthLoading, setIsOAuthLoading] = useState(false);
 
   const handleSubmit = () => {
     console.log({ code });
@@ -27,14 +26,6 @@ const TwoFactorAuth = () => {
 
   const handleResendOTP = () => {
     console.log("Resend OTP");
-  };
-
-  const handleOAuthPress = () => {
-    console.log("OAuth button pressed");
-    setIsOAuthLoading(true);
-    setTimeout(() => {
-      setIsOAuthLoading(false);
-    }, 3000);
   };
 
   return (
@@ -62,6 +53,7 @@ const TwoFactorAuth = () => {
           maxLength={6}
           placeholder="000000"
           cursorColor={"red"}
+          disabled={isLoading}
         />
       </View>
 

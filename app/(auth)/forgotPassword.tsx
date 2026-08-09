@@ -7,40 +7,27 @@ import AuthLogo from "@/components/starkUI/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
 import InputWithLabel from "@/components/starkUI/InputWithLabel";
 import AuthPrompt from "@/components/starkUI/AuthPrompt";
-import OAuthButton from "@/components/starkUI/OAuthButton";
-import AuthDivider from "@/components/starkUI/AuthDivider";
 
-const Login = () => {
+const ForgotPassword = () => {
   const background = useColor("background");
 
   const emailRef = useRef<any>(null);
-  const passwordRef = useRef<any>(null);
 
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isOAuthLoading, setIsOAuthLoading] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [hasError, setHasError] = useState(false)
 
-  const disabled = !email || !password || hasError;
+  const disabled = !email || hasError;
 
   const handleSubmit = () => {
-    console.log({ email, password });
+    console.log({ email });
     setEmail("");
-    setPassword("");
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);
   };
 
-  const handleOAuthPress = () => {
-    console.log("OAuth button pressed");
-    setIsOAuthLoading(true);
-    setTimeout(() => {
-      setIsOAuthLoading(false);
-    }, 3000);
-  };
 
   return (
     <View
@@ -54,8 +41,8 @@ const Login = () => {
 
       {/* Banner */}
       <Banner
-        heading="Welcome back"
-        message="Enter your master credentials to unlock the vault."
+        heading="Email verification"
+        message="We’ll send an OTP to your email to confirm it’s you."
       />
 
       {/* Email */}
@@ -65,23 +52,10 @@ const Login = () => {
         value={email}
         setValue={setEmail}
         ref={emailRef}
-        entryKeyHint="next"
         autoFocus={true}
         inputMode="email"
-        returnKeyType="next"
-        nextRef={passwordRef}
-        disabled={isLoading}
-        hasError={setHasError}
-        />
-
-      {/* Password */}
-      <InputWithLabel
-        label="Password"
-        placeholderText="••••••••••••"
-        setValue={setPassword}
-        value={password}
-        ref={passwordRef}
-        isPassword={true}
+        entryKeyHint="done"
+        returnKeyType="done"
         disabled={isLoading}
         hasError={setHasError}
       />
@@ -94,30 +68,19 @@ const Login = () => {
         loading={isLoading}
       >
         <Text style={{ fontWeight: "500", color: background }}>
-          Unlock Vault
+          Send OTP
         </Text>
       </Button>
 
-      {/* Divider */}
-      <AuthDivider />
-
-      {/* Google sign in */}
-      <OAuthButton
-        text="Continue with Google"
-        imgSource={require("@/assets/images/google.png")}
-        variant="outline"
-        onPress={handleOAuthPress}
-        loading={isOAuthLoading}
-      />
 
       {/* AuthPrompt */}
       <AuthPrompt
-        linkText="Create an account"
-        prompt="New to Stark Vault?"
-        route="/signup"
+        prompt="Remembered?"
+        linkText="log in"
+        route="/login"
       />
     </View>
   );
 };
 
-export default Login;
+export default ForgotPassword;

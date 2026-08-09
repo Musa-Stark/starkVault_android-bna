@@ -1,6 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import React from "react";
 import { useColor } from "@/hooks/useColor";
+import { Href, useRouter } from "expo-router";
 
 const AuthPrompt = ({
   prompt,
@@ -10,14 +11,15 @@ const AuthPrompt = ({
 }: {
   prompt?: string;
   linkText?: string;
-  route?: string;
+  route?: Href;
   onPress?: () => void;
 }) => {
   const muted = useColor("textMuted");
   const foreground = useColor("foreground");
+  const router = useRouter();
 
   const handlePress = () => {
-    if (route) console.log(`Push to ${route}`);
+    if (route) router.push(route);
     if (onPress) onPress();
   };
 

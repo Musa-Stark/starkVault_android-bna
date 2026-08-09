@@ -26,8 +26,9 @@ const Login = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isOAuthLoading, setIsOAuthLoading] = useState(false);
+  const [hasError, setHasError] = useState(false)
 
-  const disabled = !email || !password || password !== confirmPassword;
+  const disabled = !email || !password || password !== confirmPassword || hasError;
 
   const handleSubmit = () => {
     console.log({ fullName, email, password });
@@ -75,7 +76,9 @@ const Login = () => {
         autoFocus={true}
         returnKeyType="next"
         nextRef={emailRef}
-      />
+        disabled={isLoading}
+        hasError={(setHasError)}
+        />
 
       {/* Email */}
       <InputWithLabel
@@ -88,7 +91,9 @@ const Login = () => {
         inputMode="email"
         returnKeyType="next"
         nextRef={passwordRef}
-      />
+        disabled={isLoading}
+        hasError={(setHasError)}
+        />
 
       {/* Password */}
       <InputWithLabel
@@ -101,7 +106,9 @@ const Login = () => {
         entryKeyHint="next"
         returnKeyType="next"
         nextRef={confirmPasswordRef}
-      />
+        disabled={isLoading}
+        hasError={(setHasError)}
+        />
       <InputWithLabel
         label="Confirm Password"
         placeholderText="••••••••••••"
@@ -109,6 +116,8 @@ const Login = () => {
         value={confirmPassword}
         ref={confirmPasswordRef}
         isPassword={true}
+        disabled={isLoading}
+        hasError={(setHasError)}
       />
 
       {/* Submit */}
