@@ -6,6 +6,7 @@ import globalStyles from "@/starkwind/globalStyle";
 import AuthLogo from "@/components/starkUI/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
 import InputWithLabel from "@/components/starkUI/InputWithLabel";
+import authApiCall from "./authApiCall";
 
 const Login = () => {
   const background = useColor("background");
@@ -16,18 +17,23 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [hasError, setHasError] = useState(false)
+  const [hasError, setHasError] = useState(false);
 
   const disabled = !password || password !== confirmPassword || hasError;
 
-  const handleSubmit = () => {
-    console.log({ password });
-    setPassword("");
-    setConfirmPassword("");
+  const handleSubmit = async () => {
     setIsLoading(true);
+
+    const response = await authApiCall({
+      password,
+      email: "musa@gmail.com",
+      page: "resetPassword",
+    });
 
     setTimeout(() => {
       setIsLoading(false);
+      setPassword("");
+      setConfirmPassword("");
     }, 3000);
   };
 

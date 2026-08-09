@@ -12,6 +12,8 @@ import React, { useEffect } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
+import Toast from "react-native-toast-message";
+import toastConfig from "@/components/starkUI/StarkToast";
 
 SplashScreen.setOptions({
   duration: 200,
@@ -41,50 +43,51 @@ export default function RootLayout() {
       <ThemeProvider>
         <StatusBar style={colorScheme === "dark" ? "light" : "dark"} animated />
 
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 
-            <Stack.Screen
-              name="sheet"
-              options={{
-                headerShown: false,
-                sheetGrabberVisible: true,
-                sheetAllowedDetents: [0.4, 0.7, 1],
-                contentStyle: {
-                  backgroundColor: isLiquidGlassAvailable()
+          <Stack.Screen
+            name="sheet"
+            options={{
+              headerShown: false,
+              sheetGrabberVisible: true,
+              sheetAllowedDetents: [0.4, 0.7, 1],
+              contentStyle: {
+                backgroundColor: isLiquidGlassAvailable()
+                  ? "transparent"
+                  : colorScheme === "dark"
+                    ? Colors.dark.card
+                    : Colors.light.card,
+              },
+              headerTransparent: Platform.OS === "ios" ? true : false,
+              headerLargeTitle: false,
+              title: "",
+              presentation:
+                Platform.OS === "ios"
+                  ? isLiquidGlassAvailable() && osName !== "iPadOS"
+                    ? "formSheet"
+                    : "modal"
+                  : "modal",
+              sheetInitialDetentIndex: 0,
+              headerStyle: {
+                backgroundColor:
+                  Platform.OS === "ios"
                     ? "transparent"
                     : colorScheme === "dark"
                       ? Colors.dark.card
                       : Colors.light.card,
-                },
-                headerTransparent: Platform.OS === "ios" ? true : false,
-                headerLargeTitle: false,
-                title: "",
-                presentation:
-                  Platform.OS === "ios"
-                    ? isLiquidGlassAvailable() && osName !== "iPadOS"
-                      ? "formSheet"
-                      : "modal"
-                    : "modal",
-                sheetInitialDetentIndex: 0,
-                headerStyle: {
-                  backgroundColor:
-                    Platform.OS === "ios"
-                      ? "transparent"
-                      : colorScheme === "dark"
-                        ? Colors.dark.card
-                        : Colors.light.card,
-                },
-                headerBlurEffect: isLiquidGlassAvailable()
-                  ? undefined
-                  : colorScheme === "dark"
-                    ? "dark"
-                    : "light",
-              }}
-            />
-            <Stack.Screen name="+not-found" />
-          </Stack>
+              },
+              headerBlurEffect: isLiquidGlassAvailable()
+                ? undefined
+                : colorScheme === "dark"
+                  ? "dark"
+                  : "light",
+            }}
+          />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <Toast config={toastConfig} />
       </ThemeProvider>
     </GestureHandlerRootView>
   );

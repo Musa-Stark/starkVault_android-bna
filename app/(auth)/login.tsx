@@ -9,6 +9,7 @@ import InputWithLabel from "@/components/starkUI/InputWithLabel";
 import AuthPrompt from "@/components/starkUI/AuthPrompt";
 import OAuthButton from "@/components/starkUI/OAuthButton";
 import AuthDivider from "@/components/starkUI/AuthDivider";
+import authApiCall from "./authApiCall";
 
 const Login = () => {
   const background = useColor("background");
@@ -24,13 +25,15 @@ const Login = () => {
 
   const disabled = !email || !password || hasError;
 
-  const handleSubmit = () => {
-    console.log({ email, password });
-    setEmail("");
-    setPassword("");
+  const handleSubmit = async () => {
     setIsLoading(true);
+
+    const response = await authApiCall({ email, password, page: "login" });
+
     setTimeout(() => {
       setIsLoading(false);
+      setEmail("");
+      setPassword("");
     }, 3000);
   };
 
@@ -72,7 +75,7 @@ const Login = () => {
         nextRef={passwordRef}
         disabled={isLoading}
         hasError={setHasError}
-        />
+      />
 
       {/* Password */}
       <InputWithLabel

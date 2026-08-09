@@ -9,11 +9,11 @@ import InputWithLabel from "@/components/starkUI/InputWithLabel";
 import AuthPrompt from "@/components/starkUI/AuthPrompt";
 import OAuthButton from "@/components/starkUI/OAuthButton";
 import AuthDivider from "@/components/starkUI/AuthDivider";
+import Toast from "react-native-toast-message";
+import authApiCall from "./authApiCall";
 
 const Signup = () => {
   const background = useColor("background");
-
-
   const nameRef = useRef<any>(null);
   const emailRef = useRef<any>(null);
   const passwordRef = useRef<any>(null);
@@ -27,19 +27,33 @@ const Signup = () => {
   const [isOAuthLoading, setIsOAuthLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
-  const disabled =
-    !email || !password || password !== confirmPassword || hasError;
+  const disabled = !fullName || !email || !password || hasError;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (password !== confirmPassword) {
+      Toast.show({
+        type: "error",
+        text1: "Password mismatch",
+        text2: "Password must match confirm password",
+        position: "bottom",
+      });
+      return;
+    }
+    setIsLoading(true);
 
-    console.log({ fullName, email, password });
-    setFullName("");
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-    // setIsLoading(true);
+    const response = await authApiCall({
+      fullName,
+      email,
+      password,
+      page: "signup",
+    });
+
     setTimeout(() => {
       setIsLoading(false);
+      setFullName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
     }, 3000);
   };
 
@@ -122,7 +136,7 @@ const Signup = () => {
       {/* Submit */}
       <Button
         style={{ marginTop: 20 }}
-        // disabled={disabled}
+        disabled={disabled}
         onPress={handleSubmit}
         loading={isLoading}
       >

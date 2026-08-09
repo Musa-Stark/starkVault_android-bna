@@ -7,6 +7,7 @@ import AuthLogo from "@/components/starkUI/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
 import AuthPrompt from "@/components/starkUI/AuthPrompt";
 import { InputOTP } from "@/components/ui/input-otp";
+import authApiCall from "./authApiCall";
 
 const TwoFactorAuth = () => {
   const background = useColor("background");
@@ -14,13 +15,18 @@ const TwoFactorAuth = () => {
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = () => {
-    console.log({ code });
-    setCode("");
-
+  const handleSubmit = async () => {
     setIsLoading(true);
+
+    const response = await authApiCall({
+      code,
+      email: "musa@gmail.com",
+      page: "twoFactorAuth",
+    });
+
     setTimeout(() => {
       setIsLoading(false);
+      setCode("");
     }, 3000);
   };
 

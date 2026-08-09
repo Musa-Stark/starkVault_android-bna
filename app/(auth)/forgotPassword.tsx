@@ -15,19 +15,19 @@ const ForgotPassword = () => {
 
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [hasError, setHasError] = useState(false)
+  const [hasError, setHasError] = useState(false);
 
   const disabled = !email || hasError;
 
   const handleSubmit = () => {
     console.log({ email });
-    setEmail("");
     setIsLoading(true);
+
     setTimeout(() => {
       setIsLoading(false);
+      setEmail("");
     }, 3000);
   };
-
 
   return (
     <View
@@ -67,18 +67,11 @@ const ForgotPassword = () => {
         onPress={handleSubmit}
         loading={isLoading}
       >
-        <Text style={{ fontWeight: "500", color: background }}>
-          Send OTP
-        </Text>
+        <Text style={{ fontWeight: "500", color: background }}>Send OTP</Text>
       </Button>
 
-
       {/* AuthPrompt */}
-      <AuthPrompt
-        prompt="Remembered?"
-        linkText="log in"
-        route="/login"
-      />
+      <AuthPrompt prompt="Remembered?" linkText="log in" route="/login" />
     </View>
   );
 };
