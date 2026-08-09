@@ -9,6 +9,7 @@ import {
   Pressable,
   type TextInput,
 } from "react-native";
+import { useRouter } from "expo-router";
 
 import { useColor } from "@/hooks/useColor";
 import { Input } from "../ui/input";
@@ -47,6 +48,7 @@ const InputWithLabel = ({
   hasError,
 }: InputWithLabelProps) => {
   const foreground = useColor("foreground");
+  const router = useRouter()
   const teal = useColor("teal");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -124,7 +126,7 @@ const InputWithLabel = ({
         {/* forgot password */}
         {hasForgot && (
           <Pressable
-            onPress={() => console.log("Fogrot presssed")}
+            onPress={() => router.push("/forgotPassword")}
             hitSlop={10}
           >
             <Text

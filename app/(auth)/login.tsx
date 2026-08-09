@@ -84,6 +84,7 @@ const Login = () => {
         isPassword={true}
         disabled={isLoading}
         hasError={setHasError}
+        hasForgot={true}
       />
 
       {/* Submit */}

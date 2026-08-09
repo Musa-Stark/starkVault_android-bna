@@ -1,9 +1,7 @@
 import { View, Text, Image, Pressable } from "react-native";
-import { Input } from "@/components/ui/input";
 import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useColor } from "@/hooks/useColor";
-import { Eye, EyeOff } from "lucide-react-native";
 import globalStyles from "@/starkwind/globalStyle";
 import AuthLogo from "@/components/starkUI/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
@@ -12,8 +10,9 @@ import AuthPrompt from "@/components/starkUI/AuthPrompt";
 import OAuthButton from "@/components/starkUI/OAuthButton";
 import AuthDivider from "@/components/starkUI/AuthDivider";
 
-const Login = () => {
+const Signup = () => {
   const background = useColor("background");
+
 
   const nameRef = useRef<any>(null);
   const emailRef = useRef<any>(null);
@@ -26,17 +25,19 @@ const Login = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isOAuthLoading, setIsOAuthLoading] = useState(false);
-  const [hasError, setHasError] = useState(false)
+  const [hasError, setHasError] = useState(false);
 
-  const disabled = !email || !password || password !== confirmPassword || hasError;
+  const disabled =
+    !email || !password || password !== confirmPassword || hasError;
 
   const handleSubmit = () => {
+
     console.log({ fullName, email, password });
-    setFullName("")
+    setFullName("");
     setEmail("");
     setPassword("");
-    setConfirmPassword("")
-    setIsLoading(true);
+    setConfirmPassword("");
+    // setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);
@@ -61,9 +62,7 @@ const Login = () => {
       <AuthLogo />
 
       {/* Banner */}
-      <Banner
-        heading="Create your vault"
-      />
+      <Banner heading="Create your vault" />
 
       {/* fullName */}
       <InputWithLabel
@@ -77,8 +76,8 @@ const Login = () => {
         returnKeyType="next"
         nextRef={emailRef}
         disabled={isLoading}
-        hasError={(setHasError)}
-        />
+        hasError={setHasError}
+      />
 
       {/* Email */}
       <InputWithLabel
@@ -92,8 +91,8 @@ const Login = () => {
         returnKeyType="next"
         nextRef={passwordRef}
         disabled={isLoading}
-        hasError={(setHasError)}
-        />
+        hasError={setHasError}
+      />
 
       {/* Password */}
       <InputWithLabel
@@ -107,8 +106,8 @@ const Login = () => {
         returnKeyType="next"
         nextRef={confirmPasswordRef}
         disabled={isLoading}
-        hasError={(setHasError)}
-        />
+        hasError={setHasError}
+      />
       <InputWithLabel
         label="Confirm Password"
         placeholderText="••••••••••••"
@@ -117,13 +116,13 @@ const Login = () => {
         ref={confirmPasswordRef}
         isPassword={true}
         disabled={isLoading}
-        hasError={(setHasError)}
+        hasError={setHasError}
       />
 
       {/* Submit */}
       <Button
         style={{ marginTop: 20 }}
-        disabled={disabled}
+        // disabled={disabled}
         onPress={handleSubmit}
         loading={isLoading}
       >
@@ -154,4 +153,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
