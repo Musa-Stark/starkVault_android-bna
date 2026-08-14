@@ -1,68 +1,164 @@
-import { Platform } from 'react-native';
-import { useColor } from '@/hooks/useColor';
-import { isLiquidGlassAvailable } from 'expo-glass-effect';
-import MaterialIcons from '@expo/vector-icons/Feather';
-import {
-  Badge,
-  Icon,
-  Label,
-  NativeTabs,
-  VectorIcon,
-} from 'expo-router/unstable-native-tabs';
+import { Tabs } from "expo-router";
+import {  CircleDollarSign, FolderLock, LayoutDashboard, Settings, User2, Vault } from "lucide-react-native";
+import { useColor } from "@/hooks/useColor";
+import { View, Text } from "react-native";
 
-export default function TabsLayout() {
-  const red = useColor('red');
-  const primary = useColor('primary');
-  const foreground = useColor('foreground');
+export default function Layout() {
+  const background = useColor("background");
+  const foreground = useColor("foreground");
 
   return (
-    <NativeTabs
-      minimizeBehavior='onScrollDown'
-      labelStyle={{
-        default: { color: primary },
-        selected: { color: foreground },
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+
+        // Entire bottom navigation
+        tabBarStyle: {
+          height: 90,
+          backgroundColor: background,
+          paddingTop: 8,
+          paddingBottom: 20,
+          borderTopWidth: 0,
+          elevation: 10,
+        },
+
+        // Label
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "600",
+          marginTop: 2,
+        },
+
+        // Colors
+        tabBarInactiveTintColor: foreground,
+        tabBarActiveTintColor: foreground,
       }}
-      iconColor={{
-        default: primary,
-        selected: foreground,
-      }}
-      badgeBackgroundColor={red}
-      labelVisibilityMode='labeled'
-      disableTransparentOnScrollEdge={true}
     >
-      <NativeTabs.Trigger name='(home)'>
-        {Platform.select({
-          ios: <Icon sf='house.fill' />,
-          android: (
-            <Icon src={<VectorIcon family={MaterialIcons} name='home' />} />
+      <Tabs.Screen
+        name="dashboard/index"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                borderRadius: 22,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: focused ? "#84d89951" : "transparent",
+                paddingHorizontal: 18,
+                paddingVertical: 6,
+              }}
+            >
+              <LayoutDashboard size={24} color={foreground} />
+            </View>
           ),
-        })}
-        <Label>Home</Label>
-      </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name='settings'>
-        {Platform.select({
-          ios: <Icon sf='gear' />,
-          android: (
-            <Icon src={<VectorIcon family={MaterialIcons} name='settings' />} />
+          tabBarLabel: () => (
+            <View>
+              <Text
+                style={{ color: foreground, fontWeight: 600, marginTop: 2 }}
+              >
+                Dashboard
+              </Text>
+            </View>
           ),
-        })}
-        <Label>Settings</Label>
-        <Badge>1</Badge>
-      </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger
-        name='search'
-        role={isLiquidGlassAvailable() ? 'search' : undefined}
-      >
-        {Platform.select({
-          ios: <Icon sf='magnifyingglass' />,
-          android: (
-            <Icon src={<VectorIcon family={MaterialIcons} name='search' />} />
+          animation: "fade",
+        }}
+      />
+      <Tabs.Screen
+        name="money/index"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                borderRadius: 22,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: focused ? "#84d89951" : "transparent",
+                paddingHorizontal: 18,
+                paddingVertical: 6,
+              }}
+            >
+              <CircleDollarSign size={24} color={foreground} />
+            </View>
           ),
-        })}
-        <Label>Search</Label>
-      </NativeTabs.Trigger>
-    </NativeTabs>
+
+          tabBarLabel: () => (
+            <View>
+              <Text
+                style={{ color: foreground, fontWeight: 600, marginTop: 2 }}
+              >
+                Money
+              </Text>
+            </View>
+          ),
+
+          animation: "fade",
+        }}
+      />
+      <Tabs.Screen
+        name="vault/index"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                borderRadius: 22,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: focused ? "#84d89951" : "transparent",
+                paddingHorizontal: 18,
+                paddingVertical: 6,
+              }}
+            >
+              <FolderLock size={24} color={foreground} />
+            </View>
+          ),
+
+          tabBarLabel: () => (
+            <View>
+              <Text
+                style={{ color: foreground, fontWeight: 600, marginTop: 2 }}
+              >
+                Vault
+              </Text>
+            </View>
+          ),
+
+          animation: "fade",
+        }}
+      />
+
+      <Tabs.Screen
+        name="profile/index"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                borderRadius: 22,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: focused ? "#84d89951" : "transparent",
+                paddingHorizontal: 18,
+                paddingVertical: 6,
+              }}
+            >
+              <User2 size={24} color={foreground} />
+            </View>
+          ),
+
+          tabBarLabel: () => (
+            <View>
+              <Text
+                style={{ color: foreground, fontWeight: 600, marginTop: 2 }}
+              >
+                Profile
+              </Text>
+            </View>
+          ),
+
+          animation: "fade",
+        }}
+      />
+    </Tabs>
   );
 }
