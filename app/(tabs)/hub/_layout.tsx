@@ -9,6 +9,7 @@ export default function Layout() {
       <Stack.Screen name="savings-goals" />
       <Stack.Screen name="subscriptions" />
       <Stack.Screen name="passwords" />
+      <Stack.Screen name="cards" />
     </Stack>
   );
 }

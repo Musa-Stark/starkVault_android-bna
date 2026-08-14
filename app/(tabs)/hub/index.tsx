@@ -79,7 +79,7 @@ const Money = () => {
       route: "/hub/savings-goals",
     },
     { icon: KeyRound, text: "Passwords", category: "vault", route: "/hub/passwords" },
-    // { icon: CreditCard, text: "Cards", category: "vault", route: "/hub/cards" },
+    { icon: CreditCard, text: "Cards", category: "vault", route: "/hub/cards" },
     // {
     //   icon: FileLock,
     //   text: "Documents",
