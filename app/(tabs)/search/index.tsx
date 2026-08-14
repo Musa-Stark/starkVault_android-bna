@@ -2,13 +2,13 @@ import { View, Text } from "react-native";
 import React from "react";
 import { useColor } from "@/hooks/useColor";
 
-const Vault = () => {
+const Search = () => {
   const foreground = useColor("foreground");
   return (
     <View>
-      <Text style={{ color: foreground }}>Vault</Text>
+      <Text style={{ color: foreground }}>Search</Text>
     </View>
   );
 };
 
-export default Vault;
+export default Search;

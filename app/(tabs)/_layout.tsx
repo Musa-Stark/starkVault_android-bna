@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import {  CircleDollarSign, FolderLock, LayoutDashboard, Settings, User2, Vault } from "lucide-react-native";
+import {  CircleDollarSign, FolderLock, LayoutDashboard, LayoutGrid, Search, Settings, User2, Vault } from "lucide-react-native";
 import { useColor } from "@/hooks/useColor";
 import { View, Text } from "react-native";
 
@@ -14,7 +14,7 @@ export default function Layout() {
 
         // Entire bottom navigation
         tabBarStyle: {
-          height: 90,
+          height: 100,
           backgroundColor: background,
           paddingTop: 8,
           paddingBottom: 20,
@@ -62,11 +62,11 @@ export default function Layout() {
             </View>
           ),
 
-          animation: "fade",
+          animation: "shift",
         }}
       />
       <Tabs.Screen
-        name="money/index"
+        name="hub/index"
         options={{
           tabBarIcon: ({ focused }) => (
             <View
@@ -79,7 +79,7 @@ export default function Layout() {
                 paddingVertical: 6,
               }}
             >
-              <CircleDollarSign size={24} color={foreground} />
+              <LayoutGrid size={24} color={foreground} />
             </View>
           ),
 
@@ -88,16 +88,16 @@ export default function Layout() {
               <Text
                 style={{ color: foreground, fontWeight: 600, marginTop: 2 }}
               >
-                Money
+                Hub
               </Text>
             </View>
           ),
 
-          animation: "fade",
+          animation: "shift",
         }}
       />
       <Tabs.Screen
-        name="vault/index"
+        name="search/index"
         options={{
           tabBarIcon: ({ focused }) => (
             <View
@@ -110,7 +110,7 @@ export default function Layout() {
                 paddingVertical: 6,
               }}
             >
-              <FolderLock size={24} color={foreground} />
+              <Search size={24} color={foreground} />
             </View>
           ),
 
@@ -119,7 +119,7 @@ export default function Layout() {
               <Text
                 style={{ color: foreground, fontWeight: 600, marginTop: 2 }}
               >
-                Vault
+                Search
               </Text>
             </View>
           ),
