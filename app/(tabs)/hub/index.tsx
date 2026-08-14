@@ -72,20 +72,13 @@ const Money = () => {
       category: "money",
       route: "/hub/subscriptions",
     },
-    // {
-    //   icon: HandCoins,
-    //   text: "Savings Goals",
-    //   category: "money",
-    //   route: "/hub/savings-goals",
-    // },
-    // { icon: Scale, text: "Debt", category: "money", route: "/hub/debt" },
-    // {
-    //   icon: ChartColumnIcon,
-    //   text: "Investments",
-    //   category: "money",
-    //   route: "/hub/investments",
-    // },
-    // { icon: KeyRound, text: "Password", category: "vault", route: "/hub/password" },
+    {
+      icon: HandCoins,
+      text: "Savings Goals",
+      category: "money",
+      route: "/hub/savings-goals",
+    },
+    { icon: KeyRound, text: "Passwords", category: "vault", route: "/hub/passwords" },
     // { icon: CreditCard, text: "Cards", category: "vault", route: "/hub/cards" },
     // {
     //   icon: FileLock,
