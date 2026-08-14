@@ -1,4 +1,4 @@
-import { View, } from "react-native";
+import { Pressable, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Text } from "@/components/ui/text";
 import React from "react";
@@ -18,18 +18,23 @@ import {
   Scale,
   Wallet,
 } from "lucide-react-native";
+import { Href, useRouter } from "expo-router";
 
 const ListItem = ({
   Icon,
   text,
+  route,
 }: {
   Icon: React.ComponentType<LucideProps>;
   text: string;
+  route: Href;
 }) => {
   const foreground = useColor("foreground");
+  const router = useRouter();
 
   return (
-    <View
+    <Pressable
+      onPress={() => router.push(route)}
       style={{
         ...globalStyles.flexBoxHorizantal,
         justifyContent: "flex-start",
@@ -41,24 +46,59 @@ const ListItem = ({
       <Text variant="body" style={{ color: foreground }}>
         {text}
       </Text>
-    </View>
+    </Pressable>
   );
 };
 
 const Money = () => {
   const foreground = useColor("foreground");
 
-  const items = [
-    { icon: CircleDollarSign, text: "Expenses", category: "money" },
-    { icon: Wallet, text: "Income", category: "money" },
-    { icon: Repeat, text: "Subscriptions", category: "money" },
-    { icon: HandCoins, text: "Savings Goals", category: "money" },
-    { icon: Scale, text: "Debt", category: "money" },
-    { icon: ChartColumnIcon, text: "Investments", category: "money" },
-    { icon: KeyRound, text: "Password", category: "vault" },
-    { icon: CreditCard, text: "Cards", category: "vault" },
-    { icon: FileLock, text: "Documents", category: "vault" },
-    { icon: NotebookPenIcon, text: "Notes", category: "vault" },
+  const items: {
+    icon: React.ComponentType<LucideProps>;
+    text: string;
+    category: string;
+    route: Href;
+  }[] = [
+    {
+      icon: CircleDollarSign,
+      text: "Expenses",
+      category: "money",
+      route: "/hub/expenses",
+    },
+    // { icon: Wallet, text: "Income", category: "money", route: "/hub/incom" },
+    // {
+    //   icon: Repeat,
+    //   text: "Subscriptions",
+    //   category: "money",
+    //   route: "/hub/subscriptions",
+    // },
+    // {
+    //   icon: HandCoins,
+    //   text: "Savings Goals",
+    //   category: "money",
+    //   route: "/hub/savings-goals",
+    // },
+    // { icon: Scale, text: "Debt", category: "money", route: "/hub/debt" },
+    // {
+    //   icon: ChartColumnIcon,
+    //   text: "Investments",
+    //   category: "money",
+    //   route: "/hub/investments",
+    // },
+    // { icon: KeyRound, text: "Password", category: "vault", route: "/hub/password" },
+    // { icon: CreditCard, text: "Cards", category: "vault", route: "/hub/cards" },
+    // {
+    //   icon: FileLock,
+    //   text: "Documents",
+    //   category: "vault",
+    //   route: "/hub/documents",
+    // },
+    // {
+    //   icon: NotebookPenIcon,
+    //   text: "Notes",
+    //   category: "vault",
+    //   route: "/hub/notes",
+    // },
   ];
 
   return (
@@ -92,7 +132,12 @@ const Money = () => {
                     item.category.slice(1)}
                 </Text>
               )}
-              <ListItem key={idx} Icon={item.icon} text={item.text} />
+              <ListItem
+                key={idx}
+                Icon={item.icon}
+                route={item.route}
+                text={item.text}
+              />
               {showSeparator && <Separator />}
             </View>
           );

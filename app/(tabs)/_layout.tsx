@@ -66,7 +66,7 @@ export default function Layout() {
         }}
       />
       <Tabs.Screen
-        name="hub/index"
+        name="hub"
         options={{
           tabBarIcon: ({ focused }) => (
             <View
