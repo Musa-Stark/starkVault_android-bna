@@ -65,13 +65,13 @@ const Money = () => {
       category: "money",
       route: "/hub/expenses",
     },
-    // { icon: Wallet, text: "Income", category: "money", route: "/hub/incom" },
-    // {
-    //   icon: Repeat,
-    //   text: "Subscriptions",
-    //   category: "money",
-    //   route: "/hub/subscriptions",
-    // },
+    { icon: Wallet, text: "Income", category: "money", route: "/hub/income" },
+    {
+      icon: Repeat,
+      text: "Subscriptions",
+      category: "money",
+      route: "/hub/subscriptions",
+    },
     // {
     //   icon: HandCoins,
     //   text: "Savings Goals",

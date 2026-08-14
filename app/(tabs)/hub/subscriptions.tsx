@@ -6,58 +6,56 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react-native";
 import { Card,  CardHeader, CardTitle } from "@/components/ui/card";
 
-const expenses = () => {
+const subscriptions = () => {
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
       {/* heading */}
       <Text variant="heading" style={{ marginBottom: 20 }}>
-        Expenses
+        Subscriptions
       </Text>
       {/* title */}
-      <Text variant="caption">Track every penny with intelligence.</Text>
+      <Text variant="caption">0 active subscriptions</Text>
       {/* button */}
       <Button icon={Plus} style={{ marginTop: 20 }}>
-        Add Expense
+        Track New
       </Button>
-      {/* total spent */}
+
+      {/* this month */}
       <Card style={{ marginTop: 20 }}>
         <CardHeader>
           <Text variant="caption" style={{ fontSize: 15 }}>
-            Total Spent
+            Monthly burn
           </Text>
           <CardTitle>Rs 0</CardTitle>
         </CardHeader>
       </Card>
 
-      {/* average per transaction */}
+      {/* regular subscriptions */}
       <Card style={{ marginTop: 20 }}>
         <CardHeader>
           <Text variant="caption" style={{ fontSize: 15 }}>
-            Average per transaction
+            Yearly equivalent
           </Text>
           <CardTitle>Rs 0</CardTitle>
         </CardHeader>
       </Card>
 
-      {/* top category */}
+      {/* total subscriptions */}
       <Card style={{ marginTop: 20 }}>
         <CardHeader>
           <Text variant="caption" style={{ fontSize: 15 }}>
-            Top category
+            Total Subscriptions
           </Text>
-          <CardTitle>N/A</CardTitle>
-          <Text variant="caption" style={{ fontSize: 15 }}>
-            Top category
-          </Text>
+          <CardTitle>0</CardTitle>
         </CardHeader>
       </Card>
 
-      {/* expenses */}
+      {/* subscriptions */}
       <Card style={{ marginTop: 20 }}>
-        <Text variant="caption">No expenses added yet</Text>
+        <Text variant="caption">No subscriptions added yet</Text>
       </Card>
     </View>
   );
 };
 
-export default expenses;
+export default subscriptions;

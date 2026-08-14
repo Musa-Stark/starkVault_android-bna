@@ -6,58 +6,56 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react-native";
 import { Card,  CardHeader, CardTitle } from "@/components/ui/card";
 
-const expenses = () => {
+const income = () => {
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
       {/* heading */}
       <Text variant="heading" style={{ marginBottom: 20 }}>
-        Expenses
+        Income
       </Text>
       {/* title */}
-      <Text variant="caption">Track every penny with intelligence.</Text>
+      <Text variant="caption">All income streams.</Text>
       {/* button */}
       <Button icon={Plus} style={{ marginTop: 20 }}>
-        Add Expense
+        Add Income
       </Button>
-      {/* total spent */}
+
+      {/* this month */}
       <Card style={{ marginTop: 20 }}>
         <CardHeader>
           <Text variant="caption" style={{ fontSize: 15 }}>
-            Total Spent
+            This month
           </Text>
           <CardTitle>Rs 0</CardTitle>
         </CardHeader>
       </Card>
 
-      {/* average per transaction */}
+      {/* regular income */}
       <Card style={{ marginTop: 20 }}>
         <CardHeader>
           <Text variant="caption" style={{ fontSize: 15 }}>
-            Average per transaction
+            Recurring streams
           </Text>
           <CardTitle>Rs 0</CardTitle>
         </CardHeader>
       </Card>
 
-      {/* top category */}
+      {/* average per entry */}
       <Card style={{ marginTop: 20 }}>
         <CardHeader>
           <Text variant="caption" style={{ fontSize: 15 }}>
-            Top category
+            Average per entry
           </Text>
-          <CardTitle>N/A</CardTitle>
-          <Text variant="caption" style={{ fontSize: 15 }}>
-            Top category
-          </Text>
+          <CardTitle>Rs 0</CardTitle>
         </CardHeader>
       </Card>
 
       {/* expenses */}
       <Card style={{ marginTop: 20 }}>
-        <Text variant="caption">No expenses added yet</Text>
+        <Text variant="caption">No income added yet</Text>
       </Card>
     </View>
   );
 };
 
-export default expenses;
+export default income;
