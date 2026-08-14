@@ -1,15 +1,22 @@
 import { StyleSheet, ViewStyle } from "react-native";
-import { useColor } from "@/hooks/useColor";
 
 const flexBoxObj: ViewStyle = {
   alignItems: "center",
   justifyContent: "center",
 };
+
+const container: ViewStyle = {
+  paddingHorizontal: "5%",
+  height: "100%",
+  width: "100%",
+};
+
 const globalStyles = StyleSheet.create({
-  globalContainer: {
-    paddingHorizontal: "5%",
-    height: "100%",
-    width: "100%",
+  globalContainer: container,
+
+  globalPaddingContainer: {
+    ...container,
+    paddingTop: "12%",
   },
 
   flexBox: flexBoxObj,
