@@ -1,5 +1,5 @@
 import React, { useEffect, useState, type RefObject } from "react";
-import { EyeOff, Eye, HandMetal } from "lucide-react-native";
+import { EyeOff, Eye,} from "lucide-react-native";
 import {
   EnterKeyHintType,
   ReturnKeyType,
@@ -29,6 +29,7 @@ type InputWithLabelProps = {
   autoFocus?: boolean;
   disabled?: boolean;
   hasError?: (hasError: boolean) => void;
+  variant?: "filled" | "outline"
 };
 
 const InputWithLabel = ({
@@ -46,9 +47,10 @@ const InputWithLabel = ({
   autoFocus,
   disabled,
   hasError,
+  variant
 }: InputWithLabelProps) => {
   const foreground = useColor("foreground");
-  const router = useRouter()
+  const router = useRouter();
   const teal = useColor("teal");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -143,6 +145,7 @@ const InputWithLabel = ({
 
       {/* inputField */}
       <Input
+        variant={variant}
         ref={ref}
         value={value}
         onChangeText={handleEditing}
@@ -151,7 +154,7 @@ const InputWithLabel = ({
         placeholder={placeholderText}
         containerStyle={{ marginTop: 3 }}
         onBlur={handleValidation}
-        // autoFocus={autoFocus}
+        autoFocus={autoFocus}
         secureTextEntry={!showPassword && isPassword}
         disabled={disabled}
         enterKeyHint={entryKeyHint ?? "done"}
