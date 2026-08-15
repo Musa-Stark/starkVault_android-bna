@@ -1,26 +1,25 @@
 import { View } from "react-native";
 import React from "react";
-import * as Clipboard from "expo-clipboard";
 
 import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react-native";
+import { UploadCloud } from "lucide-react-native";
 
-const cards = () => {
+const documents = () => {
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
       <Text variant="heading" style={{ marginBottom: 20 }}>
-        Cards
+        Documents
       </Text>
 
-      <Text variant="caption">0 cards in vault</Text>
+      <Text variant="caption">0 documents</Text>
 
-      <Button icon={Plus} style={{ marginTop: 20 }}>
-        Add Card
+      <Button icon={UploadCloud} style={{ marginTop: 20 }}>
+        Upload
       </Button>
     </View>
   );
 };
 
-export default cards;
+export default documents;

@@ -3,12 +3,12 @@ import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
-import AuthLogo from "@/components/starkUI/AuthLogo";
+import AuthLogo from "@/components/starkUI/auth/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
-import InputWithLabel from "@/components/starkUI/InputWithLabel";
-import AuthPrompt from "@/components/starkUI/AuthPrompt";
-import OAuthButton from "@/components/starkUI/OAuthButton";
-import AuthDivider from "@/components/starkUI/AuthDivider";
+import InputWithLabel from "@/components/starkUI/auth/InputWithLabel";
+import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
+import OAuthButton from "@/components/starkUI/auth/OAuthButton";
+import AuthDivider from "@/components/starkUI/auth/AuthDivider";
 import authApiCall from "./authApiCall";
 
 const Login = () => {

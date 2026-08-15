@@ -3,10 +3,10 @@ import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
-import AuthLogo from "@/components/starkUI/AuthLogo";
+import AuthLogo from "@/components/starkUI/auth/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
-import InputWithLabel from "@/components/starkUI/InputWithLabel";
-import AuthPrompt from "@/components/starkUI/AuthPrompt";
+import InputWithLabel from "@/components/starkUI/auth/InputWithLabel";
+import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
 
 const ForgotPassword = () => {
   const background = useColor("background");

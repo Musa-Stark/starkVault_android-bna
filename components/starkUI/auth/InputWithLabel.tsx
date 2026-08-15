@@ -12,7 +12,7 @@ import {
 import { useRouter } from "expo-router";
 
 import { useColor } from "@/hooks/useColor";
-import { Input } from "../ui/input";
+import { Input } from "../../ui/input";
 
 type InputWithLabelProps = {
   value: string;
