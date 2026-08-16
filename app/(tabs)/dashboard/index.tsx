@@ -4,13 +4,36 @@ import { View } from "react-native";
 import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
-import { CreditCard, Plus, Sparkles } from "lucide-react-native";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { useApp } from "@/providers/app-context";
+import {
+  CreditCard,
+  FileLock,
+  LucideProps,
+  Plus,
+  Sparkles,
+} from "lucide-react-native";
+import { Card, CardTitle } from "@/components/ui/card";
 import SadapayCard from "@/components/starkUI/cards/Sadapay";
 import { ScrollView } from "react-native-gesture-handler";
+import RecentActivity from "./recentActivity";
 
 const DashBoard = () => {
   const background = useColor("background");
+  const { setUploadForm } = useApp();
+
+  const recents: {
+    Icon: React.ComponentType<LucideProps>;
+    age: string;
+    service: string;
+    state: string;
+  }[] = [
+    {
+      age: "3 months",
+      Icon: FileLock,
+      service: "Document",
+      state: "added",
+    },
+  ];
 
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
@@ -44,22 +67,53 @@ const DashBoard = () => {
         </View>
 
         {/* add password */}
-        <Button icon={Sparkles} variant="default" style={{ marginTop: 15 }}>
+        <Button
+          onPress={() =>
+            setUploadForm((prev) => ({
+              ...prev,
+              show: true,
+              inputs: [
+                {
+                  label: "Email",
+                  placeholderText: "you@example.com",
+                },
+                {
+                  label: "Password",
+                  placeholderText: "At least 6 characters",
+                },
+              ],
+            }))
+          }
+          icon={Sparkles}
+          variant="default"
+          style={{ marginTop: 15 }}
+        >
           <Text style={{ color: background }}>Add Password</Text>
         </Button>
 
         {/* recent */}
         <Card style={{ marginTop: 20 }}>
           <CardTitle children="Recent Activity" />
-          <View style={{...globalStyles.flexBox, marginTop: 10}}>
-            <CardDescription children="No recent activity yet" />
+          <View style={{ ...globalStyles.flexBox, marginTop: 10 }}>
+            {/* <CardDescription children="No recent activity yet" /> */}
+            {recents.map((item, idx) => (
+              <RecentActivity
+                key={idx}
+                Icon={item.Icon}
+                age={item.age}
+                service={item.service}
+                state={item.state}
+              />
+            ))}
           </View>
         </Card>
 
         {/* cards */}
         <Card style={{ marginTop: 20, marginBottom: 20 }}>
           <CardTitle children="Latest Card" />
-          <CardDescription children="Tap CVV to flip" />
+          <Text variant="caption" style={{ fontSize: 14 }}>
+            Tap on card to flip
+          </Text>
 
           <SadapayCard style={{ marginTop: 15, width: 335 }} />
 

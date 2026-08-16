@@ -1,5 +1,5 @@
 import React, { useEffect, useState, type RefObject } from "react";
-import { EyeOff, Eye,} from "lucide-react-native";
+import { EyeOff, Eye } from "lucide-react-native";
 import {
   EnterKeyHintType,
   ReturnKeyType,
@@ -8,17 +8,18 @@ import {
   View,
   Pressable,
   type TextInput,
+  ViewStyle,
 } from "react-native";
 import { useRouter } from "expo-router";
 
 import { useColor } from "@/hooks/useColor";
 import { Input } from "../../ui/input";
 
-type InputWithLabelProps = {
-  value: string;
-  setValue: (value: string) => void;
+export interface InputWithLabel {
   label: string;
   placeholderText: string;
+  value?: string;
+  setValue?: (value: string) => void;
   inputMode?: TextInputProps["inputMode"];
   entryKeyHint?: EnterKeyHintType;
   returnKeyType?: ReturnKeyType;
@@ -29,8 +30,9 @@ type InputWithLabelProps = {
   autoFocus?: boolean;
   disabled?: boolean;
   hasError?: (hasError: boolean) => void;
-  variant?: "filled" | "outline"
-};
+  variant?: "filled" | "outline";
+  containerStyle?: ViewStyle
+}
 
 const InputWithLabel = ({
   value,
@@ -47,8 +49,9 @@ const InputWithLabel = ({
   autoFocus,
   disabled,
   hasError,
-  variant
-}: InputWithLabelProps) => {
+  variant,
+  containerStyle
+}: InputWithLabel) => {
   const foreground = useColor("foreground");
   const router = useRouter();
   const teal = useColor("teal");
@@ -71,20 +74,20 @@ const InputWithLabel = ({
 
   // on blur validation
   const handleValidation = () => {
-    if (value.length === 0) {
+    if (value?.length === 0) {
       setError(`${label} is required`);
       return;
     }
 
     // email validation
-    const emailError = handleEmailValidation(value);
+    const emailError = handleEmailValidation(value ?? "");
     if (emailError) {
       setError("Invalid Email");
       return;
     }
 
     // password validation
-    if (isPassword && value.length < 6) {
+    if (isPassword && value && value.length < 6) {
       setError("Password must be at least 6 characters");
       return;
     }
@@ -92,6 +95,7 @@ const InputWithLabel = ({
 
   // typing validation
   const handleEditing = (text: string) => {
+    if (!setValue) return;
     setValue(text);
 
     // password validation
@@ -152,7 +156,7 @@ const InputWithLabel = ({
         inputMode={inputMode ?? "text"}
         error={error}
         placeholder={placeholderText}
-        containerStyle={{ marginTop: 3 }}
+        containerStyle={{ marginTop: 3, ...containerStyle }}
         onBlur={handleValidation}
         autoFocus={autoFocus}
         secureTextEntry={!showPassword && isPassword}

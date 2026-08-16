@@ -35,7 +35,7 @@ export default function Layout() {
       }}
     >
       <Tabs.Screen
-        name="dashboard/index"
+        name="dashboard"
         options={{
           tabBarIcon: ({ focused }) => (
             <View
