@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
-import AuthLogo from "@/components/starkUI/AuthLogo";
+import AuthLogo from "@/components/starkUI/auth/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
-import AuthPrompt from "@/components/starkUI/AuthPrompt";
+import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
 import { InputOTP } from "@/components/ui/input-otp";
 import authApiCall from "./authApiCall";
 

@@ -2,7 +2,7 @@ import React from "react";
 import { Image, ImageSourcePropType, Text } from "react-native";
 
 import { useColor } from "@/hooks/useColor";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 type OAuthButtonProps = {
   text: string;

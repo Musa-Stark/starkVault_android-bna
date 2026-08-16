@@ -8,7 +8,6 @@ import { CreditCard, Plus, Sparkles } from "lucide-react-native";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 
 const DashBoard = () => {
-  const foreground = useColor("foreground");
   const background = useColor("background");
 
   return (
