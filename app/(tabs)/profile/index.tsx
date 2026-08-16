@@ -1,4 +1,4 @@
-import { ColorValue, StyleProp, View, ViewStyle } from "react-native";
+import { View } from "react-native";
 import { Text } from "@/components/ui/text";
 import React, { useState } from "react";
 import { useColor } from "@/hooks/useColor";
@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   Edit3,
   Fingerprint,
+  LogOut,
   LucideIcon,
   LucideProps,
   ShieldCheck,
@@ -52,7 +53,7 @@ const SecurityControl = ({
       >
         <Icon color={foreground} />
       </View>
-      <Text numberOfLines={2} style={{ maxWidth: "65%" }}>
+      <Text numberOfLines={2} style={{ maxWidth: "65%", fontSize: 16 }}>
         {text}
       </Text>
       <Switch
@@ -126,6 +127,7 @@ const Profile = () => {
             setValue={setEmail}
             value={email}
             variant="outline"
+            disabled
           />
 
           <Button icon={Edit3} style={{ marginTop: 20 }}>
@@ -137,7 +139,6 @@ const Profile = () => {
         <Card
           style={{
             marginTop: 20,
-            marginBottom: 10,
             ...globalStyles.flexBox,
             gap: 10,
           }}
@@ -151,9 +152,7 @@ const Profile = () => {
           <SecurityControl
             key={1}
             Icon={ShieldCheck}
-            text={
-              "Two-Factor Authentication asdfasdf asdfasdf asdfasdf asdfasdf asdfasdf"
-            }
+            text={"Two-Factor Authentication"}
           />
           <SecurityControl
             key={2}
@@ -161,6 +160,18 @@ const Profile = () => {
             text={"Biometric Unlock"}
           />
         </Card>
+
+        {/* logout */}
+        <Button
+          icon={LogOut}
+          variant="destructive"
+          style={{
+            marginTop: 20,
+            marginBottom: 20,
+          }}
+        >
+          Logout
+        </Button>
       </ScrollView>
     </View>
   );
