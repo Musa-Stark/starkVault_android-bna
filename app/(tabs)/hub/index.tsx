@@ -107,7 +107,7 @@ const Money = () => {
       </Text>
 
       {/* items */}
-      <ScrollView style={{ marginTop: 20 }}>
+      <ScrollView style={{ marginTop: 20 }} showsVerticalScrollIndicator={false}>
         {items.map((item, idx) => {
           const previous = items[idx - 1]?.category;
           const showCategory = item.category !== previous;

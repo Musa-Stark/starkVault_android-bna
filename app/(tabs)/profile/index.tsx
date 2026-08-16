@@ -10,7 +10,6 @@ import {
   Edit3,
   Fingerprint,
   LogOut,
-  LucideIcon,
   LucideProps,
   ShieldCheck,
 } from "lucide-react-native";
@@ -67,10 +66,7 @@ const SecurityControl = ({
 
 const Profile = () => {
   const background = useColor("background");
-  const foreground = useColor("foreground");
   const green = useColor("green");
-  const borderColor = useColor("muted");
-  const cardColor = useColor("card");
 
   const [userName, setUserName] = useState("Muhammad Musa");
   const [newPassword, setNewPassword] = useState("");
@@ -78,7 +74,7 @@ const Profile = () => {
 
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Text variant="heading" style={{ marginBottom: 20 }}>
           Profile
         </Text>

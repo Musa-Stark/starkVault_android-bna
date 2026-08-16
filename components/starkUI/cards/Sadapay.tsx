@@ -1,6 +1,6 @@
 // SadapayCard.tsx
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 import {
   Animated,
   Easing,
@@ -8,26 +8,32 @@ import {
   StyleSheet,
   Text,
   View,
+  ViewStyle,
   useWindowDimensions,
-} from 'react-native';
+} from "react-native";
 
 type SadapayCardProps = {
   cardNumber?: string;
   cardHolder?: string;
   expiry?: string;
   cvv?: string;
+  style?: ViewStyle;
 };
 
 export default function SadapayCard({
-  cardNumber = '4242 4242 4242 4242',
-  cardHolder = 'MUHAMMAD AHMED',
-  expiry = '12/28',
-  cvv = '123',
+  cardNumber = "4242 4242 4242 4242",
+  cardHolder = "MUHAMMAD AHMED",
+  expiry = "12/28",
+  cvv = "123",
+  style,
 }: SadapayCardProps) {
   const { width } = useWindowDimensions();
 
-  const cardWidth = Math.min(width - 32, 400);
-  const cardHeight = cardWidth * 0.63;
+  const cardWidth = Math.min(
+    style?.width ? (style?.width as number) : width - 32,
+    400,
+  );
+  const cardHeight = style?.height || cardWidth * 0.63;
 
   const [flipped, setFlipped] = useState(false);
 
@@ -48,12 +54,12 @@ export default function SadapayCard({
 
   const frontRotation = rotate.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
+    outputRange: ["0deg", "180deg"],
   });
 
   const backRotation = rotate.interpolate({
     inputRange: [0, 1],
-    outputRange: ['180deg', '360deg'],
+    outputRange: ["180deg", "360deg"],
   });
 
   return (
@@ -61,7 +67,8 @@ export default function SadapayCard({
       style={{
         width: cardWidth,
         height: cardHeight,
-        alignSelf: 'center',
+        alignSelf: "center",
+        ...style,
       }}
     >
       {/* =====================================================
@@ -75,10 +82,7 @@ export default function SadapayCard({
           {
             width: cardWidth,
             height: cardHeight,
-            transform: [
-              { perspective: 1400 },
-              { rotateY: frontRotation },
-            ],
+            transform: [{ perspective: 1400 }, { rotateY: frontRotation }],
           },
         ]}
       >
@@ -132,31 +136,23 @@ export default function SadapayCard({
           <View style={styles.holder}>
             <Text style={styles.label}>CARD HOLDER</Text>
 
-            <Text style={styles.name}>
-              {cardHolder.toUpperCase()}
-            </Text>
+            <Text style={styles.name}>{cardHolder.toUpperCase()}</Text>
           </View>
 
           <View>
             <Text style={styles.label}>EXPIRES</Text>
 
-            <Text style={styles.expiry}>
-              {expiry}
-            </Text>
+            <Text style={styles.expiry}>{expiry}</Text>
           </View>
         </View>
 
         {/* Demo badge */}
 
         <View style={styles.demoBadge}>
-          <Text style={styles.demoText}>
-            DEMO
-          </Text>
+          <Text style={styles.demoText}>DEMO</Text>
         </View>
 
-        <Text style={styles.flipHint}>
-          TAP TO FLIP
-        </Text>
+        <Text style={styles.flipHint}>TAP TO FLIP</Text>
       </Animated.View>
 
       {/* =====================================================
@@ -171,23 +167,16 @@ export default function SadapayCard({
           {
             width: cardWidth,
             height: cardHeight,
-            transform: [
-              { perspective: 1400 },
-              { rotateY: backRotation },
-            ],
+            transform: [{ perspective: 1400 }, { rotateY: backRotation }],
           },
         ]}
       >
         {/* Header */}
 
         <View style={styles.backHeader}>
-          <Text style={styles.backBrand}>
-            PAY
-          </Text>
+          <Text style={styles.backBrand}>PAY</Text>
 
-          <Text style={styles.backDemo}>
-            DEMO CARD
-          </Text>
+          <Text style={styles.backDemo}>DEMO CARD</Text>
         </View>
 
         {/* Stripe */}
@@ -198,20 +187,14 @@ export default function SadapayCard({
 
         <View style={styles.cvvRow}>
           <View style={styles.signature}>
-            <Text style={styles.signatureText}>
-              {cardHolder.toUpperCase()}
-            </Text>
+            <Text style={styles.signatureText}>{cardHolder.toUpperCase()}</Text>
           </View>
 
           <View style={styles.cvvContainer}>
-            <Text style={styles.cvvLabel}>
-              CVV
-            </Text>
+            <Text style={styles.cvvLabel}>CVV</Text>
 
             <View style={styles.cvvBox}>
-              <Text style={styles.cvv}>
-                {cvv}
-              </Text>
+              <Text style={styles.cvv}>{cvv}</Text>
             </View>
           </View>
         </View>
@@ -220,36 +203,26 @@ export default function SadapayCard({
 
         <View style={styles.info}>
           <View style={styles.infoIcon}>
-            <Text style={styles.infoIconText}>
-              i
-            </Text>
+            <Text style={styles.infoIconText}>i</Text>
           </View>
 
           <Text style={styles.infoText}>
-            This fictional payment card is for UI
-            demonstration purposes only.
+            This fictional payment card is for UI demonstration purposes only.
           </Text>
         </View>
 
         {/* Bottom */}
 
         <View style={styles.backBottom}>
-          <Text style={styles.lastFour}>
-            •••• {cardNumber.slice(-4)}
-          </Text>
+          <Text style={styles.lastFour}>•••• {cardNumber.slice(-4)}</Text>
 
-          <Text style={styles.flipBack}>
-            TAP TO FLIP BACK
-          </Text>
+          <Text style={styles.flipBack}>TAP TO FLIP BACK</Text>
         </View>
       </Animated.View>
 
       {/* Touch layer */}
 
-      <Pressable
-        onPress={flipCard}
-        style={StyleSheet.absoluteFill}
-      />
+      <Pressable onPress={flipCard} style={StyleSheet.absoluteFill} />
     </View>
   );
 }
@@ -260,7 +233,7 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   card: {
-    position: 'absolute',
+    position: "absolute",
 
     top: 0,
     left: 0,
@@ -269,15 +242,15 @@ const styles = StyleSheet.create({
 
     borderRadius: 24,
 
-    overflow: 'hidden',
+    overflow: "hidden",
 
-    backgroundColor: '#09090c',
+    backgroundColor: "#09090c",
 
     borderWidth: 1,
 
-    borderColor: 'rgba(255,255,255,0.12)',
+    borderColor: "rgba(255,255,255,0.12)",
 
-    shadowColor: '#000',
+    shadowColor: "#000",
 
     shadowOffset: {
       width: 0,
@@ -290,11 +263,11 @@ const styles = StyleSheet.create({
 
     elevation: 15,
 
-    backfaceVisibility: 'hidden',
+    backfaceVisibility: "hidden",
   },
 
   backCard: {
-    backgroundColor: '#08080b',
+    backgroundColor: "#08080b",
   },
 
   /* =====================================================
@@ -302,7 +275,7 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   blueGlow: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 250,
     height: 250,
@@ -312,13 +285,13 @@ const styles = StyleSheet.create({
     right: -150,
     top: -150,
 
-    backgroundColor: '#3867ff',
+    backgroundColor: "#3867ff",
 
     opacity: 0.3,
   },
 
   purpleGlow: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 220,
     height: 220,
@@ -328,13 +301,13 @@ const styles = StyleSheet.create({
     left: -150,
     bottom: -150,
 
-    backgroundColor: '#7a42ff',
+    backgroundColor: "#7a42ff",
 
     opacity: 0.18,
   },
 
   circleOne: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 220,
     height: 220,
@@ -346,11 +319,11 @@ const styles = StyleSheet.create({
 
     borderWidth: 1,
 
-    borderColor: 'rgba(100,130,255,0.15)',
+    borderColor: "rgba(100,130,255,0.15)",
   },
 
   circleTwo: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 160,
     height: 160,
@@ -362,7 +335,7 @@ const styles = StyleSheet.create({
 
     borderWidth: 1,
 
-    borderColor: 'rgba(140,110,255,0.1)',
+    borderColor: "rgba(140,110,255,0.1)",
   },
 
   /* =====================================================
@@ -370,29 +343,29 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   header: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
 
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
 
   brand: {
-    color: '#fff',
+    color: "#fff",
 
     fontSize: 19,
 
-    fontWeight: '900',
+    fontWeight: "900",
 
     letterSpacing: -0.5,
   },
 
   brandSub: {
-    color: 'rgba(255,255,255,0.35)',
+    color: "rgba(255,255,255,0.35)",
 
     fontSize: 5.5,
 
-    fontWeight: '700',
+    fontWeight: "700",
 
     letterSpacing: 1.3,
 
@@ -407,15 +380,15 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
 
-    justifyContent: 'center',
+    justifyContent: "center",
 
-    alignItems: 'center',
+    alignItems: "center",
 
-    transform: [{ rotate: '-45deg' }],
+    transform: [{ rotate: "-45deg" }],
   },
 
   arcOne: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 8,
     height: 8,
@@ -424,13 +397,13 @@ const styles = StyleSheet.create({
 
     borderRightWidth: 2,
 
-    borderColor: '#fff',
+    borderColor: "#fff",
 
     borderRadius: 10,
   },
 
   arcTwo: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 15,
     height: 15,
@@ -439,13 +412,13 @@ const styles = StyleSheet.create({
 
     borderRightWidth: 2,
 
-    borderColor: 'rgba(255,255,255,0.55)',
+    borderColor: "rgba(255,255,255,0.55)",
 
     borderRadius: 13,
   },
 
   arcThree: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 22,
     height: 22,
@@ -454,7 +427,7 @@ const styles = StyleSheet.create({
 
     borderRightWidth: 2,
 
-    borderColor: 'rgba(255,255,255,0.25)',
+    borderColor: "rgba(255,255,255,0.25)",
 
     borderRadius: 15,
   },
@@ -471,17 +444,17 @@ const styles = StyleSheet.create({
 
     borderRadius: 7,
 
-    backgroundColor: '#b7b7ba',
+    backgroundColor: "#b7b7ba",
 
-    overflow: 'hidden',
+    overflow: "hidden",
 
     borderWidth: 1,
 
-    borderColor: 'rgba(255,255,255,0.4)',
+    borderColor: "rgba(255,255,255,0.4)",
   },
 
   chipHorizontal: {
-    position: 'absolute',
+    position: "absolute",
 
     left: 0,
     right: 0,
@@ -490,11 +463,11 @@ const styles = StyleSheet.create({
 
     height: 1,
 
-    backgroundColor: '#777',
+    backgroundColor: "#777",
   },
 
   chipVertical: {
-    position: 'absolute',
+    position: "absolute",
 
     top: 0,
     bottom: 0,
@@ -503,11 +476,11 @@ const styles = StyleSheet.create({
 
     width: 1,
 
-    backgroundColor: '#777',
+    backgroundColor: "#777",
   },
 
   chipInner: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 17,
     height: 11,
@@ -517,7 +490,7 @@ const styles = StyleSheet.create({
 
     borderWidth: 1,
 
-    borderColor: '#777',
+    borderColor: "#777",
 
     borderRadius: 4,
   },
@@ -527,9 +500,9 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   cardNumber: {
-    color: '#fff',
+    color: "#fff",
 
-    fontWeight: '500',
+    fontWeight: "500",
 
     letterSpacing: 2,
 
@@ -541,9 +514,9 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   bottom: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
 
     marginTop: 15,
   },
@@ -555,11 +528,11 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    color: 'rgba(255,255,255,0.3)',
+    color: "rgba(255,255,255,0.3)",
 
     fontSize: 5.5,
 
-    fontWeight: '600',
+    fontWeight: "600",
 
     letterSpacing: 1,
 
@@ -567,21 +540,21 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    color: '#fff',
+    color: "#fff",
 
     fontSize: 10,
 
-    fontWeight: '700',
+    fontWeight: "700",
 
     letterSpacing: 0.6,
   },
 
   expiry: {
-    color: '#fff',
+    color: "#fff",
 
     fontSize: 11,
 
-    fontWeight: '700',
+    fontWeight: "700",
 
     letterSpacing: 0.5,
   },
@@ -591,7 +564,7 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   demoBadge: {
-    position: 'absolute',
+    position: "absolute",
 
     right: 22,
     bottom: 22,
@@ -602,30 +575,30 @@ const styles = StyleSheet.create({
 
     borderRadius: 6,
 
-    backgroundColor: 'rgba(255,255,255,0.07)',
+    backgroundColor: "rgba(255,255,255,0.07)",
 
     borderWidth: 1,
 
-    borderColor: 'rgba(255,255,255,0.12)',
+    borderColor: "rgba(255,255,255,0.12)",
   },
 
   demoText: {
-    color: '#9dafff',
+    color: "#9dafff",
 
     fontSize: 5.5,
 
-    fontWeight: '900',
+    fontWeight: "900",
 
     letterSpacing: 1,
   },
 
   flipHint: {
-    position: 'absolute',
+    position: "absolute",
 
     right: 22,
     bottom: 9,
 
-    color: 'rgba(255,255,255,0.22)',
+    color: "rgba(255,255,255,0.22)",
 
     fontSize: 5.5,
 
@@ -637,23 +610,23 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   backHeader: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
 
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   backBrand: {
-    color: '#fff',
+    color: "#fff",
 
     fontSize: 17,
 
-    fontWeight: '900',
+    fontWeight: "900",
   },
 
   backDemo: {
-    color: 'rgba(255,255,255,0.35)',
+    color: "rgba(255,255,255,0.35)",
 
     fontSize: 6,
 
@@ -661,7 +634,7 @@ const styles = StyleSheet.create({
   },
 
   stripe: {
-    position: 'absolute',
+    position: "absolute",
 
     left: 0,
     right: 0,
@@ -670,7 +643,7 @@ const styles = StyleSheet.create({
 
     height: 42,
 
-    backgroundColor: '#000',
+    backgroundColor: "#000",
   },
 
   /* =====================================================
@@ -678,9 +651,9 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   cvvRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
 
     marginTop: 51,
   },
@@ -694,19 +667,19 @@ const styles = StyleSheet.create({
 
     paddingHorizontal: 10,
 
-    justifyContent: 'center',
+    justifyContent: "center",
 
-    backgroundColor: '#e5e5e7',
+    backgroundColor: "#e5e5e7",
 
     borderRadius: 4,
   },
 
   signatureText: {
-    color: '#17171a',
+    color: "#17171a",
 
     fontSize: 8,
 
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
 
   cvvContainer: {
@@ -714,7 +687,7 @@ const styles = StyleSheet.create({
   },
 
   cvvLabel: {
-    color: 'rgba(255,255,255,0.3)',
+    color: "rgba(255,255,255,0.3)",
 
     fontSize: 5.5,
 
@@ -728,19 +701,19 @@ const styles = StyleSheet.create({
 
     borderRadius: 4,
 
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
 
-    justifyContent: 'center',
+    justifyContent: "center",
 
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   cvv: {
-    color: '#111',
+    color: "#111",
 
     fontSize: 13,
 
-    fontWeight: '800',
+    fontWeight: "800",
 
     letterSpacing: 1,
   },
@@ -750,9 +723,9 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   info: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    alignItems: 'center',
+    alignItems: "center",
 
     marginTop: 14,
 
@@ -760,7 +733,7 @@ const styles = StyleSheet.create({
 
     borderRadius: 9,
 
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: "rgba(255,255,255,0.04)",
   },
 
   infoIcon: {
@@ -771,25 +744,25 @@ const styles = StyleSheet.create({
 
     marginRight: 8,
 
-    justifyContent: 'center',
+    justifyContent: "center",
 
-    alignItems: 'center',
+    alignItems: "center",
 
-    backgroundColor: 'rgba(100,125,255,0.15)',
+    backgroundColor: "rgba(100,125,255,0.15)",
   },
 
   infoIconText: {
-    color: '#aab9ff',
+    color: "#aab9ff",
 
     fontSize: 10,
 
-    fontWeight: '800',
+    fontWeight: "800",
   },
 
   infoText: {
     flex: 1,
 
-    color: 'rgba(255,255,255,0.35)',
+    color: "rgba(255,255,255,0.35)",
 
     fontSize: 6,
 
@@ -801,22 +774,22 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   backBottom: {
-    position: 'absolute',
+    position: "absolute",
 
     left: 22,
     right: 22,
 
     bottom: 11,
 
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    alignItems: 'center',
+    alignItems: "center",
 
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
 
   lastFour: {
-    color: 'rgba(255,255,255,0.35)',
+    color: "rgba(255,255,255,0.35)",
 
     fontSize: 8,
 
@@ -824,7 +797,7 @@ const styles = StyleSheet.create({
   },
 
   flipBack: {
-    color: 'rgba(160,175,255,0.3)',
+    color: "rgba(160,175,255,0.3)",
 
     fontSize: 5.5,
 
