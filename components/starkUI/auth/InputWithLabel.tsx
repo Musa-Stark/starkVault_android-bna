@@ -100,6 +100,8 @@ const InputWithLabel = ({
 
   // typing validation
   const handleEditing = (text: string) => {
+    console.log(text)
+
     if (!setValue) return;
     setValue(text);
 
@@ -119,8 +121,6 @@ const InputWithLabel = ({
       return;
     }
   };
-
-  console.log(isPicker);
 
   return (
     <>
@@ -159,6 +159,8 @@ const InputWithLabel = ({
         <Picker
           options={pickerOptions}
           style={{ marginTop: 3, ...containerStyle }}
+          value={value}
+          onValueChange={setValue}
         />
       ) : (
         <Input

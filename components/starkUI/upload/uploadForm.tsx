@@ -11,14 +11,12 @@ import { useApp } from "@/providers/app-context";
 import { View } from "@/components/ui/view";
 import { useColor } from "@/hooks/useColor";
 import { BlurView } from "expo-blur";
-import { X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Easing,
   Platform,
   StyleSheet,
-  TextInput,
   TouchableWithoutFeedback,
 } from "react-native";
 import InputWithLabel from "../auth/InputWithLabel";
@@ -26,13 +24,9 @@ import InputWithLabel from "../auth/InputWithLabel";
 const UploadForm = () => {
   const { uploadForm, setUploadForm } = useApp();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
   const [mounted, setMounted] = useState(uploadForm.show);
 
   const backgroundColor = useColor("background");
-  const textColor = useColor("text");
 
   const isDark = backgroundColor.toLowerCase() === "#000000";
 
@@ -153,7 +147,9 @@ const UploadForm = () => {
             }}
           >
             <CardHeader>
-              <CardTitle style={{ textAlign: "center" }}>Sign In</CardTitle>
+              <CardTitle style={{ textAlign: "center" }}>
+                {uploadForm.name}
+              </CardTitle>
             </CardHeader>
 
             <CardContent>
@@ -187,7 +183,16 @@ const UploadForm = () => {
                     pickerOptions={el.pickerOptions}
                     ref={el.ref}
                     returnKeyType={el.returnKeyType}
-                    setValue={el.setValue}
+                    setValue={(text) =>
+                      setUploadForm((prev) => ({
+                        ...prev,
+                        inputs: prev.inputs?.map((item) =>
+                          el.label === item.label
+                            ? { ...item, value: text }
+                            : item,
+                        ),
+                      }))
+                    }
                     value={el.value}
                   />
                 ))}

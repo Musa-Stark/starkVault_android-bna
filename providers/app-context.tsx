@@ -3,6 +3,7 @@ import type { InputWithLabel } from "@/components/starkUI/auth/InputWithLabel";
 
 interface UploadFormInput {
   show: boolean;
+  name: string;
   inputs: InputWithLabel[] | undefined;
 }
 
@@ -18,6 +19,7 @@ const AppContext = createContext<CreateContext | undefined>(undefined);
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [uploadForm, setUploadForm] = useState<UploadFormInput>({
     show: false,
+    name: "Service Name",
     inputs: undefined,
   });
 

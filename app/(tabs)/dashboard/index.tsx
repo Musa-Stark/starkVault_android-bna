@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useColor } from "@/hooks/useColor";
 import { View } from "react-native";
 import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/providers/app-context";
-import { Picker } from "@/components/ui/picker";
 import {
   CreditCard,
   FileLock,
@@ -22,6 +21,12 @@ import handleExpenseForm from "@/components/starkUI/upload/expenses.form";
 const DashBoard = () => {
   const background = useColor("background");
   const { setUploadForm } = useApp();
+
+  const [merchant, setMerchant] = useState("Stark");
+  const [category, setCategory] = useState("");
+  const [amount, setAmount] = useState("");
+
+  
 
   const recents: {
     Icon: React.ComponentType<LucideProps>;
@@ -70,7 +75,17 @@ const DashBoard = () => {
 
         {/* add password */}
         <Button
-          onPress={() => handleExpenseForm({ setUploadForm })}
+          onPress={() =>
+            handleExpenseForm({
+              setUploadForm,
+              amount,
+              category,
+              merchant,
+              setAmount,
+              setCategory,
+              setMerchant,
+            })
+          }
           icon={Sparkles}
           variant="default"
           style={{ marginTop: 15 }}

@@ -1,26 +1,75 @@
 import type { SetUploadForm } from "@/providers/app-context";
+import type { Dispatch, SetStateAction } from "react";
+
+export interface ExpenseForm {
+  setUploadForm: SetUploadForm;
+
+  merchant: string;
+  setMerchant: Dispatch<SetStateAction<string>>;
+
+  category: string;
+  setCategory: Dispatch<SetStateAction<string>>;
+
+  amount: string;
+  setAmount: Dispatch<SetStateAction<string>>;
+}
 
 const handleExpenseForm = ({
   setUploadForm,
-}: {
-  setUploadForm: SetUploadForm;
-}) => {
+  merchant,
+  setMerchant,
+  category,
+  setCategory,
+  amount,
+  setAmount,
+}: ExpenseForm) => {
   setUploadForm((prev) => ({
     ...prev,
     show: true,
+    name: "Expense",
+
     inputs: [
       {
-        label: "Email",
-        placeholderText: "you@example.com",
+        label: "Merchant",
+        placeholderText: "Enter merchant name",
+        value: merchant,
+        setValue: setMerchant,
       },
-      {
-        label: "Password",
-        placeholderText: "At least 6 characters",
-      },
+
       {
         isPicker: true,
         label: "Category",
         placeholderText: "Select category",
+        value: category,
+        setValue: setCategory,
+
+        pickerOptions: [
+          { label: "Food & Dining", value: "Food & Dining" },
+          { label: "Housing", value: "Housing" },
+          { label: "Transportation", value: "Transportation" },
+          { label: "Shopping", value: "Shopping" },
+          { label: "Health", value: "Health" },
+          { label: "Entertainment", value: "Entertainment" },
+          { label: "Bills & Subscriptions", value: "Bills & Subscriptions" },
+          { label: "Travel", value: "Travel" },
+          { label: "Education", value: "Education" },
+          { label: "Family & Personal", value: "Family & Personal" },
+          { label: "Finance", value: "Finance" },
+          {
+            label: "Other",
+            value: "Other",
+            description:
+              "This means any category other than the above mentioned",
+          },
+        ],
+      },
+
+      {
+        label: "Amount",
+        placeholderText: "Enter amount",
+        inputMode: "numeric",
+        value: amount,
+        setValue: setAmount,
       },
     ],
   }));
