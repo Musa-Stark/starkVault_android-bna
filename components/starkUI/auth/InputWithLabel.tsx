@@ -1,5 +1,5 @@
 import React, { useEffect, useState, type RefObject } from "react";
-import { EyeOff, Eye } from "lucide-react-native";
+import { EyeOff, Eye, ShowerHead } from "lucide-react-native";
 import {
   EnterKeyHintType,
   ReturnKeyType,
@@ -35,6 +35,7 @@ export interface InputWithLabel {
   containerStyle?: ViewStyle;
   isPicker?: boolean;
   pickerOptions?: PickerOption[];
+  showErrorText?: boolean;
 }
 
 const InputWithLabel = ({
@@ -56,12 +57,14 @@ const InputWithLabel = ({
   containerStyle,
   isPicker,
   pickerOptions,
+  showErrorText,
 }: InputWithLabel) => {
   const foreground = useColor("foreground");
   const router = useRouter();
   const teal = useColor("teal");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [pickerError, setPickerError] = useState("");
 
   // show to parent if error exists
   useEffect(() => {
@@ -100,10 +103,12 @@ const InputWithLabel = ({
 
   // typing validation
   const handleEditing = (text: string) => {
-    console.log(text)
-
     if (!setValue) return;
     setValue(text);
+
+    if (isPicker) {
+      console.log(true, text);
+    }
 
     // password validation
     if (isPassword) {
@@ -160,7 +165,12 @@ const InputWithLabel = ({
           options={pickerOptions}
           style={{ marginTop: 3, ...containerStyle }}
           value={value}
-          onValueChange={setValue}
+          onValueChange={handleEditing}
+          showErrorText={showErrorText}
+          error={pickerError}
+          onClose={() => {
+            if (!value) setPickerError(`${label} is required`);
+          }}
         />
       ) : (
         <Input
@@ -170,6 +180,7 @@ const InputWithLabel = ({
           onChangeText={handleEditing}
           inputMode={inputMode ?? "text"}
           error={error}
+          showErrorText={showErrorText}
           placeholder={placeholderText}
           containerStyle={{ marginTop: 3, ...containerStyle }}
           onBlur={handleValidation}

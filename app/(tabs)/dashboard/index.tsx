@@ -20,13 +20,31 @@ import handleExpenseForm from "@/components/starkUI/upload/expenses.form";
 
 const DashBoard = () => {
   const background = useColor("background");
-  const { setUploadForm } = useApp();
+  const {
+    uploadForm,
+    setUploadForm,
+    merchant,
+    category,
+    amount,
+    setMerchant,
+    setCategory,
+    setAmount,
+    merchantRef,
+    categoryRef,
+    amountRef,
+  } = useApp();
 
-  const [merchant, setMerchant] = useState("Stark");
-  const [category, setCategory] = useState("");
-  const [amount, setAmount] = useState("");
+  // submit
+  useEffect(() => {
+    if (!uploadForm.submit) return;
 
-  
+    console.log({ merchant, category, amount });
+
+    setUploadForm((prev) => ({ ...prev, submit: false }));
+    setMerchant("");
+    setCategory("");
+    setAmount("");
+  }, [uploadForm.submit]);
 
   const recents: {
     Icon: React.ComponentType<LucideProps>;
@@ -84,6 +102,9 @@ const DashBoard = () => {
               setAmount,
               setCategory,
               setMerchant,
+              merchantRef,
+              categoryRef,
+              amountRef,
             })
           }
           icon={Sparkles}

@@ -1,27 +1,29 @@
-import type { SetUploadForm } from "@/providers/app-context";
-import type { Dispatch, SetStateAction } from "react";
+import type { SetUploadForm, SetString, Ref } from "@/providers/app-context";
 
 export interface ExpenseForm {
   setUploadForm: SetUploadForm;
-
   merchant: string;
-  setMerchant: Dispatch<SetStateAction<string>>;
-
+  setMerchant: SetString;
+  merchantRef: Ref;
   category: string;
-  setCategory: Dispatch<SetStateAction<string>>;
-
+  setCategory: SetString;
+  categoryRef: Ref;
   amount: string;
-  setAmount: Dispatch<SetStateAction<string>>;
+  setAmount: SetString;
+  amountRef: Ref;
 }
 
 const handleExpenseForm = ({
   setUploadForm,
   merchant,
   setMerchant,
+  merchantRef,
   category,
   setCategory,
+  categoryRef,
   amount,
   setAmount,
+  amountRef,
 }: ExpenseForm) => {
   setUploadForm((prev) => ({
     ...prev,
@@ -34,6 +36,11 @@ const handleExpenseForm = ({
         placeholderText: "Enter merchant name",
         value: merchant,
         setValue: setMerchant,
+        ref: merchantRef,
+        nextRef: categoryRef,
+        entryKeyHint: "next",
+        returnKeyType: "next",
+        showErrorText: false,
       },
 
       {
@@ -42,7 +49,9 @@ const handleExpenseForm = ({
         placeholderText: "Select category",
         value: category,
         setValue: setCategory,
-
+        ref: categoryRef,
+        nextRef: amountRef,
+        showErrorText: false,
         pickerOptions: [
           { label: "Food & Dining", value: "Food & Dining" },
           { label: "Housing", value: "Housing" },
@@ -70,6 +79,8 @@ const handleExpenseForm = ({
         inputMode: "numeric",
         value: amount,
         setValue: setAmount,
+        ref: amountRef,
+        showErrorText: false,
       },
     ],
   }));

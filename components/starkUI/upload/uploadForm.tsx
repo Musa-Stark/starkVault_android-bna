@@ -25,6 +25,10 @@ const UploadForm = () => {
   const { uploadForm, setUploadForm } = useApp();
 
   const [mounted, setMounted] = useState(uploadForm.show);
+  const [hasError, setHasError] = useState(false);
+  const hasValue =
+    !!uploadForm.inputs?.length &&
+    uploadForm.inputs.every((item) => item.value?.trim());
 
   const backgroundColor = useColor("background");
 
@@ -174,7 +178,8 @@ const UploadForm = () => {
                     autoFocus={el.autoFocus}
                     disabled={el.disabled}
                     entryKeyHint={el.entryKeyHint}
-                    hasError={el.hasError}
+                    hasError={setHasError}
+                    showErrorText={el.showErrorText}
                     hasForgot={el.hasForgot}
                     inputMode={el.inputMode}
                     isPassword={el.isPassword}
@@ -183,7 +188,8 @@ const UploadForm = () => {
                     pickerOptions={el.pickerOptions}
                     ref={el.ref}
                     returnKeyType={el.returnKeyType}
-                    setValue={(text) =>
+                    setValue={(text) => {
+                      el.setValue?.(text);
                       setUploadForm((prev) => ({
                         ...prev,
                         inputs: prev.inputs?.map((item) =>
@@ -191,8 +197,8 @@ const UploadForm = () => {
                             ? { ...item, value: text }
                             : item,
                         ),
-                      }))
-                    }
+                      }));
+                    }}
                     value={el.value}
                   />
                 ))}
@@ -218,7 +224,18 @@ const UploadForm = () => {
                 <Text>Cancel</Text>
               </Button>
 
-              <Button>Submit</Button>
+              <Button
+                onPress={() =>
+                  setUploadForm((prev) => ({
+                    ...prev,
+                    submit: true,
+                    show: false,
+                  }))
+                }
+                disabled={hasError || !hasValue}
+              >
+                Submit
+              </Button>
             </CardFooter>
           </Card>
         </Animated.View>
