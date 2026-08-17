@@ -5,6 +5,7 @@ import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/providers/app-context";
+import { Picker } from "@/components/ui/picker";
 import {
   CreditCard,
   FileLock,
@@ -16,6 +17,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import SadapayCard from "@/components/starkUI/cards/Sadapay";
 import { ScrollView } from "react-native-gesture-handler";
 import RecentActivity from "./recentActivity";
+import handleExpenseForm from "@/components/starkUI/upload/expenses.form";
 
 const DashBoard = () => {
   const background = useColor("background");
@@ -68,22 +70,7 @@ const DashBoard = () => {
 
         {/* add password */}
         <Button
-          onPress={() =>
-            setUploadForm((prev) => ({
-              ...prev,
-              show: true,
-              inputs: [
-                {
-                  label: "Email",
-                  placeholderText: "you@example.com",
-                },
-                {
-                  label: "Password",
-                  placeholderText: "At least 6 characters",
-                },
-              ],
-            }))
-          }
+          onPress={() => handleExpenseForm({ setUploadForm })}
           icon={Sparkles}
           variant="default"
           style={{ marginTop: 15 }}

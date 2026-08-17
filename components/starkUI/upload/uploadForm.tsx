@@ -111,9 +111,7 @@ const UploadForm = () => {
         style={StyleSheet.absoluteFill}
       />
 
-      <View
-        pointerEvents="none"
-      />
+      <View pointerEvents="none" />
 
       {/* Glass card */}
       <TouchableWithoutFeedback>
@@ -177,6 +175,20 @@ const UploadForm = () => {
                     label={el.label}
                     placeholderText={el.placeholderText}
                     variant="outline"
+                    autoFocus={el.autoFocus}
+                    disabled={el.disabled}
+                    entryKeyHint={el.entryKeyHint}
+                    hasError={el.hasError}
+                    hasForgot={el.hasForgot}
+                    inputMode={el.inputMode}
+                    isPassword={el.isPassword}
+                    isPicker={el.isPicker}
+                    nextRef={el.nextRef}
+                    pickerOptions={el.pickerOptions}
+                    ref={el.ref}
+                    returnKeyType={el.returnKeyType}
+                    setValue={el.setValue}
+                    value={el.value}
                   />
                 ))}
               </View>
@@ -186,7 +198,7 @@ const UploadForm = () => {
               style={{
                 gap: 12,
                 justifyContent: "center",
-                marginTop: 20
+                marginTop: 20,
               }}
             >
               <Button

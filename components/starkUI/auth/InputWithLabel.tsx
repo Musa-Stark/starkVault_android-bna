@@ -11,6 +11,7 @@ import {
   ViewStyle,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { Picker, PickerOption } from "@/components/ui/picker";
 
 import { useColor } from "@/hooks/useColor";
 import { Input } from "../../ui/input";
@@ -31,7 +32,9 @@ export interface InputWithLabel {
   disabled?: boolean;
   hasError?: (hasError: boolean) => void;
   variant?: "filled" | "outline";
-  containerStyle?: ViewStyle
+  containerStyle?: ViewStyle;
+  isPicker?: boolean;
+  pickerOptions?: PickerOption[];
 }
 
 const InputWithLabel = ({
@@ -50,7 +53,9 @@ const InputWithLabel = ({
   disabled,
   hasError,
   variant,
-  containerStyle
+  containerStyle,
+  isPicker,
+  pickerOptions,
 }: InputWithLabel) => {
   const foreground = useColor("foreground");
   const router = useRouter();
@@ -115,6 +120,8 @@ const InputWithLabel = ({
     }
   };
 
+  console.log(isPicker);
+
   return (
     <>
       {/* container */}
@@ -148,38 +155,45 @@ const InputWithLabel = ({
       </View>
 
       {/* inputField */}
-      <Input
-        variant={variant}
-        ref={ref}
-        value={value}
-        onChangeText={handleEditing}
-        inputMode={inputMode ?? "text"}
-        error={error}
-        placeholder={placeholderText}
-        containerStyle={{ marginTop: 3, ...containerStyle }}
-        onBlur={handleValidation}
-        autoFocus={autoFocus}
-        secureTextEntry={!showPassword && isPassword}
-        disabled={disabled}
-        enterKeyHint={entryKeyHint ?? "done"}
-        returnKeyType={returnKeyType ?? "default"}
-        onSubmitEditing={() => nextRef?.current?.focus()}
-        rightComponent={
-          // eye - show password
-          isPassword && (
-            <Pressable
-              onPress={() => setShowPassword((prev) => !prev)}
-              hitSlop={10}
-            >
-              {showPassword ? (
-                <EyeOff size={20} color={foreground} />
-              ) : (
-                <Eye size={20} color={foreground} />
-              )}
-            </Pressable>
-          )
-        }
-      />
+      {isPicker ? (
+        <Picker
+          options={pickerOptions}
+          style={{ marginTop: 3, ...containerStyle }}
+        />
+      ) : (
+        <Input
+          variant={variant}
+          ref={ref}
+          value={value}
+          onChangeText={handleEditing}
+          inputMode={inputMode ?? "text"}
+          error={error}
+          placeholder={placeholderText}
+          containerStyle={{ marginTop: 3, ...containerStyle }}
+          onBlur={handleValidation}
+          autoFocus={autoFocus}
+          secureTextEntry={!showPassword && isPassword}
+          disabled={disabled}
+          enterKeyHint={entryKeyHint ?? "done"}
+          returnKeyType={returnKeyType ?? "default"}
+          onSubmitEditing={() => nextRef?.current?.focus()}
+          rightComponent={
+            // eye - show password
+            isPassword && (
+              <Pressable
+                onPress={() => setShowPassword((prev) => !prev)}
+                hitSlop={10}
+              >
+                {showPassword ? (
+                  <EyeOff size={20} color={foreground} />
+                ) : (
+                  <Eye size={20} color={foreground} />
+                )}
+              </Pressable>
+            )
+          }
+        />
+      )}
     </>
   );
 };

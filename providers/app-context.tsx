@@ -6,16 +6,18 @@ interface UploadFormInput {
   inputs: InputWithLabel[] | undefined;
 }
 
+export type SetUploadForm = React.Dispatch<React.SetStateAction<UploadFormInput>>
+
 interface CreateContext {
   uploadForm: UploadFormInput;
-  setUploadForm: React.Dispatch<React.SetStateAction<UploadFormInput>>;
+  setUploadForm: SetUploadForm;
 }
 
 const AppContext = createContext<CreateContext | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [uploadForm, setUploadForm] = useState<UploadFormInput>({
-    show: true,
+    show: false,
     inputs: undefined,
   });
 
