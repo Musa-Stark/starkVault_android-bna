@@ -13,7 +13,7 @@ import {
   LucideProps,
   ShieldCheck,
 } from "lucide-react-native";
-import InputWithLabel from "@/components/starkUI/auth/InputWithLabel";
+import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import { ScrollView } from "react-native-gesture-handler";
 import { Switch } from "@/components/ui/switch";
 

@@ -1,12 +1,45 @@
 import { View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react-native";
-import { Card,  CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { useApp } from "@/providers/app-context";
+import handleExpenseForm from "@/components/starkUI/upload/expenses.form";
 
 const expenses = () => {
+  const {
+    amount,
+    amountRef,
+    category,
+    categoryRef,
+    merchant,
+    merchantRef,
+    setAmount,
+    setCategory,
+    setMerchant,
+    setUploadForm,
+    uploadForm,
+  } = useApp();
+
+  useEffect(() => {
+    if (!uploadForm.submit) return;
+
+    console.log({ merchant, amount, category });
+
+    setUploadForm({
+      inputs: undefined,
+      name: "",
+      show: false,
+      submit: false,
+    });
+
+    setMerchant("")
+    setAmount("")
+    setCategory("")
+  }, [uploadForm.submit]);
+
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
       {/* heading */}
@@ -16,7 +49,24 @@ const expenses = () => {
       {/* title */}
       <Text variant="caption">Track every penny with intelligence.</Text>
       {/* button */}
-      <Button icon={Plus} style={{ marginTop: 20 }}>
+      <Button
+        icon={Plus}
+        style={{ marginTop: 20 }}
+        onPress={() =>
+          handleExpenseForm({
+            amount,
+            amountRef,
+            category,
+            categoryRef,
+            merchant,
+            merchantRef,
+            setAmount,
+            setCategory,
+            setMerchant,
+            setUploadForm,
+          })
+        }
+      >
         Add Expense
       </Button>
       {/* total spent */}

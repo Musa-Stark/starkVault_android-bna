@@ -5,7 +5,7 @@ import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
 import AuthLogo from "@/components/starkUI/auth/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
-import InputWithLabel from "@/components/starkUI/auth/InputWithLabel";
+import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import authApiCall from "./authApiCall";
 
 const Login = () => {

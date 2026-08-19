@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import * as Clipboard from "expo-clipboard";
 
 import { Text } from "@/components/ui/text";
@@ -7,6 +7,8 @@ import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
 import { Pen, Plus, Trash2 } from "lucide-react-native";
 import { Table } from "@/components/ui/table";
+import { useApp } from "@/providers/app-context";
+import handlePasswordForm from "@/components/starkUI/upload/passwords.form";
 
 interface Row {
   id: number;
@@ -16,6 +18,44 @@ interface Row {
   actions: string;
 }
 const passwords = () => {
+  const {
+    service,
+    setService,
+    serviceRef,
+
+    username,
+    setUsername,
+    usernameRef,
+
+    password,
+    setPassword,
+    passwordRef,
+
+    uploadForm,
+    setUploadForm,
+  } = useApp();
+
+  useEffect(() => {
+    if (!uploadForm.submit) return;
+
+    console.log({
+      service,
+      username,
+      password,
+    });
+
+    setUploadForm({
+      inputs: undefined,
+      name: "",
+      show: false,
+      submit: false,
+    });
+
+    setService("");
+    setUsername("");
+    setPassword("");
+  }, [uploadForm.submit]);
+
   const handleRowPress = async (row: Row) => {
     await Clipboard.setStringAsync(row.password);
   };
@@ -34,7 +74,27 @@ const passwords = () => {
 
       <Text variant="caption">0 credentials secured</Text>
 
-      <Button icon={Plus} style={{ marginTop: 20 }}>
+      <Button
+        icon={Plus}
+        style={{ marginTop: 20 }}
+        onPress={() =>
+          handlePasswordForm({
+            service,
+            setService,
+            serviceRef,
+
+            username,
+            setUsername,
+            usernameRef,
+
+            password,
+            setPassword,
+            passwordRef,
+
+            setUploadForm,
+          })
+        }
+      >
         New Password
       </Button>
 

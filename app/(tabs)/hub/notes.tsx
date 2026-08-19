@@ -5,6 +5,8 @@ import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react-native";
+import { useApp } from "@/providers/app-context";
+
 
 const notes = () => {
   return (

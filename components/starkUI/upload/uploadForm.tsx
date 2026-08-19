@@ -19,7 +19,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
 } from "react-native";
-import InputWithLabel from "../auth/InputWithLabel";
+import InputWithLabel from "../input/InputWithLabel";
 
 const UploadForm = () => {
   const { uploadForm, setUploadForm } = useApp();

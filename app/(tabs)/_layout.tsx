@@ -62,7 +62,7 @@ export default function Layout() {
             </View>
           ),
 
-          animation: "shift",
+          animation: "fade",
         }}
       />
       <Tabs.Screen
@@ -93,7 +93,7 @@ export default function Layout() {
             </View>
           ),
 
-          animation: "shift",
+          animation: "fade",
         }}
       />
       <Tabs.Screen

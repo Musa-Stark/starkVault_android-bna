@@ -1,5 +1,6 @@
 import React, { useEffect, useState, type RefObject } from "react";
-import { EyeOff, Eye, ShowerHead } from "lucide-react-native";
+import { EyeOff, Eye } from "lucide-react-native";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   EnterKeyHintType,
   ReturnKeyType,
@@ -17,8 +18,8 @@ import { useColor } from "@/hooks/useColor";
 import { Input } from "../../ui/input";
 
 export interface InputWithLabel {
-  label: string;
-  placeholderText: string;
+  label?: string;
+  placeholderText?: string;
   value?: string;
   setValue?: (value: string) => void;
   inputMode?: TextInputProps["inputMode"];
@@ -106,10 +107,6 @@ const InputWithLabel = ({
     if (!setValue) return;
     setValue(text);
 
-    if (isPicker) {
-      console.log(true, text);
-    }
-
     // password validation
     if (isPassword) {
       if (text.length >= 6) {
@@ -127,6 +124,57 @@ const InputWithLabel = ({
     }
   };
 
+  const inputTypes = {
+    isPicker: (
+      <Picker
+        options={pickerOptions}
+        style={{ marginTop: 3, ...containerStyle }}
+        value={value}
+        onValueChange={handleEditing}
+        showErrorText={showErrorText}
+        error={pickerError}
+        onClose={() => {
+          if (!value) setPickerError(`${label} is required`);
+        }}
+      />
+    ),
+    isInput: (
+      <Input
+        variant={variant}
+        ref={ref}
+        value={value}
+        onChangeText={handleEditing}
+        inputMode={inputMode ?? "text"}
+        error={error}
+        showErrorText={showErrorText}
+        placeholder={placeholderText}
+        containerStyle={{ marginTop: 3, ...containerStyle }}
+        onBlur={handleValidation}
+        autoFocus={autoFocus}
+        secureTextEntry={!showPassword && isPassword}
+        disabled={disabled}
+        enterKeyHint={entryKeyHint ?? "done"}
+        returnKeyType={returnKeyType ?? "default"}
+        onSubmitEditing={() => nextRef?.current?.focus()}
+        rightComponent={
+          // eye - show password
+          isPassword && (
+            <Pressable
+              onPress={() => setShowPassword((prev) => !prev)}
+              hitSlop={10}
+            >
+              {showPassword ? (
+                <EyeOff size={20} color={foreground} />
+              ) : (
+                <Eye size={20} color={foreground} />
+              )}
+            </Pressable>
+          )
+        }
+      />
+    ),
+  };
+
   return (
     <>
       {/* container */}
@@ -139,7 +187,9 @@ const InputWithLabel = ({
         }}
       >
         {/* label */}
-        <Text style={{ color: foreground, fontSize: 18 }}>{label}</Text>
+        {label && (
+          <Text style={{ color: foreground, fontSize: 18 }}>{label}</Text>
+        )}
 
         {/* forgot password */}
         {hasForgot && (

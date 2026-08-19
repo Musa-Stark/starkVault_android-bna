@@ -82,7 +82,24 @@ const DashBoard = () => {
             { justifyContent: "flex-start", marginTop: 20, gap: 10 },
           ]}
         >
-          <Button icon={Plus} variant="outline">
+          <Button
+            onPress={() =>
+              handleExpenseForm({
+                setUploadForm,
+                amount,
+                category,
+                merchant,
+                setAmount,
+                setCategory,
+                setMerchant,
+                merchantRef,
+                categoryRef,
+                amountRef,
+              })
+            }
+            icon={Plus}
+            variant="outline"
+          >
             <Text>Expense</Text>
           </Button>
 
@@ -92,25 +109,7 @@ const DashBoard = () => {
         </View>
 
         {/* add password */}
-        <Button
-          onPress={() =>
-            handleExpenseForm({
-              setUploadForm,
-              amount,
-              category,
-              merchant,
-              setAmount,
-              setCategory,
-              setMerchant,
-              merchantRef,
-              categoryRef,
-              amountRef,
-            })
-          }
-          icon={Sparkles}
-          variant="default"
-          style={{ marginTop: 15 }}
-        >
+        <Button icon={Sparkles} variant="default" style={{ marginTop: 15 }}>
           <Text style={{ color: background }}>Add Password</Text>
         </Button>
 

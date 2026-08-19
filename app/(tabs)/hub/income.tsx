@@ -1,12 +1,45 @@
 import { View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react-native";
-import { Card,  CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { useApp } from "@/providers/app-context";
+import handleIncomeForm from "@/components/starkUI/upload/income.form";
 
 const income = () => {
+  const {
+    source,
+    type,
+    amount,
+    setSource,
+    setType,
+    setAmount,
+    sourceRef,
+    typeRef,
+    amountRef,
+    uploadForm,
+    setUploadForm,
+  } = useApp();
+
+  useEffect(() => {
+    if (!uploadForm.submit) return;
+
+    console.log({ source, type, amount });
+
+    setUploadForm({
+      inputs: undefined,
+      name: "",
+      show: false,
+      submit: false,
+    });
+
+    setSource("");
+    setType("");
+    setAmount("");
+  }, [uploadForm.submit]);
+
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
       {/* heading */}
@@ -16,7 +49,24 @@ const income = () => {
       {/* title */}
       <Text variant="caption">All income streams.</Text>
       {/* button */}
-      <Button icon={Plus} style={{ marginTop: 20 }}>
+      <Button
+        icon={Plus}
+        style={{ marginTop: 20 }}
+        onPress={() =>
+          handleIncomeForm({
+            amount,
+            amountRef,
+            source,
+            sourceRef,
+            type,
+            typeRef,
+            setAmount,
+            setSource,
+            setType,
+            setUploadForm,
+          })
+        }
+      >
         Add Income
       </Button>
 
