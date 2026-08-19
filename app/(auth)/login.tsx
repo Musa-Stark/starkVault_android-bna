@@ -66,7 +66,7 @@ const Login = () => {
         label="Email"
         placeholderText="you@example.com"
         value={email}
-        setValue={setEmail}
+        setStringValue={setEmail}
         ref={emailRef}
         entryKeyHint="next"
         autoFocus={true}
@@ -81,7 +81,7 @@ const Login = () => {
       <InputWithLabel
         label="Password"
         placeholderText="••••••••••••"
-        setValue={setPassword}
+        setStringValue={setPassword}
         value={password}
         ref={passwordRef}
         isPassword={true}

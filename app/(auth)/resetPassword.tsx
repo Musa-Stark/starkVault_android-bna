@@ -54,7 +54,7 @@ const Login = () => {
       <InputWithLabel
         label="Password"
         placeholderText="••••••••••••"
-        setValue={setPassword}
+        setStringValue={setPassword}
         value={password}
         ref={passwordRef}
         isPassword={true}
@@ -69,7 +69,7 @@ const Login = () => {
       <InputWithLabel
         label="Confirm Password"
         placeholderText="••••••••••••"
-        setValue={setConfirmPassword}
+        setStringValue={setConfirmPassword}
         value={confirmPassword}
         ref={confirmPasswordRef}
         isPassword={true}

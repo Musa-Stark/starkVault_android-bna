@@ -83,7 +83,7 @@ const Signup = () => {
         label="Full Name"
         placeholderText="e.g, Musa Stark"
         value={fullName}
-        setValue={setFullName}
+        setStringValue={setFullName}
         ref={nameRef}
         entryKeyHint="next"
         autoFocus={true}
@@ -98,7 +98,7 @@ const Signup = () => {
         label="Email"
         placeholderText="you@example.com"
         value={email}
-        setValue={setEmail}
+        setStringValue={setEmail}
         ref={emailRef}
         entryKeyHint="next"
         inputMode="email"
@@ -112,7 +112,7 @@ const Signup = () => {
       <InputWithLabel
         label="Password"
         placeholderText="••••••••••••"
-        setValue={setPassword}
+        setStringValue={setPassword}
         value={password}
         ref={passwordRef}
         isPassword={true}
@@ -125,7 +125,7 @@ const Signup = () => {
       <InputWithLabel
         label="Confirm Password"
         placeholderText="••••••••••••"
-        setValue={setConfirmPassword}
+        setStringValue={setConfirmPassword}
         value={confirmPassword}
         ref={confirmPasswordRef}
         isPassword={true}

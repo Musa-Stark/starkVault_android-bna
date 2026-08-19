@@ -7,7 +7,7 @@ import { Plus } from "lucide-react-native";
 import { Card, CardTitle, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useApp } from "@/providers/app-context";
-import handleSavingsGoalForm from "@/components/starkUI/upload/handleSavingsGoal.form";
+import savingsGoalsForm from "@/components/starkUI/upload/savingsGoal.form";
 
 const savingsGoals = () => {
   const {
@@ -75,7 +75,7 @@ const savingsGoals = () => {
         icon={Plus}
         style={{ marginTop: 20 }}
         onPress={() =>
-          handleSavingsGoalForm({
+          savingsGoalsForm({
             goalName,
             setGoalName,
             goalNameRef,

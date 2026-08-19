@@ -28,7 +28,14 @@ const UploadForm = () => {
   const [hasError, setHasError] = useState(false);
   const hasValue =
     !!uploadForm.inputs?.length &&
-    uploadForm.inputs.every((item) => item.value?.trim());
+    uploadForm.inputs.every((item) => {
+      const stringValidation =
+        typeof item.value === "string" && item.value?.trim();
+
+      const booleanValidation = item.inputType === "checkbox";
+
+      if (stringValidation || booleanValidation) return true;
+    });
 
   const backgroundColor = useColor("background");
 
@@ -172,6 +179,7 @@ const UploadForm = () => {
                         : "rgba(255,255,255,0.45)",
                     }}
                     key={idx}
+                    inputType={el.inputType}
                     label={el.label}
                     placeholderText={el.placeholderText}
                     variant="outline"
@@ -183,13 +191,12 @@ const UploadForm = () => {
                     hasForgot={el.hasForgot}
                     inputMode={el.inputMode}
                     isPassword={el.isPassword}
-                    isPicker={el.isPicker}
                     nextRef={el.nextRef}
                     pickerOptions={el.pickerOptions}
                     ref={el.ref}
                     returnKeyType={el.returnKeyType}
-                    setValue={(text) => {
-                      el.setValue?.(text);
+                    setStringValue={(text) => {
+                      el.setStringValue?.(text);
                       setUploadForm((prev) => ({
                         ...prev,
                         inputs: prev.inputs?.map((item) =>
@@ -200,6 +207,19 @@ const UploadForm = () => {
                       }));
                     }}
                     value={el.value}
+                    checkboxAccessibilityLabel={el.checkboxAccessibilityLabel}
+                    setBooleanValue={(status) => {
+                      el.setBooleanValue?.(status);
+                      setUploadForm((prev) => ({
+                        ...prev,
+                        inputs: prev.inputs?.map((item) =>
+                          el.checkboxAccessibilityLabel ===
+                          item.checkboxAccessibilityLabel
+                            ? { ...item, value: status }
+                            : item,
+                        ),
+                      }));
+                    }}
                   />
                 ))}
               </View>

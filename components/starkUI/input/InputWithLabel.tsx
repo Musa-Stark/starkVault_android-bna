@@ -20,8 +20,9 @@ import { Input } from "../../ui/input";
 export interface InputWithLabel {
   label?: string;
   placeholderText?: string;
-  value?: string;
-  setValue?: (value: string) => void;
+  value?: string | boolean;
+  setStringValue?: (value: string) => void;
+  setBooleanValue?: (value: boolean) => void;
   inputMode?: TextInputProps["inputMode"];
   entryKeyHint?: EnterKeyHintType;
   returnKeyType?: ReturnKeyType;
@@ -34,14 +35,16 @@ export interface InputWithLabel {
   hasError?: (hasError: boolean) => void;
   variant?: "filled" | "outline";
   containerStyle?: ViewStyle;
-  isPicker?: boolean;
   pickerOptions?: PickerOption[];
   showErrorText?: boolean;
+  inputType?: "picker" | "text" | "checkbox";
+  checkboxAccessibilityLabel?: string;
 }
 
 const InputWithLabel = ({
   value,
-  setValue,
+  setStringValue,
+  setBooleanValue,
   label,
   placeholderText,
   inputMode,
@@ -56,9 +59,10 @@ const InputWithLabel = ({
   hasError,
   variant,
   containerStyle,
-  isPicker,
   pickerOptions,
   showErrorText,
+  inputType = "text",
+  checkboxAccessibilityLabel,
 }: InputWithLabel) => {
   const foreground = useColor("foreground");
   const router = useRouter();
@@ -83,20 +87,20 @@ const InputWithLabel = ({
 
   // on blur validation
   const handleValidation = () => {
-    if (value?.length === 0) {
+    if (typeof value === "string" && value?.length === 0) {
       setError(`${label} is required`);
       return;
     }
 
     // email validation
-    const emailError = handleEmailValidation(value ?? "");
+    const emailError = handleEmailValidation((value as string) ?? "");
     if (emailError) {
       setError("Invalid Email");
       return;
     }
 
     // password validation
-    if (isPassword && value && value.length < 6) {
+    if (isPassword && value && typeof value === "string" && value.length < 6) {
       setError("Password must be at least 6 characters");
       return;
     }
@@ -104,8 +108,8 @@ const InputWithLabel = ({
 
   // typing validation
   const handleEditing = (text: string) => {
-    if (!setValue) return;
-    setValue(text);
+    if (!setStringValue) return;
+    setStringValue(text);
 
     // password validation
     if (isPassword) {
@@ -125,11 +129,11 @@ const InputWithLabel = ({
   };
 
   const inputTypes = {
-    isPicker: (
+    picker: (
       <Picker
         options={pickerOptions}
         style={{ marginTop: 3, ...containerStyle }}
-        value={value}
+        value={value as string}
         onValueChange={handleEditing}
         showErrorText={showErrorText}
         error={pickerError}
@@ -138,11 +142,11 @@ const InputWithLabel = ({
         }}
       />
     ),
-    isInput: (
+    text: (
       <Input
         variant={variant}
         ref={ref}
-        value={value}
+        value={value as string}
         onChangeText={handleEditing}
         inputMode={inputMode ?? "text"}
         error={error}
@@ -171,6 +175,17 @@ const InputWithLabel = ({
             </Pressable>
           )
         }
+      />
+    ),
+    checkbox: (
+      <Checkbox
+        checked={value as boolean}
+        onCheckedChange={setBooleanValue!}
+        accessibilityLabel={checkboxAccessibilityLabel}
+        disabled={disabled}
+        haptic={true}
+        label={checkboxAccessibilityLabel}
+        error={error}
       />
     ),
   };
@@ -210,53 +225,7 @@ const InputWithLabel = ({
       </View>
 
       {/* inputField */}
-      {isPicker ? (
-        <Picker
-          options={pickerOptions}
-          style={{ marginTop: 3, ...containerStyle }}
-          value={value}
-          onValueChange={handleEditing}
-          showErrorText={showErrorText}
-          error={pickerError}
-          onClose={() => {
-            if (!value) setPickerError(`${label} is required`);
-          }}
-        />
-      ) : (
-        <Input
-          variant={variant}
-          ref={ref}
-          value={value}
-          onChangeText={handleEditing}
-          inputMode={inputMode ?? "text"}
-          error={error}
-          showErrorText={showErrorText}
-          placeholder={placeholderText}
-          containerStyle={{ marginTop: 3, ...containerStyle }}
-          onBlur={handleValidation}
-          autoFocus={autoFocus}
-          secureTextEntry={!showPassword && isPassword}
-          disabled={disabled}
-          enterKeyHint={entryKeyHint ?? "done"}
-          returnKeyType={returnKeyType ?? "default"}
-          onSubmitEditing={() => nextRef?.current?.focus()}
-          rightComponent={
-            // eye - show password
-            isPassword && (
-              <Pressable
-                onPress={() => setShowPassword((prev) => !prev)}
-                hitSlop={10}
-              >
-                {showPassword ? (
-                  <EyeOff size={20} color={foreground} />
-                ) : (
-                  <Eye size={20} color={foreground} />
-                )}
-              </Pressable>
-            )
-          }
-        />
-      )}
+      {inputTypes[inputType]}
     </>
   );
 };

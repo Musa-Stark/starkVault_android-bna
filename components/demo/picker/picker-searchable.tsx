@@ -2,7 +2,7 @@ import { Picker } from '@/components/ui/picker';
 import React, { useState } from 'react';
 
 export function PickerSearchable() {
-  const [value, setValue] = useState<string>('');
+  const [value, setStringValue] = useState<string>('');
 
   const options = [
     { label: 'United States', value: 'us' },
@@ -21,7 +21,7 @@ export function PickerSearchable() {
     <Picker
       options={options}
       value={value}
-      onValueChange={setValue}
+      onValueChange={setStringValue}
       placeholder='Select a country...'
       searchable
       searchPlaceholder='Search countries...'

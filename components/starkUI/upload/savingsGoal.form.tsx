@@ -24,7 +24,7 @@ export interface SavingsGoalForm {
   categoryRef: Ref;
 }
 
-const handleSavingsGoalForm = ({
+const savingsGoalsForm = ({
   setUploadForm,
 
   goalName,
@@ -57,7 +57,7 @@ const handleSavingsGoalForm = ({
         label: "Goal Name",
         placeholderText: "e.g. New Laptop",
         value: goalName,
-        setValue: setGoalName,
+        setStringValue: setGoalName,
         ref: goalNameRef,
         nextRef: targetAmountRef,
         entryKeyHint: "next",
@@ -70,7 +70,7 @@ const handleSavingsGoalForm = ({
         placeholderText: "e.g. 150000",
         inputMode: "numeric",
         value: targetAmount,
-        setValue: setTargetAmount,
+        setStringValue: setTargetAmount,
         ref: targetAmountRef,
         nextRef: currentAmountRef,
         entryKeyHint: "next",
@@ -83,7 +83,7 @@ const handleSavingsGoalForm = ({
         placeholderText: "e.g. 25000",
         inputMode: "numeric",
         value: currentAmount,
-        setValue: setCurrentAmount,
+        setStringValue: setCurrentAmount,
         ref: currentAmountRef,
         nextRef: deadlineRef,
         entryKeyHint: "next",
@@ -95,7 +95,7 @@ const handleSavingsGoalForm = ({
         label: "Deadline",
         placeholderText: "e.g. 31 Dec 2026",
         value: deadline,
-        setValue: setDeadline,
+        setStringValue: setDeadline,
         ref: deadlineRef,
         nextRef: categoryRef,
         entryKeyHint: "next",
@@ -104,11 +104,11 @@ const handleSavingsGoalForm = ({
       },
 
       {
-        isPicker: true,
+        inputType: "picker",
         label: "Category",
         placeholderText: "e.g. Travel",
         value: category,
-        setValue: setCategory,
+        setStringValue: setCategory,
         ref: categoryRef,
         showErrorText: false,
         pickerOptions: [
@@ -133,4 +133,4 @@ const handleSavingsGoalForm = ({
   }));
 };
 
-export default handleSavingsGoalForm;
+export default savingsGoalsForm;

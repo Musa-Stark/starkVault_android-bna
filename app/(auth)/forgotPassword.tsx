@@ -50,7 +50,7 @@ const ForgotPassword = () => {
         label="Email"
         placeholderText="you@example.com"
         value={email}
-        setValue={setEmail}
+        setStringValue={setEmail}
         ref={emailRef}
         autoFocus={true}
         inputMode="email"

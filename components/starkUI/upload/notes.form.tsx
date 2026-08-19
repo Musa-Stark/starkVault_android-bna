@@ -1,4 +1,4 @@
-import type { SetUploadForm, SetString, Ref } from "@/providers/app-context";
+import type { SetUploadForm, SetString, Ref, SetBoolean } from "@/providers/app-context";
 
 export interface NoteForm {
   setUploadForm: SetUploadForm;
@@ -15,8 +15,8 @@ export interface NoteForm {
   setCategory: SetString;
   categoryRef: Ref;
 
-  pin: string;
-  setPin: SetString;
+  pin: boolean;
+  setPin: SetBoolean;
   pinRef: Ref;
 }
 
@@ -45,7 +45,7 @@ const handleNoteForm = ({
         label: "Title",
         placeholderText: "e.g. Meeting Notes",
         value: noteTitle,
-        setValue: setNoteTitle,
+        setStringValue: setNoteTitle,
         ref: noteTitleRef,
         nextRef: contentRef,
         entryKeyHint: "next",
@@ -57,7 +57,7 @@ const handleNoteForm = ({
         label: "Content",
         placeholderText: "Write your note...",
         value: content,
-        setValue: setContent,
+        setStringValue: setContent,
         ref: contentRef,
         nextRef: categoryRef,
         entryKeyHint: "next",
@@ -67,11 +67,11 @@ const handleNoteForm = ({
       },
 
       {
-        isPicker: true,
+        inputType: "picker",
         label: "Category",
         placeholderText: "e.g. Personal",
         value: category,
-        setValue: setCategory,
+        setStringValue: setCategory,
         ref: categoryRef,
         nextRef: pinRef,
         entryKeyHint: "next",
@@ -86,8 +86,11 @@ const handleNoteForm = ({
         ],
       },
       {
-        label: "Pin",
-        placeholderText: "Pin",
+        checkboxAccessibilityLabel: "Pin",
+        inputType: "checkbox",
+        value: pin,
+        setBooleanValue: setPin,
+        ref: pinRef
       },
     ],
   }));

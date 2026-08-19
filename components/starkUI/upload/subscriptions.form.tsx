@@ -49,7 +49,7 @@ const handleSubscriptionForm = ({
         label: "Subscription Name",
         placeholderText: "Enter subscription name",
         value: subscriptionName,
-        setValue: setSubscriptionName,
+        setStringValue: setSubscriptionName,
         ref: subscriptionNameRef,
         nextRef: amountRef,
         entryKeyHint: "next",
@@ -62,7 +62,7 @@ const handleSubscriptionForm = ({
         placeholderText: "Enter cost",
         inputMode: "numeric",
         value: amount,
-        setValue: setAmount,
+        setStringValue: setAmount,
         ref: amountRef,
         nextRef: billingCycleRef,
         entryKeyHint: "next",
@@ -71,11 +71,11 @@ const handleSubscriptionForm = ({
       },
 
       {
-        isPicker: true,
+        inputType: "picker",
         label: "Billing Cycle",
         placeholderText: "Select billing cycle",
         value: billingCycle,
-        setValue: setBillingCycle,
+        setStringValue: setBillingCycle,
         ref: billingCycleRef,
         nextRef: categoryRef,
         showErrorText: false,
@@ -89,11 +89,11 @@ const handleSubscriptionForm = ({
       },
 
       {
-        isPicker: true,
+        inputType: "picker",
         label: "Category",
         placeholderText: "Select category",
         value: category,
-        setValue: setCategory,
+        setStringValue: setCategory,
         ref: categoryRef,
         showErrorText: false,
         pickerOptions: [

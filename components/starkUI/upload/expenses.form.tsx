@@ -34,8 +34,8 @@ const handleExpenseForm = ({
       {
         label: "Merchant",
         placeholderText: "Enter merchant name",
-        value: merchant,
-        setValue: setMerchant,
+        value: merchant as string,
+        setStringValue: setMerchant,
         ref: merchantRef,
         nextRef: categoryRef,
         entryKeyHint: "next",
@@ -44,11 +44,11 @@ const handleExpenseForm = ({
       },
 
       {
-        isPicker: true,
+        inputType: "picker",
         label: "Category",
         placeholderText: "Select category",
         value: category,
-        setValue: setCategory,
+        setStringValue: setCategory,
         ref: categoryRef,
         nextRef: amountRef,
         showErrorText: false,
@@ -78,7 +78,7 @@ const handleExpenseForm = ({
         placeholderText: "Enter amount",
         inputMode: "numeric",
         value: amount,
-        setValue: setAmount,
+        setStringValue: setAmount,
         ref: amountRef,
         showErrorText: false,
       },

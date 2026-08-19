@@ -105,14 +105,14 @@ const Profile = () => {
           <InputWithLabel
             label="Username"
             placeholderText="e.g, Muhammad Musa"
-            setValue={setUserName}
+            setStringValue={setUserName}
             value={userName}
             variant="outline"
           />
           <InputWithLabel
             label="New Password"
             placeholderText="Enter a new password"
-            setValue={setNewPassword}
+            setStringValue={setNewPassword}
             value={newPassword}
             variant="outline"
             isPassword
@@ -120,7 +120,7 @@ const Profile = () => {
           <InputWithLabel
             label="Email"
             placeholderText="e.g, you@gmail.com"
-            setValue={setEmail}
+            setStringValue={setEmail}
             value={email}
             variant="outline"
             disabled
