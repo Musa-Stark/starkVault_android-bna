@@ -6,6 +6,7 @@ import React, {
   useRef,
 } from "react";
 import type { InputWithLabel } from "@/components/starkUI/input/InputWithLabel";
+import { MediaAsset } from "@/components/ui/media-picker";
 
 interface UploadFormInput {
   show: boolean;
@@ -16,6 +17,7 @@ interface UploadFormInput {
 
 export type SetString = React.Dispatch<React.SetStateAction<string>>;
 export type SetBoolean = React.Dispatch<React.SetStateAction<boolean>>;
+export type SetFile = React.Dispatch<React.SetStateAction<MediaAsset>>;
 export type Ref = React.RefObject<null>;
 
 export type SetUploadForm = React.Dispatch<
@@ -110,6 +112,10 @@ interface CreateContext {
   setBank: SetString;
   bankRef: Ref;
 
+  file: MediaAsset;
+  setFile: SetFile;
+  fileRef: Ref;
+
   noteTitle: string;
   setNoteTitle: SetString;
   noteTitleRef: Ref;
@@ -153,6 +159,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [cvv, setCvv] = useState("");
   const [label, setLabel] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
+  const [file, setFile] = useState<MediaAsset>({
+    id: "random-id",
+    type: "image",
+    uri: "https://random-uri.com",
+  });
   const [noteTitle, setNoteTitle] = useState("");
   const [content, setContent] = useState("");
   const [pin, setPin] = useState(false);
@@ -178,6 +189,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const cardNumberRef = useRef<any>(null);
   const cvvRef = useRef<any>(null);
   const expiryDateRef = useRef<any>(null);
+  const fileRef = useRef<any>(null);
   const noteTitleRef = useRef<any>(null);
   const contentRef = useRef<any>(null);
   const pinRef = useRef<any>(null);
@@ -269,6 +281,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     label,
     setLabel,
     labelRef,
+
+    file,
+    setFile,
+    fileRef,
 
     noteTitle,
     setNoteTitle,

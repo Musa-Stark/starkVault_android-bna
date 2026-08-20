@@ -4,23 +4,24 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   EnterKeyHintType,
   ReturnKeyType,
-  Text,
   TextInputProps,
   View,
   Pressable,
   type TextInput,
   ViewStyle,
 } from "react-native";
+import { Text } from "@/components/ui/text";
 import { useRouter } from "expo-router";
 import { Picker, PickerOption } from "@/components/ui/picker";
 
 import { useColor } from "@/hooks/useColor";
 import { Input } from "../../ui/input";
+import { MediaAsset, MediaPicker } from "@/components/ui/media-picker";
 
 export interface InputWithLabel {
   label?: string;
   placeholderText?: string;
-  value?: string | boolean;
+  value?: string | boolean | MediaAsset;
   setStringValue?: (value: string) => void;
   setBooleanValue?: (value: boolean) => void;
   inputMode?: TextInputProps["inputMode"];
@@ -37,7 +38,7 @@ export interface InputWithLabel {
   containerStyle?: ViewStyle;
   pickerOptions?: PickerOption[];
   showErrorText?: boolean;
-  inputType?: "picker" | "text" | "checkbox";
+  inputType?: "picker" | "text" | "checkbox" | "mediaPicker";
   checkboxAccessibilityLabel?: string;
 }
 
@@ -70,6 +71,8 @@ const InputWithLabel = ({
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [pickerError, setPickerError] = useState("");
+
+  const [assets, setAssets] = useState<MediaAsset[]>([]);
 
   // show to parent if error exists
   useEffect(() => {
@@ -188,6 +191,21 @@ const InputWithLabel = ({
         error={error}
       />
     ),
+    mediaPicker: (
+      <MediaPicker
+        mediaType="all"
+        multiple={true}
+        maxSelection={6}
+        showPreview={true}
+        previewSize={100}
+        buttonText="Add Media"
+        selectedAssets={assets}
+        onSelectionChange={(newAssets) => {
+          setAssets(newAssets);
+          console.log("Assets with preview:", newAssets);
+        }}
+      />
+    ),
   };
 
   return (
@@ -226,6 +244,17 @@ const InputWithLabel = ({
 
       {/* inputField */}
       {inputTypes[inputType]}
+
+      {assets.length > 0 && (
+        <View>
+          <Text variant="caption">
+            {assets.length} item{assets.length !== 1 ? "s" : ""} selected
+          </Text>
+          <Text variant="caption">
+            Types: {assets.map((a) => a.type).join(", ")}
+          </Text>
+        </View>
+      )}
     </>
   );
 };
