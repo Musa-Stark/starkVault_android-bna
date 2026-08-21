@@ -1,26 +1,97 @@
+import React, { useEffect } from "react";
 import { View } from "react-native";
-import React from "react";
 import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react-native";
-import { Card,  CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import handleSubscriptionForm from "@/components/starkUI/upload/subscriptions.form";
+import { useApp } from "@/providers/app-context";
 
-const subscriptions = () => {
+const Subscriptions = () => {
+  const {
+    subscriptionName,
+    setSubscriptionName,
+    subscriptionNameRef,
+
+    amount,
+    setAmount,
+    amountRef,
+
+    billingCycle,
+    setBillingCycle,
+    billingCycleRef,
+
+    category,
+    setCategory,
+    categoryRef,
+
+    uploadForm,
+    setUploadForm,
+  } = useApp();
+
+  useEffect(() => {
+    if (!uploadForm.submit) return;
+
+    console.log({
+      subscriptionName,
+      amount,
+      billingCycle,
+      category,
+    });
+
+    setUploadForm({
+      inputs: undefined,
+      name: "",
+      show: false,
+      submit: false,
+    });
+
+    setSubscriptionName("");
+    setAmount("");
+    setBillingCycle("");
+    setCategory("");
+  }, [
+    uploadForm.submit,
+  ]);
+
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
-      {/* heading */}
       <Text variant="heading" style={{ marginBottom: 20 }}>
         Subscriptions
       </Text>
-      {/* title */}
-      <Text variant="caption">0 active subscriptions</Text>
-      {/* button */}
-      <Button icon={Plus} style={{ marginTop: 20 }}>
-        Track New
+
+      <Text variant="caption">Track your recurring subscriptions.</Text>
+
+      <Button
+        icon={Plus}
+        style={{ marginTop: 20 }}
+        onPress={() =>
+          handleSubscriptionForm({
+            subscriptionName,
+            setSubscriptionName,
+            subscriptionNameRef,
+
+            amount,
+            setAmount,
+            amountRef,
+
+            billingCycle,
+            setBillingCycle,
+            billingCycleRef,
+
+            category,
+            setCategory,
+            categoryRef,
+
+            setUploadForm,
+          })
+        }
+      >
+        Add Subscription
       </Button>
 
-      {/* this month */}
+      {/* This month */}
       <Card style={{ marginTop: 20 }}>
         <CardHeader>
           <Text variant="caption" style={{ fontSize: 15 }}>
@@ -30,7 +101,7 @@ const subscriptions = () => {
         </CardHeader>
       </Card>
 
-      {/* regular subscriptions */}
+      {/* Yearly equivalent */}
       <Card style={{ marginTop: 20 }}>
         <CardHeader>
           <Text variant="caption" style={{ fontSize: 15 }}>
@@ -40,7 +111,7 @@ const subscriptions = () => {
         </CardHeader>
       </Card>
 
-      {/* total subscriptions */}
+      {/* Total subscriptions */}
       <Card style={{ marginTop: 20 }}>
         <CardHeader>
           <Text variant="caption" style={{ fontSize: 15 }}>
@@ -50,7 +121,7 @@ const subscriptions = () => {
         </CardHeader>
       </Card>
 
-      {/* subscriptions */}
+      {/* Subscriptions */}
       <Card style={{ marginTop: 20 }}>
         <Text variant="caption">No subscriptions added yet</Text>
       </Card>
@@ -58,4 +129,4 @@ const subscriptions = () => {
   );
 };
 
-export default subscriptions;
+export default Subscriptions;

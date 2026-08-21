@@ -35,7 +35,7 @@ export default function Layout() {
       }}
     >
       <Tabs.Screen
-        name="dashboard/index"
+        name="dashboard"
         options={{
           tabBarIcon: ({ focused }) => (
             <View
@@ -62,7 +62,7 @@ export default function Layout() {
             </View>
           ),
 
-          animation: "shift",
+          animation: "fade",
         }}
       />
       <Tabs.Screen
@@ -93,7 +93,7 @@ export default function Layout() {
             </View>
           ),
 
-          animation: "shift",
+          animation: "fade",
         }}
       />
       <Tabs.Screen

@@ -5,7 +5,7 @@ import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
 import AuthLogo from "@/components/starkUI/auth/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
-import InputWithLabel from "@/components/starkUI/auth/InputWithLabel";
+import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
 
 const ForgotPassword = () => {
@@ -50,7 +50,7 @@ const ForgotPassword = () => {
         label="Email"
         placeholderText="you@example.com"
         value={email}
-        setValue={setEmail}
+        setStringValue={setEmail}
         ref={emailRef}
         autoFocus={true}
         inputMode="email"

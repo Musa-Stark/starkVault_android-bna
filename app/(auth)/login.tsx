@@ -5,7 +5,7 @@ import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
 import AuthLogo from "@/components/starkUI/auth/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
-import InputWithLabel from "@/components/starkUI/auth/InputWithLabel";
+import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
 import OAuthButton from "@/components/starkUI/auth/OAuthButton";
 import AuthDivider from "@/components/starkUI/auth/AuthDivider";
@@ -66,7 +66,7 @@ const Login = () => {
         label="Email"
         placeholderText="you@example.com"
         value={email}
-        setValue={setEmail}
+        setStringValue={setEmail}
         ref={emailRef}
         entryKeyHint="next"
         autoFocus={true}
@@ -81,7 +81,7 @@ const Login = () => {
       <InputWithLabel
         label="Password"
         placeholderText="••••••••••••"
-        setValue={setPassword}
+        setStringValue={setPassword}
         value={password}
         ref={passwordRef}
         isPassword={true}

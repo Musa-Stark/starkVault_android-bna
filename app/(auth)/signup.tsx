@@ -5,7 +5,7 @@ import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
 import AuthLogo from "@/components/starkUI/auth/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
-import InputWithLabel from "@/components/starkUI/auth/InputWithLabel";
+import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
 import OAuthButton from "@/components/starkUI/auth/OAuthButton";
 import AuthDivider from "@/components/starkUI/auth/AuthDivider";
@@ -83,7 +83,7 @@ const Signup = () => {
         label="Full Name"
         placeholderText="e.g, Musa Stark"
         value={fullName}
-        setValue={setFullName}
+        setStringValue={setFullName}
         ref={nameRef}
         entryKeyHint="next"
         autoFocus={true}
@@ -98,7 +98,7 @@ const Signup = () => {
         label="Email"
         placeholderText="you@example.com"
         value={email}
-        setValue={setEmail}
+        setStringValue={setEmail}
         ref={emailRef}
         entryKeyHint="next"
         inputMode="email"
@@ -112,7 +112,7 @@ const Signup = () => {
       <InputWithLabel
         label="Password"
         placeholderText="••••••••••••"
-        setValue={setPassword}
+        setStringValue={setPassword}
         value={password}
         ref={passwordRef}
         isPassword={true}
@@ -125,7 +125,7 @@ const Signup = () => {
       <InputWithLabel
         label="Confirm Password"
         placeholderText="••••••••••••"
-        setValue={setConfirmPassword}
+        setStringValue={setConfirmPassword}
         value={confirmPassword}
         ref={confirmPasswordRef}
         isPassword={true}

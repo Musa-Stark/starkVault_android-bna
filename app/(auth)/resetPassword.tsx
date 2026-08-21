@@ -5,7 +5,7 @@ import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
 import AuthLogo from "@/components/starkUI/auth/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
-import InputWithLabel from "@/components/starkUI/auth/InputWithLabel";
+import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import authApiCall from "./authApiCall";
 
 const Login = () => {
@@ -54,7 +54,7 @@ const Login = () => {
       <InputWithLabel
         label="Password"
         placeholderText="••••••••••••"
-        setValue={setPassword}
+        setStringValue={setPassword}
         value={password}
         ref={passwordRef}
         isPassword={true}
@@ -69,7 +69,7 @@ const Login = () => {
       <InputWithLabel
         label="Confirm Password"
         placeholderText="••••••••••••"
-        setValue={setConfirmPassword}
+        setStringValue={setConfirmPassword}
         value={confirmPassword}
         ref={confirmPasswordRef}
         isPassword={true}

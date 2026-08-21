@@ -1,4 +1,4 @@
-import { ColorValue, StyleProp, View, ViewStyle } from "react-native";
+import { View } from "react-native";
 import { Text } from "@/components/ui/text";
 import React, { useState } from "react";
 import { useColor } from "@/hooks/useColor";
@@ -9,11 +9,11 @@ import { Button } from "@/components/ui/button";
 import {
   Edit3,
   Fingerprint,
-  LucideIcon,
+  LogOut,
   LucideProps,
   ShieldCheck,
 } from "lucide-react-native";
-import InputWithLabel from "@/components/starkUI/auth/InputWithLabel";
+import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import { ScrollView } from "react-native-gesture-handler";
 import { Switch } from "@/components/ui/switch";
 
@@ -52,7 +52,7 @@ const SecurityControl = ({
       >
         <Icon color={foreground} />
       </View>
-      <Text numberOfLines={2} style={{ maxWidth: "65%" }}>
+      <Text numberOfLines={2} style={{ maxWidth: "65%", fontSize: 16 }}>
         {text}
       </Text>
       <Switch
@@ -66,10 +66,7 @@ const SecurityControl = ({
 
 const Profile = () => {
   const background = useColor("background");
-  const foreground = useColor("foreground");
   const green = useColor("green");
-  const borderColor = useColor("muted");
-  const cardColor = useColor("card");
 
   const [userName, setUserName] = useState("Muhammad Musa");
   const [newPassword, setNewPassword] = useState("");
@@ -77,7 +74,7 @@ const Profile = () => {
 
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Text variant="heading" style={{ marginBottom: 20 }}>
           Profile
         </Text>
@@ -108,14 +105,14 @@ const Profile = () => {
           <InputWithLabel
             label="Username"
             placeholderText="e.g, Muhammad Musa"
-            setValue={setUserName}
+            setStringValue={setUserName}
             value={userName}
             variant="outline"
           />
           <InputWithLabel
             label="New Password"
             placeholderText="Enter a new password"
-            setValue={setNewPassword}
+            setStringValue={setNewPassword}
             value={newPassword}
             variant="outline"
             isPassword
@@ -123,9 +120,10 @@ const Profile = () => {
           <InputWithLabel
             label="Email"
             placeholderText="e.g, you@gmail.com"
-            setValue={setEmail}
+            setStringValue={setEmail}
             value={email}
             variant="outline"
+            disabled
           />
 
           <Button icon={Edit3} style={{ marginTop: 20 }}>
@@ -137,7 +135,6 @@ const Profile = () => {
         <Card
           style={{
             marginTop: 20,
-            marginBottom: 10,
             ...globalStyles.flexBox,
             gap: 10,
           }}
@@ -151,9 +148,7 @@ const Profile = () => {
           <SecurityControl
             key={1}
             Icon={ShieldCheck}
-            text={
-              "Two-Factor Authentication asdfasdf asdfasdf asdfasdf asdfasdf asdfasdf"
-            }
+            text={"Two-Factor Authentication"}
           />
           <SecurityControl
             key={2}
@@ -161,6 +156,18 @@ const Profile = () => {
             text={"Biometric Unlock"}
           />
         </Card>
+
+        {/* logout */}
+        <Button
+          icon={LogOut}
+          variant="destructive"
+          style={{
+            marginTop: 20,
+            marginBottom: 20,
+          }}
+        >
+          Logout
+        </Button>
       </ScrollView>
     </View>
   );
