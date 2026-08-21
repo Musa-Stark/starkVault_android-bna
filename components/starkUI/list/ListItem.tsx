@@ -1,5 +1,11 @@
 import React, { useCallback, useState } from "react";
-import { Pressable, StyleSheet, View, ViewStyle } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  TextStyle,
+  View,
+  ViewStyle,
+} from "react-native";
 import { Text } from "@/components/ui/text";
 import {
   Check,
@@ -11,6 +17,7 @@ import {
 import { useColor } from "@/hooks/useColor";
 import { BORDER_RADIUS } from "@/theme/globals";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 export type Item = {
   id: string;
@@ -19,7 +26,11 @@ export type Item = {
   Icon: LucideIcon;
 
   // Anything you want displayed on the right
-  right?: React.ReactNode;
+  right?: {
+    type: "text" | "icon";
+    text?: string;
+    textStyle?: TextStyle;
+  };
 };
 
 type SelectableListItemProps = {
@@ -49,16 +60,11 @@ function SelectableListItem({
       delayLongPress={400}
       style={({ pressed }) => [
         {
-          minHeight: 72,
+          minHeight: 65,
           flexDirection: "row",
           alignItems: "center",
-          paddingHorizontal: 12,
-          paddingVertical: 10,
-          marginBottom: 8,
-          borderRadius: 14,
-          backgroundColor: borderColor,
+          opacity: pressed ? 0.5 : 1,
         },
-        (pressed || selected) && { backgroundColor: background },
       ]}
     >
       {/* Left logo */}
@@ -74,7 +80,13 @@ function SelectableListItem({
       </View>
 
       {/* Heading + caption */}
-      <View style={styles.textContainer}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          minWidth: 0,
+        }}
+      >
         <Text numberOfLines={1}>{item.title}</Text>
 
         {item.caption && (
@@ -93,12 +105,24 @@ function SelectableListItem({
           marginLeft: 12,
         }}
       >
-        {item?.right}
+        {item.right?.type === "text" && (
+          <Text variant="body" style={item.right.textStyle}>
+            {item.right.text}
+          </Text>
+        )}
 
         {selectionMode ? (
           <View
             style={[
-              styles.selectionCircle,
+              {
+                width: 22,
+                height: 22,
+                borderRadius: 11,
+                borderWidth: 1.5,
+                borderColor: "#D4D4D8",
+                alignItems: "center",
+                justifyContent: "center",
+              },
               selected && {
                 backgroundColor: foreground,
                 borderColor: borderColor,
@@ -107,9 +131,8 @@ function SelectableListItem({
           >
             {selected && <Check size={15} color={background} strokeWidth={3} />}
           </View>
-        ) : (
-          <ChevronRight size={18} color={foreground} />
-        )}
+        ) : //   <ChevronRight size={18} color={foreground} />
+        null}
       </View>
     </Pressable>
   );
@@ -120,10 +143,16 @@ type ViewAllProps = {
   onEdit?: (selectedItems: Item[]) => void;
   onDelete?: (selectedItems: Item[]) => void;
   style?: ViewStyle;
-  header?: string
+  header?: string;
 };
 
-export function ViewAll({ items, onEdit, onDelete, style, header }: ViewAllProps) {
+export function ViewAll({
+  items,
+  onEdit,
+  onDelete,
+  style,
+  header,
+}: ViewAllProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const selectionMode = selectedIds.length > 0;
@@ -197,7 +226,13 @@ export function ViewAll({ items, onEdit, onDelete, style, header }: ViewAllProps
           )}
 
           {selectionMode && (
-            <Text style={styles.selectedCount}>
+            <Text
+              style={{
+                marginTop: 2,
+                fontSize: 13,
+                color: "#71717A",
+              }}
+            >
               {selectedIds.length} selected
             </Text>
           )}
@@ -212,20 +247,24 @@ export function ViewAll({ items, onEdit, onDelete, style, header }: ViewAllProps
               gap: 8,
             }}
           >
-            <Button
-              onPress={handleEdit}
-              hitSlop={8}
-              icon={Edit3}
-              size="icon"
-              variant="ghost"
-            />
-            <Button
-              onPress={handleDelete}
-              hitSlop={8}
-              icon={Trash2}
-              size="icon"
-              variant="ghost"
-            />
+            {onEdit && (
+              <Button
+                onPress={handleEdit}
+                hitSlop={8}
+                icon={Edit3}
+                size="icon"
+                variant="ghost"
+              />
+            )}
+            {onDelete && (
+              <Button
+                onPress={handleDelete}
+                hitSlop={8}
+                icon={Trash2}
+                size="icon"
+                variant="destructive"
+              />
+            )}
           </View>
         )}
       </View>
@@ -237,140 +276,27 @@ export function ViewAll({ items, onEdit, onDelete, style, header }: ViewAllProps
           marginTop: 10,
         }}
       >
-        {items.map((item, idx) => (
-          <SelectableListItem
-            key={idx}
-            item={item}
-            selected={selectedIds.includes(item.id)}
-            selectionMode={selectionMode}
-            onLongPress={() => enterSelectionMode(item.id)}
-            onPress={() => {
-              if (selectionMode) {
-                toggleSelection(item.id);
-              }
-            }}
-          />
-        ))}
+        {items.map((item, idx) => {
+          const separate = idx !== items.length - 1;
+          return (
+            <React.Fragment key={`${idx}-fragment`}>
+              <SelectableListItem
+                key={idx}
+                item={item}
+                selected={selectedIds.includes(item.id)}
+                selectionMode={selectionMode}
+                onLongPress={() => enterSelectionMode(item.id)}
+                onPress={() => {
+                  if (selectionMode) {
+                    toggleSelection(item.id);
+                  }
+                }}
+              />
+              {separate && <Separator key={`${idx}-separator`} />}
+            </React.Fragment>
+          );
+        })}
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#18181B",
-  },
-
-  selectedCount: {
-    marginTop: 2,
-    fontSize: 13,
-    color: "#71717A",
-  },
-
-  actions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-
-  actionButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#F4F4F5",
-  },
-
-  actionPressed: {
-    opacity: 0.6,
-  },
-
-  listContent: {
-    paddingBottom: 32,
-    marginTop: 10,
-  },
-
-  item: {
-    minHeight: 72,
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 8,
-    borderRadius: 14,
-    backgroundColor: "#FFFFFF",
-  },
-
-  itemPressed: {
-    backgroundColor: "#F4F4F5",
-  },
-
-  itemSelected: {
-    backgroundColor: "#F4F4F5",
-  },
-
-  logoContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-    backgroundColor: "#F4F4F5",
-  },
-
-  textContainer: {
-    flex: 1,
-    justifyContent: "center",
-    minWidth: 0,
-  },
-
-  title: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#18181B",
-  },
-
-  caption: {
-    marginTop: 3,
-    fontSize: 13,
-    color: "#71717A",
-  },
-
-  rightContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-    marginLeft: 12,
-  },
-
-  selectionCircle: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 1.5,
-    borderColor: "#D4D4D8",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  selectionCircleSelected: {
-    backgroundColor: "#18181B",
-    borderColor: "#18181B",
-  },
-});

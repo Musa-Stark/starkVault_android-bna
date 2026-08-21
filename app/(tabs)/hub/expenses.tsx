@@ -14,6 +14,7 @@ import { useApp } from "@/providers/app-context";
 import handleExpenseForm from "@/components/starkUI/upload/expenses.form";
 import { Item, ViewAll } from "@/components/starkUI/list/ListItem";
 import { ScrollView } from "react-native-gesture-handler";
+import { useColor } from "@/hooks/useColor";
 
 const expenses = () => {
   const {
@@ -29,27 +30,37 @@ const expenses = () => {
     setUploadForm,
     uploadForm,
   } = useApp();
+  const green = useColor("green");
+  const red = useColor("red");
+
   const [items, setItems] = useState<Item[]>([
     {
       id: "1",
       title: "Food",
-      caption: "Monthly spending",
       Icon: ShoppingCart,
-      right: <Text style={{ fontSize: 14, fontWeight: "600" }}>32%</Text>,
+      caption: new Date().toLocaleDateString("pk", {
+        dateStyle: "full"
+      }),
+      right: {
+        type: "text",
+        text: "Rs 100/-",
+        textStyle: { color: red, fontSize: 15 },
+      },
     },
     {
       id: "2",
       title: "Shopping",
-      caption: "Monthly spending",
       Icon: Wallet,
-      // right: <Text style={{ fontSize: 14, fontWeight: "600" }}>18%</Text>,
+      right: {
+        type: "text",
+        text: "Rs 50/-",
+        textStyle: { color: green, fontSize: 15 },
+      },
     },
     {
       id: "3",
       title: "Savings",
-      caption: "Monthly target",
       Icon: CircleDollarSign,
-      right: <Text style={{ fontSize: 14, fontWeight: "600" }}>50%</Text>,
     },
   ]);
 
@@ -138,11 +149,11 @@ const expenses = () => {
           <ViewAll
             items={items}
             header="List"
-            onEdit={(selectedItems) => {
-              console.log("Edit:", selectedItems);
-            }}
-            onDelete={(selectedItems) => {
-              console.log("Delete:", selectedItems);
+            // onEdit={(selectedItems) => {
+            //   console.log("Edit:", selectedItems);
+            // }}
+            onDelete={(selectedItems: Item[]) => {
+              console.log("Delete:", selectedItems[0].id);
             }}
             style={{ marginVertical: 20 }}
           />
