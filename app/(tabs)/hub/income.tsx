@@ -1,8 +1,8 @@
 import { View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { Item } from "@/components/starkUI/list/ListItem";
+import { Item } from "@/components/starkUI/list/ItemsList";
 import { Text } from "@/components/ui/text";
-import { ViewAll } from "@/components/starkUI/list/ListItem";
+import { ViewAll } from "@/components/starkUI/list/ItemsList";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,8 +15,11 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useApp } from "@/providers/app-context";
 import handleIncomeForm from "@/components/starkUI/upload/income.form";
 import { ScrollView } from "react-native-gesture-handler";
+import { useColor } from "@/hooks/useColor";
 
 const income = () => {
+  const green = useColor("green");
+
   const {
     source,
     type,
@@ -53,6 +56,19 @@ const income = () => {
       id: "1",
       title: "Food",
       Icon: ShoppingCart,
+      caption: new Date()
+        .toLocaleDateString("pk", {
+          dateStyle: "full",
+        })
+        .toString(),
+      captionStyle: {
+        fontSize: 12,
+      },
+      right: {
+        type: "text",
+        text: "+Rs 2000",
+        textStyle: { color: green },
+      },
     },
     {
       id: "2",

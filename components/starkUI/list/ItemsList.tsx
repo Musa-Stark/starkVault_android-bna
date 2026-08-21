@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from "react";
 import {
   Pressable,
-  StyleSheet,
   TextStyle,
   View,
   ViewStyle,
@@ -9,7 +8,6 @@ import {
 import { Text } from "@/components/ui/text";
 import {
   Check,
-  ChevronRight,
   Edit3,
   LucideIcon,
   Trash2,
@@ -23,6 +21,7 @@ export type Item = {
   id: string;
   title: string;
   caption?: string;
+  captionStyle?: TextStyle,
   Icon: LucideIcon;
 
   // Anything you want displayed on the right
@@ -90,7 +89,7 @@ function SelectableListItem({
         <Text numberOfLines={1}>{item.title}</Text>
 
         {item.caption && (
-          <Text variant="caption" style={{ fontSize: 14 }} numberOfLines={1}>
+          <Text variant="caption" style={{ fontSize: 14, ...item.captionStyle }} numberOfLines={1}>
             {item.caption}
           </Text>
         )}

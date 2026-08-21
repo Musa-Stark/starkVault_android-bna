@@ -12,7 +12,7 @@ import {
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useApp } from "@/providers/app-context";
 import handleExpenseForm from "@/components/starkUI/upload/expenses.form";
-import { Item, ViewAll } from "@/components/starkUI/list/ListItem";
+import { Item, ViewAll } from "@/components/starkUI/list/ItemsList";
 import { ScrollView } from "react-native-gesture-handler";
 import { useColor } from "@/hooks/useColor";
 
@@ -30,7 +30,6 @@ const expenses = () => {
     setUploadForm,
     uploadForm,
   } = useApp();
-  const green = useColor("green");
   const red = useColor("red");
 
   const [items, setItems] = useState<Item[]>([
@@ -41,6 +40,9 @@ const expenses = () => {
       caption: new Date().toLocaleDateString("pk", {
         dateStyle: "full"
       }),
+      captionStyle: {
+        fontSize: 13
+      },
       right: {
         type: "text",
         text: "Rs 100/-",
@@ -54,7 +56,7 @@ const expenses = () => {
       right: {
         type: "text",
         text: "Rs 50/-",
-        textStyle: { color: green, fontSize: 15 },
+        textStyle: { color: red, fontSize: 15 },
       },
     },
     {
