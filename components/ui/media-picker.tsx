@@ -1,23 +1,13 @@
-import { Button, ButtonSize, ButtonVariant } from '@/components/ui/button';
-import { Text } from '@/components/ui/text';
-import { View } from '@/components/ui/view';
-import { useColor } from '@/hooks/useColor';
-import { CORNERS, FONT_SIZE } from '@/theme/globals';
-import { Image as ExpoImage } from 'expo-image';
-import * as ImagePicker from 'expo-image-picker';
-import * as MediaLibrary from 'expo-media-library';
-import {
-  Check,
-  LucideProps,
-  Video,
-  X,
-} from 'lucide-react-native';
-import React, {
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { Button, ButtonSize, ButtonVariant } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { View } from "@/components/ui/view";
+import { useColor } from "@/hooks/useColor";
+import { CORNERS, FONT_SIZE } from "@/theme/globals";
+import { Image as ExpoImage } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
+import * as MediaLibrary from "expo-media-library";
+import { Check, LucideProps, Video, X } from "lucide-react-native";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -30,22 +20,16 @@ import {
   TouchableOpacity,
   View as RNView,
   ViewStyle,
-} from 'react-native';
+} from "react-native";
 
-export type MediaType =
-  | 'image'
-  | 'video'
-  | 'all';
+export type MediaType = "image" | "video" | "all";
 
-export type MediaQuality =
-  | 'low'
-  | 'medium'
-  | 'high';
+export type MediaQuality = "low" | "medium" | "high";
 
 export interface MediaAsset {
   id: string;
   uri: string;
-  type: 'image' | 'video';
+  type: "image" | "video";
   width?: number;
   height?: number;
   duration?: number;
@@ -90,22 +74,14 @@ export interface MediaPickerProps {
    */
   uploading?: boolean;
 
-  onSelectionChange?: (
-    assets: MediaAsset[]
-  ) => void;
+  onSelectionChange?: (assets: MediaAsset[]) => void;
 
-  onError?: (
-    error: string
-  ) => void;
+  onError?: (error: string) => void;
 }
 
-const { width: screenWidth } =
-  Dimensions.get('window');
+const { width: screenWidth } = Dimensions.get("window");
 
-const arraysEqual = (
-  a: MediaAsset[],
-  b: MediaAsset[]
-): boolean => {
+const arraysEqual = (a: MediaAsset[], b: MediaAsset[]): boolean => {
   if (a.length !== b.length) {
     return false;
   }
@@ -114,9 +90,7 @@ const arraysEqual = (
     const bItem = b[index];
 
     return (
-      item.id === bItem.id &&
-      item.uri === bItem.uri &&
-      item.type === bItem.type
+      item.id === bItem.id && item.uri === bItem.uri && item.type === bItem.type
     );
   });
 };
@@ -143,49 +117,28 @@ const AnimatedUploadOverlay = ({
   secondary: string;
   onComplete?: () => void;
 }) => {
-  const overlayOpacity =
-    useRef(
-      new Animated.Value(1)
-    ).current;
+  const overlayOpacity = useRef(new Animated.Value(1)).current;
 
-  const scale =
-    useRef(
-      new Animated.Value(0.85)
-    ).current;
+  const scale = useRef(new Animated.Value(0.85)).current;
 
-  const progressAnimation =
-    useRef(
-      new Animated.Value(0)
-    ).current;
+  const progressAnimation = useRef(new Animated.Value(0)).current;
 
-  const checkScale =
-    useRef(
-      new Animated.Value(0)
-    ).current;
+  const checkScale = useRef(new Animated.Value(0)).current;
 
-  const [completed, setCompleted] =
-    useState(false);
+  const [completed, setCompleted] = useState(false);
 
-  const safeProgress = Math.min(
-    Math.max(progress, 0),
-    100
-  );
+  const safeProgress = Math.min(Math.max(progress, 0), 100);
 
   useEffect(() => {
     /*
      * Smooth percentage animation.
      */
-    Animated.timing(
-      progressAnimation,
-      {
-        toValue: safeProgress,
-        duration: 450,
-        easing: Easing.out(
-          Easing.cubic
-        ),
-        useNativeDriver: false,
-      }
-    ).start();
+    Animated.timing(progressAnimation, {
+      toValue: safeProgress,
+      duration: 450,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
 
     /*
      * Entrance animation.
@@ -202,10 +155,7 @@ const AnimatedUploadOverlay = ({
     /*
      * Upload completed.
      */
-    if (
-      safeProgress >= 100 &&
-      !completed
-    ) {
+    if (safeProgress >= 100 && !completed) {
       setCompleted(true);
 
       /*
@@ -222,42 +172,28 @@ const AnimatedUploadOverlay = ({
          * then reveal the sharp preview.
          */
         setTimeout(() => {
-          Animated.timing(
-            overlayOpacity,
-            {
-              toValue: 0,
-              duration: 450,
-              easing: Easing.out(
-                Easing.cubic
-              ),
-              useNativeDriver: true,
-            }
-          ).start(() => {
+          Animated.timing(overlayOpacity, {
+            toValue: 0,
+            duration: 450,
+            easing: Easing.out(Easing.cubic),
+            useNativeDriver: true,
+          }).start(() => {
             onComplete?.();
           });
         }, 500);
       });
     }
-  }, [
-    safeProgress,
-    completed,
-    onComplete,
-  ]);
+  }, [safeProgress, completed, onComplete]);
 
-  const progressRotation =
-    progressAnimation.interpolate({
-      inputRange: [0, 100],
-      outputRange: [
-        '0deg',
-        '360deg',
-      ],
-    });
+  const progressRotation = progressAnimation.interpolate({
+    inputRange: [0, 100],
+    outputRange: ["0deg", "360deg"],
+  });
 
-  const percentage =
-    progressAnimation.interpolate({
-      inputRange: [0, 100],
-      outputRange: ['0', '100'],
-    });
+  const percentage = progressAnimation.interpolate({
+    inputRange: [0, 100],
+    outputRange: ["0", "100"],
+  });
 
   return (
     <Animated.View
@@ -265,8 +201,7 @@ const AnimatedUploadOverlay = ({
       style={[
         styles.uploadOverlay,
         {
-          opacity:
-            overlayOpacity,
+          opacity: overlayOpacity,
         },
       ]}
     >
@@ -278,16 +213,14 @@ const AnimatedUploadOverlay = ({
                 scale,
               },
             ],
-            alignItems:
-              'center',
+            alignItems: "center",
           }}
         >
           <View
             style={[
               styles.progressCircle,
               {
-                borderColor:
-                  'rgba(255,255,255,0.25)',
+                borderColor: "rgba(255,255,255,0.25)",
               },
             ]}
           >
@@ -295,12 +228,10 @@ const AnimatedUploadOverlay = ({
               style={[
                 styles.progressArc,
                 {
-                  borderColor:
-                    primaryColor,
+                  borderColor: primaryColor,
                   transform: [
                     {
-                      rotate:
-                        progressRotation,
+                      rotate: progressRotation,
                     },
                   ],
                 },
@@ -311,36 +242,24 @@ const AnimatedUploadOverlay = ({
               style={[
                 styles.progressCenter,
                 {
-                  backgroundColor:
-                    primaryColor,
+                  backgroundColor: primaryColor,
                 },
               ]}
             >
-              <Animated.Text
-                style={
-                  styles.progressText
-                }
-              >
+              <Animated.Text style={styles.progressText}>
                 {percentage}%
               </Animated.Text>
             </View>
           </View>
 
-          <Text
-            style={
-              styles.uploadingText
-            }
-          >
-            Uploading...
-          </Text>
+          <Text style={styles.uploadingText}>Uploading...</Text>
         </Animated.View>
       ) : (
         <Animated.View
           style={[
             styles.successCircle,
             {
-              backgroundColor:
-                primaryColor,
+              backgroundColor: primaryColor,
               transform: [
                 {
                   scale: checkScale,
@@ -349,29 +268,22 @@ const AnimatedUploadOverlay = ({
             },
           ]}
         >
-          <Check
-            size={28}
-            color={secondary}
-            strokeWidth={3}
-          />
+          <Check size={28} color={secondary} strokeWidth={3} />
         </Animated.View>
       )}
     </Animated.View>
   );
 };
 
-export const MediaPicker = forwardRef<
-  RNView,
-  MediaPickerProps
->(
+export const MediaPicker = forwardRef<RNView, MediaPickerProps>(
   (
     {
       children,
-      mediaType = 'all',
+      mediaType = "all",
       multiple = false,
       gallery = false,
       maxSelection = 10,
-      quality = 'high',
+      quality = "high",
       onSelectionChange,
       onError,
       buttonText,
@@ -390,709 +302,421 @@ export const MediaPicker = forwardRef<
       uploadProgress = {},
       uploading = false,
     },
-    ref
+    ref,
   ) => {
-    const [
-      assets,
-      setAssets,
-    ] = useState<MediaAsset[]>(
-      selectedAssets
-    );
+    const [assets, setAssets] = useState<MediaAsset[]>(selectedAssets);
 
-    const [
-      isGalleryVisible,
-      setIsGalleryVisible,
-    ] = useState(false);
+    const [isGalleryVisible, setIsGalleryVisible] = useState(false);
 
-    const [
-      galleryAssets,
-      setGalleryAssets,
-    ] = useState<
+    const [galleryAssets, setGalleryAssets] = useState<
       MediaLibrary.AssetInfo[]
     >([]);
 
-    const [
-      hasPermission,
-      setHasPermission,
-    ] = useState<
-      boolean | null
-    >(null);
+    const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
-    const [
-      canAskAgain,
-      setCanAskAgain,
-    ] = useState(true);
+    const [canAskAgain, setCanAskAgain] = useState(true);
 
     /*
      * Tracks previews that have completed
      * their reveal animation.
      */
-    const [
-      revealedAssets,
-      setRevealedAssets,
-    ] = useState<
+    const [revealedAssets, setRevealedAssets] = useState<
       Record<string, boolean>
     >({});
 
-    const prevSelectedAssetsRef =
-      useRef<MediaAsset[]>(
-        selectedAssets
-      );
+    const prevSelectedAssetsRef = useRef<MediaAsset[]>(selectedAssets);
 
     /*
      * Theme
      */
-    const cardColor =
-      useColor('card');
+    const cardColor = useColor("card");
 
-    const borderColor =
-      useColor('border');
+    const borderColor = useColor("border");
 
-    const mutedColor =
-      useColor(
-        'mutedForeground'
-      );
+    const mutedColor = useColor("mutedForeground");
 
-    const primaryColor =
-      useColor('primary');
+    const primaryColor = useColor("primary");
 
-    const secondary =
-      useColor('secondary');
+    const secondary = useColor("secondary");
 
     /*
      * Sync selectedAssets.
      */
     useEffect(() => {
-      if (
-        !arraysEqual(
-          prevSelectedAssetsRef.current,
-          selectedAssets
-        )
-      ) {
-        setAssets(
-          selectedAssets
-        );
+      if (!arraysEqual(prevSelectedAssetsRef.current, selectedAssets)) {
+        setAssets(selectedAssets);
 
-        prevSelectedAssetsRef.current =
-          selectedAssets;
+        prevSelectedAssetsRef.current = selectedAssets;
 
         /*
          * Keep new external assets
          * unrevealed when uploading.
          */
         if (uploading) {
-          setRevealedAssets(
-            (prev) => {
-              const next = {
-                ...prev,
-              };
+          setRevealedAssets((prev) => {
+            const next = {
+              ...prev,
+            };
 
-              selectedAssets.forEach(
-                (asset) => {
-                  const progress =
-                    uploadProgress[
-                      asset.id
-                    ] ?? 0;
+            selectedAssets.forEach((asset) => {
+              const progress = uploadProgress[asset.id] ?? 0;
 
-                  if (
-                    progress <
-                    100
-                  ) {
-                    next[
-                      asset.id
-                    ] = false;
-                  }
-                }
-              );
+              if (progress < 100) {
+                next[asset.id] = false;
+              }
+            });
 
-              return next;
-            }
-          );
+            return next;
+          });
         }
       }
-    }, [
-      selectedAssets,
-      uploading,
-      uploadProgress,
-    ]);
+    }, [selectedAssets, uploading, uploadProgress]);
 
     /*
      * Request custom gallery permission.
      */
-    const requestGalleryPermissions =
-      async (): Promise<{
-        granted: boolean;
-        canAskAgain: boolean;
-      }> => {
-        try {
-          const {
-            status,
-            canAskAgain:
-              canAsk,
-          } =
-            await MediaLibrary.requestPermissionsAsync();
+    const requestGalleryPermissions = async (): Promise<{
+      granted: boolean;
+      canAskAgain: boolean;
+    }> => {
+      try {
+        const { status, canAskAgain: canAsk } =
+          await MediaLibrary.requestPermissionsAsync();
 
-          const granted =
-            status ===
-            'granted';
+        const granted = status === "granted";
 
-          setHasPermission(
-            granted
-          );
+        setHasPermission(granted);
 
-          setCanAskAgain(
-            canAsk
-          );
+        setCanAskAgain(canAsk);
 
-          if (!granted) {
-            onError?.(
-              canAsk
-                ? 'Media library permission is required to access photos and videos'
-                : 'Media library permission was denied. Enable it in Settings to continue.'
-            );
-          }
-
-          return {
-            granted,
-            canAskAgain:
-              canAsk,
-          };
-        } catch (error) {
-          console.error(
-            'MediaLibrary permission error:',
-            error
-          );
-
-          setHasPermission(
-            false
-          );
-
-          setCanAskAgain(
-            true
-          );
-
+        if (!granted) {
           onError?.(
-            'Failed to request media library permission'
+            canAsk
+              ? "Media library permission is required to access photos and videos"
+              : "Media library permission was denied. Enable it in Settings to continue.",
           );
-
-          return {
-            granted: false,
-            canAskAgain: true,
-          };
         }
-      };
+
+        return {
+          granted,
+          canAskAgain: canAsk,
+        };
+      } catch (error) {
+        console.error("MediaLibrary permission error:", error);
+
+        setHasPermission(false);
+
+        setCanAskAgain(true);
+
+        onError?.("Failed to request media library permission");
+
+        return {
+          granted: false,
+          canAskAgain: true,
+        };
+      }
+    };
 
     /*
      * Load custom gallery.
      */
-    const loadGalleryAssets =
-      async () => {
-        try {
-          const query =
-            new MediaLibrary.Query();
+    const loadGalleryAssets = async () => {
+      try {
+        const query = new MediaLibrary.Query();
 
-          if (
-            mediaType ===
-            'image'
-          ) {
-            query.eq(
-              MediaLibrary.AssetField
-                .MEDIA_TYPE,
-              MediaLibrary.MediaType
-                .IMAGE
-            );
-          } else if (
-            mediaType ===
-            'video'
-          ) {
-            query.eq(
-              MediaLibrary.AssetField
-                .MEDIA_TYPE,
-              MediaLibrary.MediaType
-                .video
-            );
-          } else {
-            query.within(
-              MediaLibrary.AssetField
-                .MEDIA_TYPE,
-              [
-                MediaLibrary.MediaType
-                  .IMAGE,
-                MediaLibrary.MediaType
-                  .video,
-              ]
-            );
-          }
-
-          const found =
-            await query
-              .orderBy({
-                key: MediaLibrary
-                  .AssetField
-                  .CREATION_TIME,
-                ascending:
-                  false,
-              })
-              .limit(100)
-              .exe();
-
-          const resolved =
-            await Promise.all(
-              found.map(
-                (asset) =>
-                  asset.getInfo()
-              )
-            );
-
-          setGalleryAssets(
-            resolved
+        if (mediaType === "image") {
+          query.eq(
+            MediaLibrary.AssetField.MEDIA_TYPE,
+            MediaLibrary.MediaType.IMAGE,
           );
-        } catch (error) {
-          console.error(
-            'Failed to load gallery assets:',
-            error
+        } else if (mediaType === "video") {
+          query.eq(
+            MediaLibrary.AssetField.MEDIA_TYPE,
+            MediaLibrary.MediaType.video,
           );
-
-          onError?.(
-            'Failed to load gallery assets'
-          );
+        } else {
+          query.within(MediaLibrary.AssetField.MEDIA_TYPE, [
+            MediaLibrary.MediaType.IMAGE,
+            MediaLibrary.MediaType.video,
+          ]);
         }
-      };
+
+        const found = await query
+          .orderBy({
+            key: MediaLibrary.AssetField.CREATION_TIME,
+            ascending: false,
+          })
+          .limit(100)
+          .exe();
+
+        const resolved = await Promise.all(
+          found.map((asset) => asset.getInfo()),
+        );
+
+        setGalleryAssets(resolved);
+      } catch (error) {
+        console.error("Failed to load gallery assets:", error);
+
+        onError?.("Failed to load gallery assets");
+      }
+    };
 
     /*
      * Native Expo picker.
      */
-    const pickWithImagePicker =
-      async () => {
-        try {
-          const permission =
-            await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const pickWithImagePicker = async () => {
+      try {
+        const permission =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-          if (
-            !permission.granted
-          ) {
-            onError?.(
-              permission.canAskAgain
-                ? 'Photo library permission is required to select media'
-                : 'Photo library permission was denied. Enable it in Settings.'
-            );
-
-            if (
-              !permission.canAskAgain
-            ) {
-              await Linking.openSettings();
-            }
-
-            return;
-          }
-
-          let pickerMediaTypes:
-            | ['images']
-            | ['videos']
-            | ['images', 'videos'];
-
-          if (
-            mediaType ===
-            'image'
-          ) {
-            pickerMediaTypes = [
-              'images',
-            ];
-          } else if (
-            mediaType ===
-            'video'
-          ) {
-            pickerMediaTypes = [
-              'videos',
-            ];
-          } else {
-            pickerMediaTypes = [
-              'images',
-              'videos',
-            ];
-          }
-
-          const result =
-            await ImagePicker.launchImageLibraryAsync(
-              {
-                mediaTypes:
-                  pickerMediaTypes,
-
-                allowsMultipleSelection:
-                  multiple,
-
-                selectionLimit:
-                  multiple
-                    ? maxSelection
-                    : 1,
-
-                quality:
-                  quality ===
-                  'high'
-                    ? 1
-                    : quality ===
-                        'medium'
-                      ? 0.7
-                      : 0.3,
-              }
-            );
-
-          if (
-            result.canceled ||
-            !result.assets?.length
-          ) {
-            return;
-          }
-
-          const newAssets =
-            result.assets.map(
-              (
-                asset,
-                index
-              ) => ({
-                id: `picker_${Date.now()}_${index}`,
-                uri: asset.uri,
-                type:
-                  asset.type ===
-                  'video'
-                    ? 'video'
-                    : 'image',
-                width:
-                  asset.width,
-                height:
-                  asset.height,
-                duration:
-                  asset.duration ||
-                  undefined,
-                filename:
-                  asset.fileName ||
-                  undefined,
-                fileSize:
-                  asset.fileSize ||
-                  undefined,
-              })
-            );
-
-          /*
-           * New previews start blurred
-           * when upload mode is active.
-           */
-          if (uploading) {
-            setRevealedAssets(
-              (prev) => {
-                const next = {
-                  ...prev,
-                };
-
-                newAssets.forEach(
-                  (asset) => {
-                    next[
-                      asset.id
-                    ] = false;
-                  }
-                );
-
-                return next;
-              }
-            );
-          }
-
-          handleAssetSelection(
-            newAssets
-          );
-        } catch (error) {
-          console.error(
-            'ImagePicker error:',
-            error
-          );
-
+        if (!permission.granted) {
           onError?.(
-            'Failed to pick media from gallery'
+            permission.canAskAgain
+              ? "Photo library permission is required to select media"
+              : "Photo library permission was denied. Enable it in Settings.",
           );
+
+          if (!permission.canAskAgain) {
+            await Linking.openSettings();
+          }
+
+          return;
         }
-      };
+
+        let pickerMediaTypes: ["images"] | ["videos"] | ["images", "videos"];
+
+        if (mediaType === "image") {
+          pickerMediaTypes = ["images"];
+        } else if (mediaType === "video") {
+          pickerMediaTypes = ["videos"];
+        } else {
+          pickerMediaTypes = ["images", "videos"];
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: pickerMediaTypes,
+
+          allowsMultipleSelection: multiple,
+
+          selectionLimit: multiple ? maxSelection : 1,
+
+          quality: quality === "high" ? 1 : quality === "medium" ? 0.7 : 0.3,
+        });
+
+        if (result.canceled || !result.assets?.length) {
+          return;
+        }
+
+        const newAssets = result.assets.map((asset, index) => ({
+          id: `picker_${Date.now()}_${index}`,
+          uri: asset.uri,
+          type: asset.type === "video" ? "video" : "image",
+          width: asset.width,
+          height: asset.height,
+          duration: asset.duration || undefined,
+          filename: asset.fileName || undefined,
+          fileSize: asset.fileSize || undefined,
+        }));
+
+        /*
+         * New previews start blurred
+         * when upload mode is active.
+         */
+        if (uploading) {
+          setRevealedAssets((prev) => {
+            const next = {
+              ...prev,
+            };
+
+            newAssets.forEach((asset) => {
+              next[asset.id] = false;
+            });
+
+            return next;
+          });
+        }
+
+        handleAssetSelection(newAssets);
+      } catch (error) {
+        console.error("ImagePicker error:", error);
+
+        onError?.("Failed to pick media from gallery");
+      }
+    };
 
     /*
      * Open gallery.
      */
-    const pickFromGallery =
-      async () => {
-        if (!gallery) {
-          await pickWithImagePicker();
+    const pickFromGallery = async () => {
+      if (!gallery) {
+        await pickWithImagePicker();
+        return;
+      }
+
+      try {
+        const permission = await requestGalleryPermissions();
+
+        if (!permission.granted) {
+          if (!permission.canAskAgain) {
+            await Linking.openSettings();
+          }
+
           return;
         }
 
-        try {
-          const permission =
-            await requestGalleryPermissions();
+        await loadGalleryAssets();
 
-          if (
-            !permission.granted
-          ) {
-            if (
-              !permission.canAskAgain
-            ) {
-              await Linking.openSettings();
-            }
+        setIsGalleryVisible(true);
+      } catch (error) {
+        console.error("Custom gallery error:", error);
 
-            return;
-          }
-
-          await loadGalleryAssets();
-
-          setIsGalleryVisible(
-            true
-          );
-        } catch (error) {
-          console.error(
-            'Custom gallery error:',
-            error
-          );
-
-          onError?.(
-            'Failed to open media gallery'
-          );
-        }
-      };
+        onError?.("Failed to open media gallery");
+      }
+    };
 
     /*
      * Add assets.
      */
-    const handleAssetSelection =
-      (
-        newAssets: MediaAsset[]
-      ) => {
-        let updatedAssets: MediaAsset[];
+    const handleAssetSelection = (newAssets: MediaAsset[]) => {
+      let updatedAssets: MediaAsset[];
 
-        if (multiple) {
-          updatedAssets = [
-            ...assets,
-            ...newAssets,
-          ].slice(
-            0,
-            maxSelection
-          );
-        } else {
-          updatedAssets =
-            newAssets;
-        }
+      if (multiple) {
+        updatedAssets = [...assets, ...newAssets].slice(0, maxSelection);
+      } else {
+        updatedAssets = newAssets;
+      }
 
-        setAssets(
-          updatedAssets
-        );
+      setAssets(updatedAssets);
 
-        prevSelectedAssetsRef.current =
-          updatedAssets;
+      prevSelectedAssetsRef.current = updatedAssets;
 
-        onSelectionChange?.(
-          updatedAssets
-        );
-      };
+      onSelectionChange?.(updatedAssets);
+    };
 
     /*
      * Custom gallery selection.
      */
-    const handleGalleryAssetSelect =
-      async (
-        galleryAsset: MediaLibrary.AssetInfo
-      ) => {
-        try {
-          const newAsset: MediaAsset =
-            {
-              id: galleryAsset.id,
-              uri: galleryAsset.uri,
-              type:
-                galleryAsset.mediaType ===
-                MediaLibrary.MediaType
-                  .video
-                  ? 'video'
-                  : 'image',
-              width:
-                galleryAsset.width,
-              height:
-                galleryAsset.height,
-              duration:
-                galleryAsset.duration ||
-                undefined,
-              filename:
-                galleryAsset.filename,
-            };
+    const handleGalleryAssetSelect = async (
+      galleryAsset: MediaLibrary.AssetInfo,
+    ) => {
+      try {
+        const newAsset: MediaAsset = {
+          id: galleryAsset.id,
+          uri: galleryAsset.uri,
+          type:
+            galleryAsset.mediaType === MediaLibrary.MediaType.video
+              ? "video"
+              : "image",
+          width: galleryAsset.width,
+          height: galleryAsset.height,
+          duration: galleryAsset.duration || undefined,
+          filename: galleryAsset.filename,
+        };
 
-          if (multiple) {
-            const alreadySelected =
-              assets.some(
-                (asset) =>
-                  asset.id ===
-                  newAsset.id
-              );
+        if (multiple) {
+          const alreadySelected = assets.some(
+            (asset) => asset.id === newAsset.id,
+          );
 
-            if (
-              alreadySelected
-            ) {
-              const filtered =
-                assets.filter(
-                  (asset) =>
-                    asset.id !==
-                    newAsset.id
-                );
+          if (alreadySelected) {
+            const filtered = assets.filter((asset) => asset.id !== newAsset.id);
 
-              setAssets(
-                filtered
-              );
+            setAssets(filtered);
 
-              prevSelectedAssetsRef.current =
-                filtered;
+            prevSelectedAssetsRef.current = filtered;
 
-              onSelectionChange?.(
-                filtered
-              );
-
-              return;
-            }
-
-            if (
-              assets.length >=
-              maxSelection
-            ) {
-              return;
-            }
-
-            const updated = [
-              ...assets,
-              newAsset,
-            ];
-
-            setAssets(
-              updated
-            );
-
-            prevSelectedAssetsRef.current =
-              updated;
-
-            onSelectionChange?.(
-              updated
-            );
+            onSelectionChange?.(filtered);
 
             return;
           }
 
-          const newAssets = [
-            newAsset,
-          ];
+          if (assets.length >= maxSelection) {
+            return;
+          }
 
-          setAssets(
-            newAssets
-          );
+          const updated = [...assets, newAsset];
 
-          prevSelectedAssetsRef.current =
-            newAssets;
+          setAssets(updated);
 
-          onSelectionChange?.(
-            newAssets
-          );
+          prevSelectedAssetsRef.current = updated;
 
-          setIsGalleryVisible(
-            false
-          );
-        } catch (error) {
-          console.error(
-            'Failed to select asset:',
-            error
-          );
+          onSelectionChange?.(updated);
 
-          onError?.(
-            'Failed to select asset'
-          );
+          return;
         }
-      };
+
+        const newAssets = [newAsset];
+
+        setAssets(newAssets);
+
+        prevSelectedAssetsRef.current = newAssets;
+
+        onSelectionChange?.(newAssets);
+
+        setIsGalleryVisible(false);
+      } catch (error) {
+        console.error("Failed to select asset:", error);
+
+        onError?.("Failed to select asset");
+      }
+    };
 
     /*
      * Remove asset.
      */
-    const removeAsset = (
-      assetId: string
-    ) => {
-      const filtered =
-        assets.filter(
-          (asset) =>
-            asset.id !== assetId
-        );
+    const removeAsset = (assetId: string) => {
+      const filtered = assets.filter((asset) => asset.id !== assetId);
 
       setAssets(filtered);
 
-      prevSelectedAssetsRef.current =
-        filtered;
+      prevSelectedAssetsRef.current = filtered;
 
-      setRevealedAssets(
-        (prev) => {
-          const next = {
-            ...prev,
-          };
+      setRevealedAssets((prev) => {
+        const next = {
+          ...prev,
+        };
 
-          delete next[
-            assetId
-          ];
+        delete next[assetId];
 
-          return next;
-        }
-      );
+        return next;
+      });
 
-      onSelectionChange?.(
-        filtered
-      );
+      onSelectionChange?.(filtered);
     };
 
     /*
      * Called when upload animation
      * has finished.
      */
-    const handleUploadComplete =
-      (assetId: string) => {
-        setRevealedAssets(
-          (prev) => ({
-            ...prev,
-            [assetId]: true,
-          })
-        );
-      };
+    const handleUploadComplete = (assetId: string) => {
+      setRevealedAssets((prev) => ({
+        ...prev,
+        [assetId]: true,
+      }));
+    };
 
     /*
      * Preview item.
      */
-    const renderPreviewItem = ({
-      item,
-    }: {
-      item: MediaAsset;
-    }) => {
-      const progress =
-        uploadProgress[
-          item.id
-        ] ?? 0;
+    const renderPreviewItem = ({ item }: { item: MediaAsset }) => {
+      const progress = uploadProgress[item.id] ?? 0;
 
       /*
        * An item is considered revealed
        * when its animation has completed.
        */
       const isRevealed =
-        !uploading ||
-        revealedAssets[
-          item.id
-        ] === true ||
-        progress >= 100;
+        !uploading || revealedAssets[item.id] === true || progress >= 100;
 
-      const isUploading =
-        uploading &&
-        !isRevealed;
+      const isUploading = uploading && !isRevealed;
 
       return (
         <View
           style={[
             styles.previewItem,
             {
-              width:
-                previewSize,
-              height:
-                previewSize,
+              width: previewSize,
+              height: previewSize,
               borderColor,
             },
           ]}
@@ -1112,34 +736,20 @@ export const MediaPicker = forwardRef<
             style={[
               styles.previewImage,
               {
-                width:
-                  previewSize,
-                height:
-                  previewSize,
+                width: previewSize,
+                height: previewSize,
               },
             ]}
             contentFit="cover"
-            blurRadius={
-              isUploading
-                ? 18
-                : 0
-            }
+            blurRadius={isUploading ? 18 : 0}
           />
 
           {/*
            * Video icon.
            */}
-          {item.type ===
-            'video' && (
-            <View
-              style={
-                styles.videoIndicator
-              }
-            >
-              <Video
-                size={16}
-                color="white"
-              />
+          {item.type === "video" && (
+            <View style={styles.videoIndicator}>
+              <Video size={16} color="white" />
             </View>
           )}
 
@@ -1148,20 +758,10 @@ export const MediaPicker = forwardRef<
            */}
           {isUploading && (
             <AnimatedUploadOverlay
-              progress={
-                progress
-              }
-              primaryColor={
-                primaryColor
-              }
-              secondary={
-                secondary
-              }
-              onComplete={() =>
-                handleUploadComplete(
-                  item.id
-                )
-              }
+              progress={progress}
+              primaryColor={primaryColor}
+              secondary={secondary}
+              onComplete={() => handleUploadComplete(item.id)}
             />
           )}
 
@@ -1174,22 +774,12 @@ export const MediaPicker = forwardRef<
               style={[
                 styles.removeButton,
                 {
-                  backgroundColor:
-                    primaryColor,
+                  backgroundColor: primaryColor,
                 },
               ]}
-              onPress={() =>
-                removeAsset(
-                  item.id
-                )
-              }
+              onPress={() => removeAsset(item.id)}
             >
-              <X
-                size={12}
-                color={
-                  secondary
-                }
-              />
+              <X size={12} color={secondary} />
             </TouchableOpacity>
           )}
         </View>
@@ -1199,177 +789,111 @@ export const MediaPicker = forwardRef<
     /*
      * Custom gallery item.
      */
-    const renderGalleryItem = ({
-      item,
-    }: {
-      item: MediaLibrary.AssetInfo;
-    }) => {
-      const isSelected =
-        assets.some(
-          (asset) =>
-            asset.id === item.id
-        );
+    const renderGalleryItem = ({ item }: { item: MediaLibrary.AssetInfo }) => {
+      const isSelected = assets.some((asset) => asset.id === item.id);
 
-      const itemWidth =
-        screenWidth / 3 - 4;
+      const itemWidth = screenWidth / 3 - 4;
 
       return (
         <Pressable
           style={[
             styles.galleryItem,
             {
-              width:
-                itemWidth,
-              height:
-                itemWidth,
+              width: itemWidth,
+              height: itemWidth,
             },
             isSelected && {
-              borderColor:
-                primaryColor,
+              borderColor: primaryColor,
               borderWidth: 3,
             },
           ]}
-          onPress={() =>
-            handleGalleryAssetSelect(
-              item
-            )
-          }
+          onPress={() => handleGalleryAssetSelect(item)}
         >
           <ExpoImage
             source={{
               uri: item.uri,
             }}
-            style={
-              styles.galleryImage
-            }
+            style={styles.galleryImage}
             contentFit="cover"
           />
 
-          {item.mediaType ===
-            MediaLibrary.MediaType
-              .video && (
-            <View
-              style={
-                styles.videoIndicator
-              }
-            >
-              <Video
-                size={20}
-                color="white"
-              />
+          {item.mediaType === MediaLibrary.MediaType.video && (
+            <View style={styles.videoIndicator}>
+              <Video size={20} color="white" />
             </View>
           )}
 
-          {multiple &&
-            isSelected && (
-              <View
-                style={[
-                  styles.selectedIndicator,
-                  {
-                    backgroundColor:
-                      primaryColor,
-                  },
-                ]}
+          {multiple && isSelected && (
+            <View
+              style={[
+                styles.selectedIndicator,
+                {
+                  backgroundColor: primaryColor,
+                },
+              ]}
+            >
+              <Text
+                style={{
+                  color: secondary,
+                  fontSize: 12,
+                  fontWeight: "bold",
+                }}
               >
-                <Text
-                  style={{
-                    color:
-                      secondary,
-                    fontSize: 12,
-                    fontWeight:
-                      'bold',
-                  }}
-                >
-                  {assets.findIndex(
-                    (
-                      asset
-                    ) =>
-                      asset.id ===
-                      item.id
-                  ) + 1}
-                </Text>
-              </View>
-            )}
+                {assets.findIndex((asset) => asset.id === item.id) + 1}
+              </Text>
+            </View>
+          )}
         </Pressable>
       );
     };
 
     return (
-      <View
-        ref={ref}
-        style={style}
-      >
+      <View ref={ref} style={style}>
         {children ? (
           children
         ) : (
           <Button
-            onPress={
-              pickFromGallery
-            }
-            disabled={
-              disabled
-            }
-            variant={
-              variant
-            }
+            onPress={pickFromGallery}
+            disabled={disabled}
+            variant={variant}
             size={size}
             icon={icon}
           >
             {buttonText ||
               `Select ${
-                mediaType ===
-                'all'
-                  ? 'Media'
-                  : mediaType ===
-                      'image'
-                    ? 'Images'
-                    : 'Videos'
+                mediaType === "all"
+                  ? "Media"
+                  : mediaType === "image"
+                    ? "Images"
+                    : "Videos"
               }`}
           </Button>
         )}
 
-        {showPreview &&
-          assets.length > 0 && (
-            <FlatList
-              data={assets}
-              renderItem={
-                renderPreviewItem
-              }
-              keyExtractor={(
-                item
-              ) => item.id}
-              horizontal
-              showsHorizontalScrollIndicator={
-                false
-              }
-              style={
-                styles.previewContainer
-              }
-              contentContainerStyle={
-                styles.previewContent
-              }
-            />
-          )}
+        {showPreview && assets.length > 0 && (
+          <FlatList
+            data={assets}
+            renderItem={renderPreviewItem}
+            keyExtractor={(item) => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.previewContainer}
+            contentContainerStyle={styles.previewContent}
+          />
+        )}
 
         {gallery && (
           <Modal
-            visible={
-              isGalleryVisible
-            }
+            visible={isGalleryVisible}
             animationType="slide"
             presentationStyle="pageSheet"
-            onRequestClose={() =>
-              setIsGalleryVisible(
-                false
-              )
-            }
+            onRequestClose={() => setIsGalleryVisible(false)}
           >
             <View
               style={[
                 styles.modalContainer,
                 {
-                  backgroundColor:
-                    cardColor,
+                  backgroundColor: cardColor,
                 },
               ]}
             >
@@ -1377,57 +901,39 @@ export const MediaPicker = forwardRef<
                 style={[
                   styles.modalHeader,
                   {
-                    borderBottomColor:
-                      borderColor,
+                    borderBottomColor: borderColor,
                   },
                 ]}
               >
                 <Text variant="title">
                   {buttonText ||
                     `Select ${
-                      mediaType ===
-                      'all'
-                        ? 'Media'
-                        : mediaType ===
-                            'image'
-                          ? 'Images'
-                          : 'Videos'
+                      mediaType === "all"
+                        ? "Media"
+                        : mediaType === "image"
+                          ? "Images"
+                          : "Videos"
                     }`}
                 </Text>
 
-                <View
-                  style={
-                    styles.modalActions
-                  }
-                >
+                <View style={styles.modalActions}>
                   {multiple && (
                     <Text
                       style={[
                         styles.selectionCount,
                         {
-                          color:
-                            mutedColor,
+                          color: mutedColor,
                         },
                       ]}
                     >
-                      {
-                        assets.length
-                      }
-                      /
-                      {
-                        maxSelection
-                      }
+                      {assets.length}/{maxSelection}
                     </Text>
                   )}
 
                   <Button
                     size="sm"
                     variant="success"
-                    onPress={() =>
-                      setIsGalleryVisible(
-                        false
-                      )
-                    }
+                    onPress={() => setIsGalleryVisible(false)}
                   >
                     Done
                   </Button>
@@ -1435,41 +941,29 @@ export const MediaPicker = forwardRef<
               </View>
 
               <FlatList
-                data={
-                  galleryAssets
-                }
-                renderItem={
-                  renderGalleryItem
-                }
-                keyExtractor={(
-                  item
-                ) => item.id}
+                data={galleryAssets}
+                renderItem={renderGalleryItem}
+                keyExtractor={(item) => item.id}
                 numColumns={3}
-                contentContainerStyle={
-                  styles.galleryContent
-                }
+                contentContainerStyle={styles.galleryContent}
               />
             </View>
           </Modal>
         )}
       </View>
     );
-  }
+  },
 );
 
 const styles = StyleSheet.create({
   compactButton: {
     width: 60,
     height: 60,
-    borderRadius:
-      CORNERS,
+    borderRadius: CORNERS,
     borderWidth: 1,
-    borderStyle:
-      'dashed',
-    alignItems:
-      'center',
-    justifyContent:
-      'center',
+    borderStyle: "dashed",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   disabled: {
@@ -1491,8 +985,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
     borderRadius: 10,
     borderWidth: 1,
-    overflow: 'hidden',
-    position: 'relative',
+    overflow: "hidden",
+    position: "relative",
   },
 
   previewImage: {
@@ -1503,18 +997,15 @@ const styles = StyleSheet.create({
    * Upload overlay
    */
   uploadOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
     borderRadius: 9,
-    backgroundColor:
-      'rgba(0,0,0,0.58)',
-    alignItems:
-      'center',
-    justifyContent:
-      'center',
+    backgroundColor: "rgba(0,0,0,0.58)",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   progressCircle: {
@@ -1522,70 +1013,58 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: 26,
     borderWidth: 3,
-    alignItems:
-      'center',
-    justifyContent:
-      'center',
-    position:
-      'relative',
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
   },
 
   progressArc: {
-    position:
-      'absolute',
+    position: "absolute",
     width: 52,
     height: 52,
     borderRadius: 26,
     borderWidth: 3,
-    borderLeftColor:
-      'transparent',
-    borderBottomColor:
-      'transparent',
+    borderLeftColor: "transparent",
+    borderBottomColor: "transparent",
   },
 
   progressCenter: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    alignItems:
-      'center',
-    justifyContent:
-      'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   progressText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 11,
-    fontWeight: '800',
+    fontWeight: "800",
   },
 
   uploadingText: {
     marginTop: 7,
-    color: '#fff',
+    color: "#fff",
     fontSize: 9,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 
   successCircle: {
     width: 52,
     height: 52,
     borderRadius: 26,
-    alignItems:
-      'center',
-    justifyContent:
-      'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   /*
    * Video indicator
    */
   videoIndicator: {
-    position:
-      'absolute',
+    position: "absolute",
     top: 8,
     left: 8,
-    backgroundColor:
-      'rgba(0,0,0,0.6)',
+    backgroundColor: "rgba(0,0,0,0.6)",
     borderRadius: 12,
     padding: 4,
   },
@@ -1594,17 +1073,14 @@ const styles = StyleSheet.create({
    * Remove button
    */
   removeButton: {
-    position:
-      'absolute',
+    position: "absolute",
     top: 6,
     right: 6,
     width: 20,
     height: 20,
     borderRadius: 10,
-    alignItems:
-      'center',
-    justifyContent:
-      'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   /*
@@ -1615,30 +1091,22 @@ const styles = StyleSheet.create({
   },
 
   modalHeader: {
-    flexDirection:
-      'row',
-    justifyContent:
-      'space-between',
-    alignItems:
-      'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 16,
-    borderBottomWidth:
-      StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
 
   modalActions: {
-    flexDirection:
-      'row',
-    alignItems:
-      'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 16,
   },
 
   selectionCount: {
-    fontSize:
-      FONT_SIZE,
-    fontWeight:
-      '500',
+    fontSize: FONT_SIZE,
+    fontWeight: "500",
   },
 
   galleryContent: {
@@ -1648,31 +1116,25 @@ const styles = StyleSheet.create({
   galleryItem: {
     margin: 1,
     borderRadius: 4,
-    overflow:
-      'hidden',
-    position:
-      'relative',
+    overflow: "hidden",
+    position: "relative",
   },
 
   galleryImage: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
   },
 
   selectedIndicator: {
-    position:
-      'absolute',
+    position: "absolute",
     top: 8,
     right: 8,
     width: 24,
     height: 24,
     borderRadius: 12,
-    alignItems:
-      'center',
-    justifyContent:
-      'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 
-MediaPicker.displayName =
-  'MediaPicker';
+MediaPicker.displayName = "MediaPicker";
