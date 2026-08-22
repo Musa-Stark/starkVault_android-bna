@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react-native";
 import { useApp } from "@/providers/app-context";
 import handleNoteForm from "@/components/starkUI/upload/notes.form";
+import NoteCard from "@/components/starkUI/list/NoteCard";
+import { ScrollView } from "react-native-gesture-handler";
+import { Card } from "@/components/ui/card";
 
 const notes = () => {
   const {
@@ -55,35 +58,67 @@ const notes = () => {
         Notes
       </Text>
 
-      <Text variant="caption">Lessons, ideas and reminders</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Text variant="caption">Lessons, ideas and reminders</Text>
 
-      <Button
-        icon={Plus}
-        style={{ marginTop: 20 }}
-        onPress={() =>
-          handleNoteForm({
-            noteTitle,
-            setNoteTitle,
-            noteTitleRef,
+        <Button
+          icon={Plus}
+          style={{ marginTop: 20 }}
+          onPress={() =>
+            handleNoteForm({
+              noteTitle,
+              setNoteTitle,
+              noteTitleRef,
 
-            content,
-            setContent,
-            contentRef,
+              content,
+              setContent,
+              contentRef,
 
-            category,
-            setCategory,
-            categoryRef,
+              category,
+              setCategory,
+              categoryRef,
 
-            pin,
-            setPin,
-            pinRef,
+              pin,
+              setPin,
+              pinRef,
 
-            setUploadForm,
-          })
-        }
-      >
-        New Note
-      </Button>
+              setUploadForm,
+            })
+          }
+        >
+          New Note
+        </Button>
+
+        <Card style={{ marginTop: 20, ...globalStyles.flexBox }}>
+          <Text variant="caption">No notes added yet</Text>
+        </Card>
+
+        {/* notes */}
+        <View style={{ marginVertical: 20 }}>
+          <NoteCard
+            note={{
+              _id: "1",
+              title: "Meeting Notes",
+              content: "Discuss the new dashboard design, API integration, and release timeline. Discuss the new dashboard design, \n\n\nAPI integration, and release timeline. Discuss the new dashboard design, API integration, and release timeline. Discuss the new dashboard design, API integration, and release timeline.",
+              category: "Work",
+              pinned: true,
+              updatedAt: new Date().toISOString(),
+            }}
+            onView={(note) => {
+              console.log("View", note);
+            }}
+            onEdit={(note) => {
+              console.log("Edit", note);
+            }}
+            onDelete={(note) => {
+              console.log("Delete", note);
+            }}
+            onTogglePin={(note) => {
+              console.log("Toggle pin", note);
+            }}
+          />
+        </View>
+      </ScrollView>
     </View>
   );
 };
