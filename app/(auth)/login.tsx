@@ -9,11 +9,11 @@ import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
 import OAuthButton from "@/components/starkUI/auth/OAuthButton";
 import AuthDivider from "@/components/starkUI/auth/AuthDivider";
-import authApiCall from "./authApiCall";
-import * as SecureStore from "expo-secure-store";
+import { useAuth } from "@/providers/auth-provider";
 
 const Login = () => {
   const background = useColor("background");
+  const { login } = useAuth();
 
   const emailRef = useRef<any>(null);
   const passwordRef = useRef<any>(null);
@@ -29,7 +29,7 @@ const Login = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const response = await authApiCall({ email, password, page: "login" });
+    const response = await login(email, password)
 
     setTimeout(() => {
       setIsLoading(false);

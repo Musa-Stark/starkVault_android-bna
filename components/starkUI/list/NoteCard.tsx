@@ -325,7 +325,7 @@ export default function NoteCard({
       {/* Copied Toast                                            */}
       {/* ====================================================== */}
 
-      {showCopied && (
+      {!showCopied && (
         <View
           pointerEvents="none"
           style={{
@@ -343,7 +343,7 @@ export default function NoteCard({
               alignItems: "center",
               gap: 8,
               paddingHorizontal: 14,
-              paddingVertical: 10,
+              paddingVertical: 15,
               borderRadius: 999,
               backgroundColor: foreground,
               elevation: 6,
@@ -354,6 +354,7 @@ export default function NoteCard({
               },
               shadowOpacity: 0.2,
               shadowRadius: 6,
+              width: "100%"
             }}
           >
             <View

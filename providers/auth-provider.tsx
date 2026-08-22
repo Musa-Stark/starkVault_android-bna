@@ -133,10 +133,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     if (!response.ok) {
+      console.log(response)
       throw new Error("Invalid email or password");
     }
 
     const data = await response.json();
+    console.log(data)
 
     await SecureStore.setItemAsync("access_token", data.accessToken);
 

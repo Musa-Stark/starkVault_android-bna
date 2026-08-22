@@ -17,6 +17,7 @@ import toastConfig from "@/components/starkUI/StarkToast";
 import UploadForm from "@/components/starkUI/upload/uploadForm";
 import { AppProvider } from "@/providers/app-context";
 import { AuthProvider } from "@/providers/auth-provider";
+import { ToastProvider } from "@/providers/toast-provider";
 import { useAuth } from "@/providers/auth-provider";
 
 // SplashScreen.setOptions({
@@ -47,7 +48,9 @@ export default function RootLayout() {
         <StatusBar style={colorScheme === "dark" ? "light" : "dark"} animated />
         <AuthProvider>
           <AppProvider>
-            <RootNavigator />
+            <ToastProvider>
+              <RootNavigator />
+            </ToastProvider>
           </AppProvider>
         </AuthProvider>
       </ThemeProvider>
@@ -109,7 +112,7 @@ const RootNavigator = () => {
         <Stack.Screen name="+not-found" />
       </Stack>
       <Toast config={toastConfig} />
-      {status === "unauthenticated" ? (
+      {status !== "unauthenticated" ? (
         <Redirect href={"/(auth)/login"} />
       ) : (
         <Redirect href={"/(tabs)/dashboard"} />
