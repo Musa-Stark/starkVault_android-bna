@@ -72,8 +72,6 @@ const documents = () => {
     {
       _id: "doc_001",
       documentTitle: "Passport",
-      documentCategory: "Personal",
-      documentCategories: "Personal",
       format: "pdf",
       size: "2.4 MB",
       date: "2026-08-10",
@@ -83,8 +81,6 @@ const documents = () => {
     {
       _id: "doc_002",
       documentTitle: "Employment Contract",
-      documentCategory: "Work",
-      documentCategories: "Work",
       format: "pdf",
       size: "1.8 MB",
       date: "2026-08-15",
@@ -94,8 +90,6 @@ const documents = () => {
     {
       _id: "doc_003",
       documentTitle: "Bank Statement",
-      documentCategory: "Finance",
-      documentCategories: "Finance",
       format: "pdf",
       size: "856 KB",
       date: "2026-08-18",
@@ -105,8 +99,6 @@ const documents = () => {
     {
       _id: "doc_004",
       documentTitle: "Property Agreement",
-      documentCategory: "Legal",
-      documentCategories: "Legal",
       format: "docx",
       size: "3.2 MB",
       date: "2026-08-20",
@@ -116,8 +108,6 @@ const documents = () => {
     {
       _id: "doc_005",
       documentTitle: "Insurance Certificate",
-      documentCategory: "Medical",
-      documentCategories: "Medical",
       format: "jpg",
       size: "1.1 MB",
       date: "2026-08-21",
@@ -132,8 +122,8 @@ const documents = () => {
         Documents
       </Text>
 
-      <ScrollView>
-        <Text variant="caption">0 documents</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Text variant="caption">{documents.length} documents secured</Text>
 
         {/* <MediaPicker
         mediaType="all"
