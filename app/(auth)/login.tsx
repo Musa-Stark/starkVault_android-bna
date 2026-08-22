@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
@@ -10,6 +10,7 @@ import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
 import OAuthButton from "@/components/starkUI/auth/OAuthButton";
 import AuthDivider from "@/components/starkUI/auth/AuthDivider";
 import authApiCall from "./authApiCall";
+import * as SecureStore from "expo-secure-store";
 
 const Login = () => {
   const background = useColor("background");
