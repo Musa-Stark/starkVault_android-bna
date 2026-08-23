@@ -40,6 +40,7 @@ export interface InputWithLabel {
   showErrorText?: boolean;
   inputType?: "picker" | "text" | "checkbox" | "mediaPicker";
   checkboxAccessibilityLabel?: string;
+  multiline?: boolean;
 }
 
 const InputWithLabel = ({
@@ -64,6 +65,7 @@ const InputWithLabel = ({
   showErrorText,
   inputType = "text",
   checkboxAccessibilityLabel,
+  multiline,
 }: InputWithLabel) => {
   const foreground = useColor("foreground");
   const router = useRouter();
@@ -151,6 +153,7 @@ const InputWithLabel = ({
         ref={ref}
         value={value as string}
         onChangeText={handleEditing}
+        multiline={multiline}
         inputMode={inputMode ?? "text"}
         error={error}
         showErrorText={showErrorText}

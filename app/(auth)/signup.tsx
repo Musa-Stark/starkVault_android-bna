@@ -9,11 +9,16 @@ import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
 import OAuthButton from "@/components/starkUI/auth/OAuthButton";
 import AuthDivider from "@/components/starkUI/auth/AuthDivider";
-import Toast from "react-native-toast-message";
-import authApiCall from "./authApiCall";
+import { useAuth } from "@/providers/auth-provider";
+import { useToast } from "@/providers/toast-provider";
+import { useRouter } from "expo-router";
 
 const Signup = () => {
   const background = useColor("background");
+  const { signup } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
+
   const nameRef = useRef<any>(null);
   const emailRef = useRef<any>(null);
   const passwordRef = useRef<any>(null);
@@ -31,21 +36,27 @@ const Signup = () => {
 
   const handleSubmit = async () => {
     if (password !== confirmPassword) {
-      Toast.show({
-        type: "error",
-        text1: "Password mismatch",
-        text2: "Password must match confirm password",
-        position: "bottom",
-      });
+      toast.error("Password mismatch", {
+        description: "Password and confirm password must match."
+      })
       return;
     }
     setIsLoading(true);
 
-    const response = await authApiCall({
-      fullName,
-      email,
-      password,
-      page: "signup",
+    const response = await signup(fullName, email, password);
+    setIsLoading(false);
+    if (!response.success) {
+      toast.error(response.message!);
+      return;
+    }
+
+    const successMessage = response?.message || response?.data?.message;
+
+    if (successMessage) toast.success(successMessage);
+
+    router.replace({
+      pathname: "/twoFactorAuth",
+      params: { email, purpose: "signup" },
     });
 
     setTimeout(() => {

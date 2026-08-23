@@ -66,6 +66,40 @@ const passwords = () => {
     await Clipboard.setStringAsync(credentials);
   };
 
+  // new
+  const passwords = [
+    {
+      _id: "pass_001",
+      serviceName: "GitHub",
+      username: "john.doe@example.com",
+      password: "Gh!p9X#k2Lm@82",
+    },
+    {
+      _id: "pass_002",
+      serviceName: "Netflix",
+      username: "john.doe@example.com",
+      password: "Nf@2026!xK92",
+    },
+    {
+      _id: "pass_003",
+      serviceName: "Google",
+      username: "john.doe@gmail.com",
+      password: "Goo!e_82#Lm91",
+    },
+    {
+      _id: "pass_004",
+      serviceName: "AWS Console",
+      username: "admin@example.com",
+      password: "Aws#92!LmXk@71",
+    },
+    {
+      _id: "pass_005",
+      serviceName: "Notion",
+      username: "john.doe@example.com",
+      password: "Not!on_72#Klm",
+    },
+  ];
+
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
       <Text variant="heading" style={{ marginBottom: 20 }}>

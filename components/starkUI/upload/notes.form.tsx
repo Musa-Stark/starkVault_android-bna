@@ -1,4 +1,9 @@
-import type { SetUploadForm, SetString, Ref, SetBoolean } from "@/providers/app-context";
+import type {
+  SetUploadForm,
+  SetString,
+  Ref,
+  SetBoolean,
+} from "@/providers/app-context";
 
 export interface NoteForm {
   setUploadForm: SetUploadForm;
@@ -90,7 +95,7 @@ const handleNoteForm = ({
         inputType: "checkbox",
         value: pin,
         setBooleanValue: setPin,
-        ref: pinRef
+        ref: pinRef,
       },
     ],
   }));

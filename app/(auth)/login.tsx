@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
@@ -9,10 +9,16 @@ import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
 import OAuthButton from "@/components/starkUI/auth/OAuthButton";
 import AuthDivider from "@/components/starkUI/auth/AuthDivider";
-import authApiCall from "./authApiCall";
+import { useAuth } from "@/providers/auth-provider";
+import { useToast } from "@/providers/toast-provider";
+import { useRouter } from "expo-router";
 
 const Login = () => {
   const background = useColor("background");
+  const { login } = useAuth();
+  const { toast } = useToast();
+
+  const router = useRouter();
 
   const emailRef = useRef<any>(null);
   const passwordRef = useRef<any>(null);
@@ -28,13 +34,24 @@ const Login = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const response = await authApiCall({ email, password, page: "login" });
+    const response = await login(email, password);
+    setIsLoading(false);
+    if (!response.success) {
+      toast.error(response.message!);
+      return;
+    }
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setEmail("");
-      setPassword("");
-    }, 3000);
+    const successMessage = response?.message || response?.data?.message;
+
+    if (successMessage) toast.success(successMessage);
+
+    router.replace({
+      pathname: "/twoFactorAuth",
+      params: { email, purpose: "login" },
+    });
+
+    setEmail("");
+    setPassword("");
   };
 
   const handleOAuthPress = () => {

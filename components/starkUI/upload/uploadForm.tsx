@@ -182,6 +182,7 @@ const UploadForm = () => {
                     inputType={el.inputType}
                     label={el.label}
                     placeholderText={el.placeholderText}
+                    multiline={el.multiline}
                     variant="outline"
                     autoFocus={el.autoFocus}
                     disabled={el.disabled}

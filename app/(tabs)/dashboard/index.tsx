@@ -17,6 +17,7 @@ import SadapayCard from "@/components/starkUI/cards/Sadapay";
 import { ScrollView } from "react-native-gesture-handler";
 import RecentActivity from "./recentActivity";
 import handleExpenseForm from "@/components/starkUI/upload/expenses.form";
+import { useToast } from "@/providers/toast-provider";
 
 const DashBoard = () => {
   const background = useColor("background");
@@ -33,6 +34,8 @@ const DashBoard = () => {
     categoryRef,
     amountRef,
   } = useApp();
+
+  const { toast } = useToast();
 
   // submit
   useEffect(() => {
@@ -109,7 +112,11 @@ const DashBoard = () => {
         </View>
 
         {/* add password */}
-        <Button icon={Sparkles} variant="default" style={{ marginTop: 15 }}>
+        <Button
+          icon={Sparkles}
+          variant="default"
+          style={{ marginTop: 15 }}
+        >
           <Text style={{ color: background }}>Add Password</Text>
         </Button>
 
