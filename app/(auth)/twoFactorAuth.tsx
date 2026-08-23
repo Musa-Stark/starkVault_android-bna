@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
@@ -7,38 +7,104 @@ import AuthLogo from "@/components/starkUI/auth/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
 import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
 import { InputOTP } from "@/components/ui/input-otp";
-import authApiCall from "./authApiCall";
+import { router, useLocalSearchParams } from "expo-router";
+import { useAuth } from "@/providers/auth-provider";
+import { useToast } from "@/providers/toast-provider";
+
+const RESEND_TIMEOUT = 30; // seconds
 
 const TwoFactorAuth = () => {
   const background = useColor("background");
+  const { twoFactorAuth, resendOTP } = useAuth();
+  const { toast } = useToast();
+
+  const { email } = useLocalSearchParams<{ email: string }>();
 
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [resendTimer, setResendTimer] = useState(RESEND_TIMEOUT);
+  const [isResending, setIsResending] = useState(false);
+
+  // Countdown timer
+  useEffect(() => {
+    if (resendTimer <= 0) return;
+
+    const timer = setInterval(() => {
+      setResendTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [resendTimer]);
 
   const handleSubmit = async () => {
+    if (!email) {
+      toast.error("Email not found");
+      return;
+    }
+
     setIsLoading(true);
 
-    const response = await authApiCall({
-      code,
-      email: "musa@gmail.com",
-      page: "twoFactorAuth",
-    });
+    const response = await twoFactorAuth(email, code);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setCode("");
-    }, 3000);
+    setIsLoading(false);
+
+    if (!response.success) {
+      toast.error(response.message!);
+      return;
+    }
+
+    const successMessage = response?.message || response?.data?.message;
+
+    if (successMessage) {
+      toast.success(successMessage);
+    }
+
+    setCode("");
+
+    router.replace({
+      pathname: "/dashboard",
+    });
   };
 
-  const handleResendOTP = () => {
-    console.log("Resend OTP");
+  const handleResendOTP = async () => {
+    if (!email || resendTimer > 0 || isResending) {
+      return;
+    }
+
+    try {
+      setIsResending(true);
+
+      // Replace this with your actual resend OTP API/function.
+      // Example:
+      const response = await resendOTP(email);
+      if (!response.success) throw new Error(response.message!)
+
+      toast.success("A new verification code has been sent.");
+
+      // Restart countdown
+      setResendTimer(RESEND_TIMEOUT);
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setIsResending(false);
+    }
   };
 
   return (
     <View
       style={[
         globalStyles.globalContainer,
-        { backgroundColor: background, paddingTop: "20%" },
+        {
+          backgroundColor: background,
+          paddingTop: "20%",
+        },
       ]}
     >
       {/* Logo */}
@@ -47,7 +113,7 @@ const TwoFactorAuth = () => {
       {/* Banner */}
       <Banner
         heading="Two-factor Verfication"
-        messages={["Enter the 6-digit code we just sent to", "musa@gmail.com"]}
+        messages={["Enter the 6-digit code we just sent to", email]}
       />
 
       <View style={{ width: "100%", marginTop: 20 }}>
@@ -58,7 +124,7 @@ const TwoFactorAuth = () => {
           keyboardType="number-pad"
           maxLength={6}
           placeholder="000000"
-          cursorColor={"red"}
+          cursorColor="red"
           disabled={isLoading}
         />
       </View>
@@ -66,7 +132,7 @@ const TwoFactorAuth = () => {
       {/* Submit */}
       <Button
         style={{ marginTop: 20 }}
-        disabled={code.length < 6}
+        disabled={code.length < 6 || isLoading}
         onPress={handleSubmit}
         loading={isLoading}
       >
@@ -75,15 +141,21 @@ const TwoFactorAuth = () => {
         </Text>
       </Button>
 
-      {/* AuthPrompt */}
-      <AuthPrompt
-        prompt="Didn't received code?"
-        linkText="Resend"
-        onPress={handleResendOTP}
-      />
+      {/* Resend */}
+      {resendTimer > 0 ? (
+        <AuthPrompt
+          prompt={`Didn't receive code? Resend in ${resendTimer}s`}
+        />
+      ) : (
+        <AuthPrompt
+          prompt="Didn't receive code?"
+          linkText={isResending ? "Sending..." : "Resend"}
+          onPress={handleResendOTP}
+        />
+      )}
 
-      {/* didn't received code */}
-      <AuthPrompt prompt="If you didn't received it, check your spam folder" />
+      {/* Spam message */}
+      <AuthPrompt prompt="If you didn't receive it, check your spam folder" />
     </View>
   );
 };

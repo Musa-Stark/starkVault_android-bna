@@ -15,11 +15,24 @@ type User = {
   name?: string;
 };
 
+type Response = {
+  success: boolean;
+  message?: string;
+  data?: any;
+};
+
 type AuthContextType = {
   status: AuthStatus;
   user: User | null;
 
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<Response>;
+  signup: (
+    fullName: string,
+    email: string,
+    password: string,
+  ) => Promise<Response>;
+  twoFactorAuth: (email: string, otp: string) => Promise<Response>;
+  resendOTP: (email: string) => Promise<Response>;
   logout: () => Promise<void>;
 
   refreshSession: () => Promise<void>;
@@ -118,34 +131,120 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   /**
+   * Signup.
+   */
+  const signup = async (fullName: string, email: string, password: string) => {
+    try {
+      const names = fullName.split(" ");
+      const firstName = names[0];
+      const lastName = names[1];
+
+      const response = await fetch(`${API_URL}/api/v1/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      return {
+        success: false,
+        message: (error as Error).message || error,
+      };
+    }
+  };
+
+  /**
    * Login.
    */
   const login = async (email: string, password: string) => {
-    const response = await fetch(`${API_URL}/api/v1/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
+    try {
+      const response = await fetch(`${API_URL}/api/v1/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-    if (!response.ok) {
-      console.log(response)
-      throw new Error("Invalid email or password");
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      return {
+        success: false,
+        message: (error as Error).message || error,
+      };
     }
+  };
 
-    const data = await response.json();
-    console.log(data)
+  /**
+   * 2fa
+   */
+  const twoFactorAuth = async (email: string, otp: string) => {
+    try {
+      const response = await fetch(`${API_URL}/api/v1/auth/2fa`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          otp,
+        }),
+      });
 
-    await SecureStore.setItemAsync("access_token", data.accessToken);
+      const data = await response.json();
 
-    await SecureStore.setItemAsync("refresh_token", data?.refreshToken);
+      // await SecureStore.setItemAsync("access_token", data.accessToken);
 
-    setUser(data.user);
-    setStatus("authenticated");
+      // await SecureStore.setItemAsync("refresh_token", data?.refreshToken);
+
+      // setUser(data.user);
+      // setStatus("authenticated");
+
+      return data;
+    } catch (error) {
+      return {
+        success: false,
+        message: (error as Error).message || error,
+      };
+    }
+  };
+
+  const resendOTP = async (email: string) => {
+    try {
+      const response = await fetch(`${API_URL}/api/v1/auth/resendOTP`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+        }),
+      });
+
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      return {
+        success: false,
+        message: (error as Error).message || error,
+      };
+    }
   };
 
   /**
@@ -153,7 +252,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const logout = async () => {
     try {
-      const refreshToken = await SecureStore.getItemAsync("refresh_token");
+      const refreshToken = await SecureStore.getItemAsync("reerrorfresh_token");
 
       await fetch(`${API_URL}/api/v1/auth/logout`, {
         method: "POST",
@@ -190,7 +289,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         status,
         user,
+        signup,
         login,
+        twoFactorAuth,
+        resendOTP,
         logout,
         refreshSession: restoreSession,
       }}

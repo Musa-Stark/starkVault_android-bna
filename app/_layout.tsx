@@ -112,11 +112,12 @@ const RootNavigator = () => {
         <Stack.Screen name="+not-found" />
       </Stack>
       <Toast config={toastConfig} />
-      {status !== "unauthenticated" ? (
+      {status === "unauthenticated" ? (
         <Redirect href={"/(auth)/login"} />
       ) : (
         <Redirect href={"/(tabs)/dashboard"} />
       )}
+      {/* <Redirect href={"/loading"} /> */}
     </>
   );
 };

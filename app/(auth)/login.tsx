@@ -10,10 +10,15 @@ import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
 import OAuthButton from "@/components/starkUI/auth/OAuthButton";
 import AuthDivider from "@/components/starkUI/auth/AuthDivider";
 import { useAuth } from "@/providers/auth-provider";
+import { useToast } from "@/providers/toast-provider";
+import { useRouter } from "expo-router";
 
 const Login = () => {
   const background = useColor("background");
   const { login } = useAuth();
+  const { toast } = useToast();
+
+  const router = useRouter();
 
   const emailRef = useRef<any>(null);
   const passwordRef = useRef<any>(null);
@@ -29,13 +34,24 @@ const Login = () => {
   const handleSubmit = async () => {
     setIsLoading(true);
 
-    const response = await login(email, password)
+    const response = await login(email, password);
+    setIsLoading(false);
+    if (!response.success) {
+      toast.error(response.message!);
+      return;
+    }
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setEmail("");
-      setPassword("");
-    }, 3000);
+    const successMessage = response?.message || response?.data?.message;
+
+    if (successMessage) toast.success(successMessage);
+
+    router.replace({
+      pathname: "/twoFactorAuth",
+      params: { email },
+    });
+
+    setEmail("");
+    setPassword("");
   };
 
   const handleOAuthPress = () => {
