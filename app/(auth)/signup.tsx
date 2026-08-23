@@ -56,7 +56,7 @@ const Signup = () => {
 
     router.replace({
       pathname: "/twoFactorAuth",
-      params: { email },
+      params: { email, purpose: "signup" },
     });
 
     setTimeout(() => {

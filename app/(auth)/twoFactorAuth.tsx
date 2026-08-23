@@ -18,7 +18,10 @@ const TwoFactorAuth = () => {
   const { twoFactorAuth, resendOTP } = useAuth();
   const { toast } = useToast();
 
-  const { email } = useLocalSearchParams<{ email: string }>();
+  const { email, purpose } = useLocalSearchParams<{
+    email: string;
+    purpose: string;
+  }>();
 
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -49,9 +52,15 @@ const TwoFactorAuth = () => {
       return;
     }
 
+    if (!purpose) {
+      toast.error("Purpose not found");
+      return;
+    }
+
     setIsLoading(true);
 
-    const response = await twoFactorAuth(email, code);
+    const response = await twoFactorAuth(email, code, purpose);
+    console.log(response);
 
     setIsLoading(false);
 
@@ -68,9 +77,16 @@ const TwoFactorAuth = () => {
 
     setCode("");
 
-    router.replace({
-      pathname: "/dashboard",
-    });
+    if (response.purpose === "password_reset") {
+      router.replace({
+        pathname: "/resetPassword",
+        params: { email },
+      });
+    } else {
+      router.replace({
+        pathname: "/dashboard",
+      });
+    }
   };
 
   const handleResendOTP = async () => {
@@ -84,7 +100,7 @@ const TwoFactorAuth = () => {
       // Replace this with your actual resend OTP API/function.
       // Example:
       const response = await resendOTP(email);
-      if (!response.success) throw new Error(response.message!)
+      if (!response.success) throw new Error(response.message!);
 
       toast.success("A new verification code has been sent.");
 
@@ -143,9 +159,7 @@ const TwoFactorAuth = () => {
 
       {/* Resend */}
       {resendTimer > 0 ? (
-        <AuthPrompt
-          prompt={`Didn't receive code? Resend in ${resendTimer}s`}
-        />
+        <AuthPrompt prompt={`Didn't receive code? Resend in ${resendTimer}s`} />
       ) : (
         <AuthPrompt
           prompt="Didn't receive code?"

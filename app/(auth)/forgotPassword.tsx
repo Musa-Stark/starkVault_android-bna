@@ -7,9 +7,16 @@ import AuthLogo from "@/components/starkUI/auth/AuthLogo";
 import Banner from "@/components/starkUI/Banner";
 import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import AuthPrompt from "@/components/starkUI/auth/AuthPrompt";
+import { useAuth } from "@/providers/auth-provider";
+import { useToast } from "@/providers/toast-provider";
+import { useRouter } from "expo-router";
 
 const ForgotPassword = () => {
   const background = useColor("background");
+
+  const { forgotPassword } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
 
   const emailRef = useRef<any>(null);
 
@@ -19,14 +26,27 @@ const ForgotPassword = () => {
 
   const disabled = !email || hasError;
 
-  const handleSubmit = () => {
-    console.log({ email });
+  const handleSubmit = async () => {
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setEmail("");
-    }, 3000);
+    const response = await forgotPassword(email);
+    setIsLoading(false);
+
+    if (!response.success) {
+      toast.error(response.message!);
+      return;
+    }
+
+    const successMessage = response?.message || response?.data?.message;
+
+    if (successMessage) toast.success(successMessage);
+
+    router.replace({
+      pathname: "/twoFactorAuth",
+      params: { email, purpose: "password_reset" },
+    });
+
+    setEmail("");
   };
 
   return (
@@ -41,7 +61,7 @@ const ForgotPassword = () => {
 
       {/* Banner */}
       <Banner
-        heading="Email verification"
+        heading="Forgot Password"
         message="We’ll send an OTP to your email to confirm it’s you."
       />
 

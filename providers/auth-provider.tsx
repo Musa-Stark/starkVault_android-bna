@@ -19,6 +19,7 @@ type Response = {
   success: boolean;
   message?: string;
   data?: any;
+  purpose?: "login" | "signup" | "password_reset";
 };
 
 type AuthContextType = {
@@ -31,8 +32,14 @@ type AuthContextType = {
     email: string,
     password: string,
   ) => Promise<Response>;
-  twoFactorAuth: (email: string, otp: string) => Promise<Response>;
+  twoFactorAuth: (
+    email: string,
+    otp: string,
+    purpose: string,
+  ) => Promise<Response>;
   resendOTP: (email: string) => Promise<Response>;
+  forgotPassword: (email: string) => Promise<Response>;
+  resetPassword: (email: string, password: string) => Promise<Response>;
   logout: () => Promise<void>;
 
   refreshSession: () => Promise<void>;
@@ -46,6 +53,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>("loading");
 
   const [user, setUser] = useState<User | null>(null);
+
+  const routes = {
+    login: "login",
+    signup: "signup",
+    twoFactorAuth: "verify-otp",
+    resendOTP: "resend-otp",
+    forgotPassword: "forgot-password",
+    resetPassword: "reset-password",
+    refresh: "refresh",
+    me: "me",
+    logout: "logout",
+  };
 
   /**
    * Restore authentication when the app starts.
@@ -111,7 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const response = await fetch(`${API_URL}/api/v1/auth/me`, {
+    const response = await fetch(`${API_URL}/api/v1/auth/${routes.me}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -139,7 +158,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const firstName = names[0];
       const lastName = names[1];
 
-      const response = await fetch(`${API_URL}/api/v1/auth/signup`, {
+      const response = await fetch(`${API_URL}/api/v1/auth/${routes.signup}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -168,7 +187,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/v1/auth/login`, {
+      const response = await fetch(`${API_URL}/api/v1/auth/${routes.login}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -193,18 +212,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   /**
    * 2fa
    */
-  const twoFactorAuth = async (email: string, otp: string) => {
+  const twoFactorAuth = async (email: string, otp: string, purpose: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/v1/auth/2fa`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${API_URL}/api/v1/auth/${routes.twoFactorAuth}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            otp,
+            purpose,
+          }),
         },
-        body: JSON.stringify({
-          email,
-          otp,
-        }),
-      });
+      );
 
       const data = await response.json();
 
@@ -224,15 +247,77 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  /**
+   * resendOTP
+   */
   const resendOTP = async (email: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/v1/auth/resendOTP`, {
+      const response = await fetch(
+        `${API_URL}/api/v1/auth/${routes.resendOTP}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      return {
+        success: false,
+        message: (error as Error).message || error,
+      };
+    }
+  };
+
+  /**
+   * forgotPassword
+   */
+  const forgotPassword = async (email: string) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/api/v1/auth/${routes.forgotPassword}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      return {
+        success: false,
+        message: (error as Error).message || error,
+      };
+    }
+  };
+
+  /**
+   * Login.
+   */
+  const resetPassword = async (email: string, password: string) => {
+    try {
+      const response = await fetch(`${API_URL}/api/v1/auth/${routes.resetPassword}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email,
+          password,
         }),
       });
 
@@ -254,7 +339,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const refreshToken = await SecureStore.getItemAsync("reerrorfresh_token");
 
-      await fetch(`${API_URL}/api/v1/auth/logout`, {
+      await fetch(`${API_URL}/api/v1/auth/${routes.logout}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -293,6 +378,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         twoFactorAuth,
         resendOTP,
+        forgotPassword,
+        resetPassword,
         logout,
         refreshSession: restoreSession,
       }}

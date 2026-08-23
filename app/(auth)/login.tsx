@@ -47,7 +47,7 @@ const Login = () => {
 
     router.replace({
       pathname: "/twoFactorAuth",
-      params: { email },
+      params: { email, purpose: "login" },
     });
 
     setEmail("");
