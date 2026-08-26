@@ -112,11 +112,7 @@ const DashBoard = () => {
         </View>
 
         {/* add password */}
-        <Button
-          icon={Sparkles}
-          variant="default"
-          style={{ marginTop: 15 }}
-        >
+        <Button icon={Sparkles} variant="default" style={{ marginTop: 15 }}>
           <Text style={{ color: background }}>Add Password</Text>
         </Button>
 

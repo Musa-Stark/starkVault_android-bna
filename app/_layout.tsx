@@ -59,65 +59,23 @@ export default function RootLayout() {
 }
 
 const RootNavigator = () => {
-  const colorScheme = useColorScheme();
   const { status } = useAuth();
 
-  if (status === "loading") return null;
+  const screens = {
+    loading: <Redirect href={"/loading"} />,
+    authenticated: <Redirect href={"/(tabs)/dashboard"} />,
+    unauthenticated: <Redirect href={"/(auth)/login"} />,
+  };
 
   return (
     <>
       <UploadForm />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-
-        <Stack.Screen
-          name="sheet"
-          options={{
-            headerShown: false,
-            sheetGrabberVisible: true,
-            sheetAllowedDetents: [0.4, 0.7, 1],
-            contentStyle: {
-              backgroundColor: isLiquidGlassAvailable()
-                ? "transparent"
-                : colorScheme === "dark"
-                  ? Colors.dark.card
-                  : Colors.light.card,
-            },
-            headerTransparent: Platform.OS === "ios" ? true : false,
-            headerLargeTitle: false,
-            title: "",
-            presentation:
-              Platform.OS === "ios"
-                ? isLiquidGlassAvailable() && osName !== "iPadOS"
-                  ? "formSheet"
-                  : "modal"
-                : "modal",
-            sheetInitialDetentIndex: 0,
-            headerStyle: {
-              backgroundColor:
-                Platform.OS === "ios"
-                  ? "transparent"
-                  : colorScheme === "dark"
-                    ? Colors.dark.card
-                    : Colors.light.card,
-            },
-            headerBlurEffect: isLiquidGlassAvailable()
-              ? undefined
-              : colorScheme === "dark"
-                ? "dark"
-                : "light",
-          }}
-        />
+        <Stack.Screen name="loading" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <Toast config={toastConfig} />
-      {status === "unauthenticated" ? (
-        <Redirect href={"/(auth)/login"} />
-      ) : (
-        <Redirect href={"/(tabs)/dashboard"} />
-      )}
-      {/* <Redirect href={"/loading"} /> */}
+      {screens[status]}
     </>
   );
 };

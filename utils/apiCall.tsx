@@ -1,0 +1,52 @@
+import * as SecureStore from "expo-secure-store";
+import { useRouter } from "expo-router";
+import { APIResponse } from "@/providers/auth-provider";
+
+export interface APIData {
+  page:
+    | "expenses"
+    | "incomes"
+    | "subscriptions"
+    | "savings-goals"
+    | "passwords"
+    | "cards"
+    | "documents"
+    | "notes";
+  data?: any;
+  method: "GET" | "POST" | "PATCH" | "DELETE";
+}
+
+const useAPICall = () => {
+  const router = useRouter();
+
+  return async ({
+    page,
+    data,
+    method,
+  }: APIData): Promise<APIResponse> => {
+    const accessToken = await SecureStore.getItemAsync("access_token");
+    if (!accessToken) {
+      router.replace("/login");
+      return { success: false, message: "" };
+    }
+
+    const response = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/api/v1/${page}`,
+      {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body:
+          method !== "GET"
+            ? JSON.stringify({ accessToken, ...data })
+            : undefined,
+      },
+    );
+
+    const res = await response.json();
+    return res;
+  };
+};
+
+export default useAPICall;

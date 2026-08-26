@@ -15,7 +15,7 @@ type User = {
   name?: string;
 };
 
-type Response = {
+export type APIResponse = {
   success: boolean;
   message?: string;
   data?: any;
@@ -26,20 +26,20 @@ type AuthContextType = {
   status: AuthStatus;
   user: User | null;
 
-  login: (email: string, password: string) => Promise<Response>;
+  login: (email: string, password: string) => Promise<APIResponse>;
   signup: (
     fullName: string,
     email: string,
     password: string,
-  ) => Promise<Response>;
+  ) => Promise<APIResponse>;
   twoFactorAuth: (
     email: string,
     otp: string,
     purpose: string,
-  ) => Promise<Response>;
-  resendOTP: (email: string) => Promise<Response>;
-  forgotPassword: (email: string) => Promise<Response>;
-  resetPassword: (email: string, password: string) => Promise<Response>;
+  ) => Promise<APIResponse>;
+  resendOTP: (email: string) => Promise<APIResponse>;
+  forgotPassword: (email: string) => Promise<APIResponse>;
+  resetPassword: (email: string, password: string) => Promise<APIResponse>;
   logout: () => Promise<void>;
 
   refreshSession: () => Promise<void>;
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const response = await fetch(`${API_URL}/api/v1/auth/refresh`, {
+      const response = await fetch(`${API_URL}/api/v1/auth/refresh-token`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +130,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const response = await fetch(`${API_URL}/api/v1/auth/${routes.me}`, {
+
+    const response = await fetch(`${API_URL}/api/v1/account/${routes.me}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -231,12 +232,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json();
 
-      // await SecureStore.setItemAsync("access_token", data.accessToken);
+      await SecureStore.setItemAsync("access_token", data.accessToken);
 
-      // await SecureStore.setItemAsync("refresh_token", data?.refreshToken);
+      await SecureStore.setItemAsync("refresh_token", data?.refreshToken);
 
-      // setUser(data.user);
-      // setStatus("authenticated");
+      setUser(data.user);
+      setStatus("authenticated");
 
       return data;
     } catch (error) {

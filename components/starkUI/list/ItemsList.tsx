@@ -9,6 +9,7 @@ import { Text } from "@/components/ui/text";
 import {
   Check,
   Edit3,
+  File,
   LucideIcon,
   Trash2,
 } from "lucide-react-native";
@@ -22,7 +23,7 @@ export type Item = {
   title: string;
   caption?: string;
   captionStyle?: TextStyle,
-  Icon: LucideIcon;
+  Icon?: LucideIcon;
 
   // Anything you want displayed on the right
   right?: {
@@ -51,6 +52,7 @@ function SelectableListItem({
   const borderColor = useColor("muted");
   const cardColor = useColor("card");
   const background = useColor("background");
+  const Icon = item.Icon || File;
 
   return (
     <Pressable
@@ -75,7 +77,7 @@ function SelectableListItem({
           marginRight: 10,
         }}
       >
-        {<item.Icon size={22} color={foreground} />}
+        {<Icon size={22} color={foreground} />}
       </View>
 
       {/* Heading + caption */}
