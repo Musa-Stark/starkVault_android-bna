@@ -23,7 +23,7 @@ type PakistaniCnicCardProps = {
   photoUri?: string;
 };
 
-export default function PakistaniCnicCard({
+export default function CNIC({
   name = 'MUHAMMAD AHMED',
   fatherName = 'MUHAMMAD ALI',
   cnicNumber = '35202-1234567-1',
@@ -406,19 +406,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
 
     borderColor: 'rgba(255,255,255,0.13)',
-
-    shadowColor: '#000',
-
-    shadowOffset: {
-      width: 0,
-      height: 16,
-    },
-
-    shadowOpacity: 0.4,
-
-    shadowRadius: 24,
-
-    elevation: 15,
 
     backfaceVisibility: 'hidden',
   },

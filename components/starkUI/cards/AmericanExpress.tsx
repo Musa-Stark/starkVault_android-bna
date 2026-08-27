@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 import {
   Animated,
   Easing,
@@ -7,20 +7,20 @@ import {
   Text,
   View,
   useWindowDimensions,
-} from 'react-native';
+} from "react-native";
 
 type AmericanExpressProps = {
   cardNumber?: string;
   cardHolder?: string;
-  expiry?: string;
+  expiry?: Date | undefined;
   cvv?: string;
 };
 
 export default function AmericanExpress({
-  cardNumber = '3782 822463 10005',
-  cardHolder = 'JOHN DOE',
-  expiry = '12/28',
-  cvv = '1234',
+  cardNumber = "3782 822463 10005",
+  cardHolder = "JOHN DOE",
+  expiry = undefined,
+  cvv = "1234",
 }: AmericanExpressProps) {
   const { width } = useWindowDimensions();
 
@@ -46,12 +46,12 @@ export default function AmericanExpress({
 
   const frontRotation = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
+    outputRange: ["0deg", "180deg"],
   });
 
   const backRotation = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['180deg', '360deg'],
+    outputRange: ["180deg", "360deg"],
   });
 
   return (
@@ -75,10 +75,7 @@ export default function AmericanExpress({
           {
             width: cardWidth,
             height: cardHeight,
-            transform: [
-              { perspective: 1200 },
-              { rotateY: frontRotation },
-            ],
+            transform: [{ perspective: 1200 }, { rotateY: frontRotation }],
           },
         ]}
       >
@@ -149,7 +146,11 @@ export default function AmericanExpress({
           <View style={styles.expiry}>
             <Text style={styles.label}>GOOD THRU</Text>
 
-            <Text style={styles.value}>{expiry}</Text>
+            {expiry && (
+              <Text style={styles.value}>{new Date(expiry).toLocaleDateString("PK", {
+                dateStyle: "short"
+              })}</Text>
+            )}
           </View>
         </View>
 
@@ -168,10 +169,7 @@ export default function AmericanExpress({
           {
             width: cardWidth,
             height: cardHeight,
-            transform: [
-              { perspective: 1200 },
-              { rotateY: backRotation },
-            ],
+            transform: [{ perspective: 1200 }, { rotateY: backRotation }],
           },
         ]}
       >
@@ -190,9 +188,7 @@ export default function AmericanExpress({
 
         <View style={styles.signatureRow}>
           <View style={styles.signatureBox}>
-            <Text style={styles.signatureText}>
-              {cardHolder.toUpperCase()}
-            </Text>
+            <Text style={styles.signatureText}>{cardHolder.toUpperCase()}</Text>
           </View>
 
           <View style={styles.cvvContainer}>
@@ -216,9 +212,7 @@ export default function AmericanExpress({
         <View style={styles.backBottom}>
           <View>
             <Text style={styles.backLabel}>CARD MEMBER</Text>
-            <Text style={styles.backName}>
-              {cardHolder.toUpperCase()}
-            </Text>
+            <Text style={styles.backName}>{cardHolder.toUpperCase()}</Text>
           </View>
 
           <Text style={styles.amexBack}>AMEX</Text>
@@ -229,17 +223,14 @@ export default function AmericanExpress({
 
       {/* Touch layer */}
 
-      <Pressable
-        onPress={flipCard}
-        style={StyleSheet.absoluteFill}
-      />
+      <Pressable onPress={flipCard} style={StyleSheet.absoluteFill} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: 'center',
+    alignSelf: "center",
   },
 
   /* =====================================================
@@ -247,7 +238,7 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   card: {
-    position: 'absolute',
+    position: "absolute",
 
     left: 0,
     top: 0,
@@ -256,32 +247,21 @@ const styles = StyleSheet.create({
 
     borderRadius: 22,
 
-    overflow: 'hidden',
+    overflow: "hidden",
 
-    backgroundColor: '#080808',
+    backgroundColor: "#080808",
 
     borderWidth: 1,
 
-    borderColor: 'rgba(255,255,255,0.14)',
+    borderColor: "rgba(255,255,255,0.14)",
 
-    shadowColor: '#000',
+    // elevation: 14,
 
-    shadowOffset: {
-      width: 0,
-      height: 16,
-    },
-
-    shadowOpacity: 0.45,
-
-    shadowRadius: 22,
-
-    elevation: 14,
-
-    backfaceVisibility: 'hidden',
+    backfaceVisibility: "hidden",
   },
 
   backCard: {
-    backgroundColor: '#0b0b0b',
+    backgroundColor: "#0b0b0b",
   },
 
   /* =====================================================
@@ -289,7 +269,7 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   topGlow: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 280,
     height: 280,
@@ -299,13 +279,13 @@ const styles = StyleSheet.create({
     right: -170,
     top: -160,
 
-    backgroundColor: '#242424',
+    backgroundColor: "#242424",
 
     opacity: 0.65,
   },
 
   bottomGlow: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 220,
     height: 220,
@@ -315,46 +295,46 @@ const styles = StyleSheet.create({
     left: -150,
     bottom: -160,
 
-    backgroundColor: '#181818',
+    backgroundColor: "#181818",
   },
 
   gridLineOne: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 500,
     height: 1,
 
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: "rgba(255,255,255,0.04)",
 
-    transform: [{ rotate: '-32deg' }],
+    transform: [{ rotate: "-32deg" }],
 
     left: -90,
     top: 80,
   },
 
   gridLineTwo: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 500,
     height: 1,
 
-    backgroundColor: 'rgba(255,255,255,0.035)',
+    backgroundColor: "rgba(255,255,255,0.035)",
 
-    transform: [{ rotate: '-32deg' }],
+    transform: [{ rotate: "-32deg" }],
 
     left: -90,
     top: 95,
   },
 
   gridLineThree: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 500,
     height: 1,
 
-    backgroundColor: 'rgba(255,255,255,0.025)',
+    backgroundColor: "rgba(255,255,255,0.025)",
 
-    transform: [{ rotate: '-32deg' }],
+    transform: [{ rotate: "-32deg" }],
 
     left: -90,
     top: 110,
@@ -365,15 +345,15 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   topRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
 
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
 
   memberSince: {
-    color: 'rgba(255,255,255,0.35)',
+    color: "rgba(255,255,255,0.35)",
 
     fontSize: 6,
 
@@ -381,11 +361,11 @@ const styles = StyleSheet.create({
   },
 
   year: {
-    color: '#d7d7d7',
+    color: "#d7d7d7",
 
     fontSize: 14,
 
-    fontWeight: '700',
+    fontWeight: "700",
 
     marginTop: 2,
   },
@@ -398,15 +378,15 @@ const styles = StyleSheet.create({
     width: 27,
     height: 27,
 
-    justifyContent: 'center',
+    justifyContent: "center",
 
-    alignItems: 'center',
+    alignItems: "center",
 
-    transform: [{ rotate: '-45deg' }],
+    transform: [{ rotate: "-45deg" }],
   },
 
   arcOne: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 8,
     height: 8,
@@ -414,13 +394,13 @@ const styles = StyleSheet.create({
     borderTopWidth: 1.5,
     borderRightWidth: 1.5,
 
-    borderColor: 'rgba(255,255,255,0.8)',
+    borderColor: "rgba(255,255,255,0.8)",
 
     borderRadius: 10,
   },
 
   arcTwo: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 15,
     height: 15,
@@ -428,13 +408,13 @@ const styles = StyleSheet.create({
     borderTopWidth: 1.5,
     borderRightWidth: 1.5,
 
-    borderColor: 'rgba(255,255,255,0.5)',
+    borderColor: "rgba(255,255,255,0.5)",
 
     borderRadius: 12,
   },
 
   arcThree: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 22,
     height: 22,
@@ -442,7 +422,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1.5,
     borderRightWidth: 1.5,
 
-    borderColor: 'rgba(255,255,255,0.25)',
+    borderColor: "rgba(255,255,255,0.25)",
 
     borderRadius: 15,
   },
@@ -452,30 +432,30 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   amexLogo: {
-    position: 'absolute',
+    position: "absolute",
 
     right: 24,
     top: 27,
 
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
 
   amexSmall: {
-    color: 'rgba(255,255,255,0.55)',
+    color: "rgba(255,255,255,0.55)",
 
     fontSize: 7,
 
-    fontWeight: '700',
+    fontWeight: "700",
 
     letterSpacing: 2,
   },
 
   amexMain: {
-    color: '#fff',
+    color: "#fff",
 
     fontSize: 15,
 
-    fontWeight: '900',
+    fontWeight: "900",
 
     letterSpacing: 1,
   },
@@ -492,17 +472,17 @@ const styles = StyleSheet.create({
 
     borderRadius: 7,
 
-    backgroundColor: '#b9b9b9',
+    backgroundColor: "#b9b9b9",
 
-    overflow: 'hidden',
+    overflow: "hidden",
 
     borderWidth: 1,
 
-    borderColor: 'rgba(255,255,255,0.35)',
+    borderColor: "rgba(255,255,255,0.35)",
   },
 
   chipHorizontal: {
-    position: 'absolute',
+    position: "absolute",
 
     left: 0,
     right: 0,
@@ -511,11 +491,11 @@ const styles = StyleSheet.create({
 
     height: 1,
 
-    backgroundColor: '#777',
+    backgroundColor: "#777",
   },
 
   chipVertical: {
-    position: 'absolute',
+    position: "absolute",
 
     top: 0,
     bottom: 0,
@@ -524,11 +504,11 @@ const styles = StyleSheet.create({
 
     width: 1,
 
-    backgroundColor: '#777',
+    backgroundColor: "#777",
   },
 
   chipSmallVertical: {
-    position: 'absolute',
+    position: "absolute",
 
     top: 0,
     bottom: 0,
@@ -537,18 +517,18 @@ const styles = StyleSheet.create({
 
     width: 1,
 
-    backgroundColor: '#777',
+    backgroundColor: "#777",
   },
 
   chipInner: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 18,
     height: 12,
 
     borderWidth: 1,
 
-    borderColor: '#777',
+    borderColor: "#777",
 
     borderRadius: 4,
 
@@ -561,9 +541,9 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   cardNumber: {
-    color: '#f2f2f2',
+    color: "#f2f2f2",
 
-    fontWeight: '500',
+    fontWeight: "500",
 
     letterSpacing: 2,
 
@@ -575,9 +555,9 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   bottomRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
 
     marginTop: 14,
   },
@@ -593,7 +573,7 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    color: 'rgba(255,255,255,0.32)',
+    color: "rgba(255,255,255,0.32)",
 
     fontSize: 6,
 
@@ -603,22 +583,22 @@ const styles = StyleSheet.create({
   },
 
   value: {
-    color: '#f5f5f5',
+    color: "#f5f5f5",
 
     fontSize: 11,
 
-    fontWeight: '600',
+    fontWeight: "600",
 
     letterSpacing: 0.8,
   },
 
   tapText: {
-    position: 'absolute',
+    position: "absolute",
 
     right: 24,
     bottom: 9,
 
-    color: 'rgba(255,255,255,0.22)',
+    color: "rgba(255,255,255,0.22)",
 
     fontSize: 6,
 
@@ -630,33 +610,33 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   backLogo: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
 
     marginBottom: 8,
   },
 
   backLogoSmall: {
-    color: 'rgba(255,255,255,0.45)',
+    color: "rgba(255,255,255,0.45)",
 
     fontSize: 6,
 
-    fontWeight: '700',
+    fontWeight: "700",
 
     letterSpacing: 1.8,
   },
 
   backLogoMain: {
-    color: '#fff',
+    color: "#fff",
 
     fontSize: 14,
 
-    fontWeight: '900',
+    fontWeight: "900",
 
     letterSpacing: 1,
   },
 
   blackStripe: {
-    position: 'absolute',
+    position: "absolute",
 
     left: 0,
     right: 0,
@@ -665,7 +645,7 @@ const styles = StyleSheet.create({
 
     height: 42,
 
-    backgroundColor: '#000',
+    backgroundColor: "#000",
   },
 
   /* =====================================================
@@ -673,9 +653,9 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   signatureRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
 
     marginTop: 53,
   },
@@ -689,17 +669,17 @@ const styles = StyleSheet.create({
 
     paddingHorizontal: 10,
 
-    justifyContent: 'center',
+    justifyContent: "center",
 
-    backgroundColor: '#dedede',
+    backgroundColor: "#dedede",
   },
 
   signatureText: {
-    color: '#161616',
+    color: "#161616",
 
     fontSize: 9,
 
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
 
   cvvContainer: {
@@ -707,7 +687,7 @@ const styles = StyleSheet.create({
   },
 
   cvvLabel: {
-    color: 'rgba(255,255,255,0.35)',
+    color: "rgba(255,255,255,0.35)",
 
     fontSize: 6,
 
@@ -719,21 +699,21 @@ const styles = StyleSheet.create({
   cvvBox: {
     height: 36,
 
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
 
     borderRadius: 3,
 
-    justifyContent: 'center',
+    justifyContent: "center",
 
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   cvv: {
-    color: '#111',
+    color: "#111",
 
     fontSize: 13,
 
-    fontWeight: '800',
+    fontWeight: "800",
 
     letterSpacing: 1,
   },
@@ -743,7 +723,7 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   backInfo: {
-    color: 'rgba(255,255,255,0.3)',
+    color: "rgba(255,255,255,0.3)",
 
     fontSize: 7,
 
@@ -751,7 +731,7 @@ const styles = StyleSheet.create({
 
     marginTop: 14,
 
-    maxWidth: '87%',
+    maxWidth: "87%",
   },
 
   /* =====================================================
@@ -759,22 +739,22 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   backBottom: {
-    position: 'absolute',
+    position: "absolute",
 
     left: 24,
     right: 24,
 
     bottom: 20,
 
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
 
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
 
   backLabel: {
-    color: 'rgba(255,255,255,0.28)',
+    color: "rgba(255,255,255,0.28)",
 
     fontSize: 6,
 
@@ -782,32 +762,32 @@ const styles = StyleSheet.create({
   },
 
   backName: {
-    color: '#ddd',
+    color: "#ddd",
 
     fontSize: 10,
 
-    fontWeight: '600',
+    fontWeight: "600",
 
     marginTop: 2,
   },
 
   amexBack: {
-    color: '#fff',
+    color: "#fff",
 
     fontSize: 16,
 
-    fontWeight: '900',
+    fontWeight: "900",
 
     letterSpacing: 1,
   },
 
   flipBack: {
-    position: 'absolute',
+    position: "absolute",
 
     right: 24,
     bottom: 7,
 
-    color: 'rgba(255,255,255,0.2)',
+    color: "rgba(255,255,255,0.2)",
 
     fontSize: 6,
 
