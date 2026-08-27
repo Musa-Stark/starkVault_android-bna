@@ -68,8 +68,6 @@ export default function SavingsGoalCard({
 
   const category = categories.find((item) => item.name === goal.category);
 
-  console.log(goal)
-
   return (
     <View
       style={{

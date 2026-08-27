@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import * as Clipboard from "expo-clipboard";
 
 import { Text } from "@/components/ui/text";
@@ -9,15 +9,16 @@ import { Pen, Plus, Trash2 } from "lucide-react-native";
 import { Table } from "@/components/ui/table";
 import { useApp } from "@/providers/app-context";
 import handlePasswordForm from "@/components/starkUI/upload/passwords.form";
+import useAPICall from "@/utils/apiCall";
+import { useToast } from "@/providers/toast-provider";
 
 interface Row {
-  id: number;
   service: string;
   username: string;
   password: string;
-  actions: string;
 }
 const passwords = () => {
+  // contexts
   const {
     service,
     setService,
@@ -35,27 +36,6 @@ const passwords = () => {
     setUploadForm,
   } = useApp();
 
-  useEffect(() => {
-    if (!uploadForm.submit) return;
-
-    console.log({
-      service,
-      username,
-      password,
-    });
-
-    setUploadForm({
-      inputs: undefined,
-      name: "",
-      show: false,
-      submit: false,
-    });
-
-    setService("");
-    setUsername("");
-    setPassword("");
-  }, [uploadForm.submit]);
-
   const handleRowPress = async (row: Row) => {
     await Clipboard.setStringAsync(row.password);
   };
@@ -66,39 +46,92 @@ const passwords = () => {
     await Clipboard.setStringAsync(credentials);
   };
 
-  // new
-  const passwords = [
-    {
-      _id: "pass_001",
-      serviceName: "GitHub",
-      username: "john.doe@example.com",
-      password: "Gh!p9X#k2Lm@82",
-    },
-    {
-      _id: "pass_002",
-      serviceName: "Netflix",
-      username: "john.doe@example.com",
-      password: "Nf@2026!xK92",
-    },
-    {
-      _id: "pass_003",
-      serviceName: "Google",
-      username: "john.doe@gmail.com",
-      password: "Goo!e_82#Lm91",
-    },
-    {
-      _id: "pass_004",
-      serviceName: "AWS Console",
-      username: "admin@example.com",
-      password: "Aws#92!LmXk@71",
-    },
-    {
-      _id: "pass_005",
-      serviceName: "Notion",
-      username: "john.doe@example.com",
-      password: "Not!on_72#Klm",
-    },
-  ];
+  interface Password {
+    _id: string;
+    service: string;
+    username: string;
+    password: string;
+  }
+
+  const [passwords, setPasswords] = useState<Password[]>([]);
+
+  const apiCall = useAPICall();
+  const { toast } = useToast();
+
+  const [itemState, setItemState] = useState<"found" | "notFound" | "fetching">(
+    "fetching",
+  );
+
+  // fetch - GET
+  useEffect(() => {
+    const fetchSubscriptions = async () => {
+      const response = await apiCall({ page: "passwords", method: "GET" });
+
+      if (!response.success && response.message === "Data not found") {
+        setItemState("notFound");
+        return;
+      }
+
+      setPasswords([
+        ...response.data.map((el: any) => ({
+          _id: el._id,
+          password: el.password,
+          service: el.name,
+          username: el.username,
+        })),
+      ]);
+
+      setItemState("found");
+    };
+
+    fetchSubscriptions();
+  }, []);
+
+  // upload - POST
+  useEffect(() => {
+    const uploadSubscription = async () => {
+      if (!uploadForm.submit) return;
+
+      const response = await apiCall({
+        page: "passwords",
+        data: {
+          name: service,
+          username,
+          password,
+        },
+        method: "POST",
+      });
+
+      if (!response.success) {
+        toast.error(response.message || "Something went wrong");
+        return;
+      }
+      setPasswords((prev) => [
+        ...prev,
+        {
+          _id: response.data._id,
+          password: response.data.password,
+          service: response.data.name,
+          username: response.data.username,
+        },
+      ]);
+
+      setItemState("found");
+
+      setUploadForm({
+        inputs: undefined,
+        name: "",
+        show: false,
+        submit: false,
+      });
+
+      setService("");
+      setUsername("");
+      setPassword("");
+    };
+
+    uploadSubscription();
+  }, [uploadForm.submit]);
 
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
@@ -181,22 +214,7 @@ const passwords = () => {
             ),
           },
         ]}
-        data={[
-          {
-            id: 1,
-            service: "Github",
-            username: "Musa",
-            password: "musa123",
-            actions: "nothing",
-          },
-          {
-            id: 2,
-            service: "Google",
-            username: "Esa",
-            password: "stark",
-            actions: "stark",
-          },
-        ]}
+        data={passwords}
       />
     </View>
   );

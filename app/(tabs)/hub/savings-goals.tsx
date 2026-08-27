@@ -114,8 +114,6 @@ const savingsGoals = () => {
         return;
       }
 
-      console.log(response.data)
-
       setSavings([
         ...response.data.map((el: SavingsGoals) => ({
           _id: el._id,
@@ -149,8 +147,6 @@ const savingsGoals = () => {
         },
         method: "POST",
       });
-
-      console.log("POST /savings-goals: ", response);
 
       if (!response.success) {
         toast.error(response.message || "Something went wrong");
