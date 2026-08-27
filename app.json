@@ -1,15 +1,1 @@
-{
-  "data": {
-    "__v": 0,
-    "_id": "6a8fe36af949a70a1fbbcac1",
-    "billingCycle": "Weekly",
-    "category": "Software",
-    "cost": 123,
-    "createdAt": "2026-08-27T07:12:42.847Z",
-    "owner": "6a8f220db075a11914143435",
-    "subscriptionName": "Test",
-    "updatedAt": "2026-08-27T07:12:42.847Z"
-  },
-  "message": "Item created successfully!",
-  "success": true
-}
+[{"__v": 0, "_id": "6a8fe36af949a70a1fbbcac1", "billingCycle": "Weekly", "category": "Software", "cost": 123, "createdAt": "2026-08-27T07:12:42.847Z", "owner": "6a8f220db075a11914143435", "subscriptionName": "Test", "updatedAt": "2026-08-27T07:12:42.847Z"}]

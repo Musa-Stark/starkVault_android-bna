@@ -18,6 +18,7 @@ interface UploadFormInput {
 export type SetString = React.Dispatch<React.SetStateAction<string>>;
 export type SetBoolean = React.Dispatch<React.SetStateAction<boolean>>;
 export type SetFile = React.Dispatch<React.SetStateAction<MediaAsset>>;
+export type SetDate = React.Dispatch<React.SetStateAction<Date | undefined>>;
 export type Ref = React.RefObject<null>;
 
 export type SetUploadForm = React.Dispatch<
@@ -68,8 +69,8 @@ interface CreateContext {
   setCurrentAmount: SetString;
   currentAmountRef: Ref;
 
-  deadline: string;
-  setDeadline: SetString;
+  deadline: Date | undefined;
+  setDeadline: SetDate;
   deadlineRef: Ref;
 
   service: string;
@@ -148,7 +149,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [goalName, setGoalName] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
   const [currentAmount, setCurrentAmount] = useState("");
-  const [deadline, setDeadline] = useState("");
+  const [deadline, setDeadline] = useState<Date | undefined>(undefined);
   const [service, setService] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

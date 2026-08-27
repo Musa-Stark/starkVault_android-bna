@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,8 @@ import { useApp } from "@/providers/app-context";
 import savingsGoalsForm from "@/components/starkUI/upload/savingsGoal.form";
 import SavingsGoalCard from "@/components/starkUI/list/SavingsCard";
 import { ScrollView } from "react-native-gesture-handler";
+import useAPICall from "@/utils/apiCall";
+import { useToast } from "@/providers/toast-provider";
 
 const savingsGoals = () => {
   const {
@@ -37,108 +39,154 @@ const savingsGoals = () => {
     setUploadForm,
   } = useApp();
 
+  const savingsGoalCategories = [
+  {
+    name: "Emergency Fund",
+    color: "#fecaca",
+  },
+  {
+    name: "Travel",
+    color: "#bfdbfe",
+  },
+  {
+    name: "Education",
+    color: "#fbcfe8",
+  },
+  {
+    name: "Home",
+    color: "#bbf7d0",
+  },
+  {
+    name: "Car",
+    color: "#fde68a",
+  },
+  {
+    name: "Electronics",
+    color: "#ddd6fe",
+  },
+  {
+    name: "Wedding",
+    color: "#f5d0fe",
+  },
+  {
+    name: "Investment",
+    color: "#a7f3d0",
+  },
+  {
+    name: "Health",
+    color: "#fed7aa",
+  },
+  {
+    name: "Personal",
+    color: "#bae6fd",
+  },
+  {
+    name: "Other",
+    color: "#e5e7eb",
+  },
+];
+
+  interface SavingsGoals {
+    _id: string;
+    goalName: string;
+    category: (typeof savingsGoalCategories)[number]["name"];
+    targetAmount: number;
+    currentAmount: number;
+    deadline: Date | undefined;
+  }
+
+  const [savings, setSavings] = useState<SavingsGoals[]>([]);
+
+  const apiCall = useAPICall();
+  const { toast } = useToast();
+
+  const [itemState, setItemState] = useState<"found" | "notFound" | "fetching">(
+    "fetching",
+  );
+
+  // fetch - GET
   useEffect(() => {
-    if (!uploadForm.submit) return;
+    const fetchSubscriptions = async () => {
+      const response = await apiCall({ page: "savings-goals", method: "GET" });
 
-    console.log({
-      goalName,
-      targetAmount,
-      currentAmount,
-      deadline,
-      category,
-    });
+      if (!response.success && response.message === "Data not found") {
+        setItemState("notFound");
+        return;
+      }
 
-    setUploadForm({
-      inputs: undefined,
-      name: "",
-      show: false,
-      submit: false,
-    });
+      console.log(response.data)
 
-    setGoalName("");
-    setTargetAmount("");
-    setCurrentAmount("");
-    setDeadline("");
-    setCategory("");
+      setSavings([
+        ...response.data.map((el: SavingsGoals) => ({
+          _id: el._id,
+          category: el.category,
+          currentAmount: el.currentAmount,
+          deadline: el.deadline,
+          goalName: el.goalName,
+          targetAmount: el.targetAmount,
+        })),
+      ]);
+
+      setItemState("found");
+    };
+
+    fetchSubscriptions();
+  }, []);
+
+  // upload - POST
+  useEffect(() => {
+    const uploadSubscription = async () => {
+      if (!uploadForm.submit) return;
+
+      const response = await apiCall({
+        page: "savings-goals",
+        data: {
+          goalName,
+          targetAmount,
+          currentAmount,
+          deadline,
+          category,
+        },
+        method: "POST",
+      });
+
+      console.log("POST /savings-goals: ", response);
+
+      if (!response.success) {
+        toast.error(response.message || "Something went wrong");
+        return;
+      }
+
+      setSavings((prev) => [
+        ...prev,
+        {
+          _id: response.data._id,
+          category: response.data.category,
+          currentAmount: response.data.currentAmount,
+          deadline: response.data.deadline,
+          goalName: response.data.goalName,
+          targetAmount: response.data.targetAmount,
+        },
+      ]);
+
+      setItemState("found");
+
+      setUploadForm({
+        inputs: undefined,
+        name: "",
+        show: false,
+        submit: false,
+      });
+
+      setGoalName("");
+      setTargetAmount("");
+      setCurrentAmount("");
+      setDeadline(undefined);
+      setCategory("");
+    };
+
+    uploadSubscription();
   }, [uploadForm.submit]);
-
-  const inputSavingsGoalCategories = [
-    {
-      name: "Travel",
-      color: "#bfdbfe",
-    },
-    {
-      name: "Emergency",
-      color: "#fecaca",
-    },
-    {
-      name: "Technology",
-      color: "#ddd6fe",
-    },
-    {
-      name: "Vehicle",
-      color: "#fde68a",
-    },
-    {
-      name: "Home",
-      color: "#bbf7d0",
-    },
-    {
-      name: "Education",
-      color: "#fbcfe8",
-    },
-  ];
-
-  const savings = [
-    {
-      _id: "goal_001",
-      goalName: "Japan Trip",
-      category: "Travel",
-      targetAmount: 3000,
-      currentAmount: 1850,
-      deadline: "2027-04-15",
-    },
-    {
-      _id: "goal_002",
-      goalName: "Emergency Fund",
-      category: "Emergency",
-      targetAmount: 10000,
-      currentAmount: 6500,
-      deadline: "2027-01-01",
-    },
-    {
-      _id: "goal_003",
-      goalName: "New MacBook",
-      category: "Technology",
-      targetAmount: 2500,
-      currentAmount: 2200,
-      deadline: "2026-12-15",
-    },
-    {
-      _id: "goal_004",
-      goalName: "New Car",
-      category: "Vehicle",
-      targetAmount: 15000,
-      currentAmount: 5250,
-      deadline: "2028-06-01",
-    },
-    {
-      _id: "goal_005",
-      goalName: "Home Renovation",
-      category: "Home",
-      targetAmount: 8000,
-      currentAmount: 8000,
-      deadline: "2026-11-30",
-    },
-    {
-      _id: "goal_006",
-      goalName: "Online Course",
-      category: "Education",
-      targetAmount: 1200,
-      currentAmount: 300,
-      deadline: "2027-02-20",
-    },
-  ];
 
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
@@ -147,7 +195,7 @@ const savingsGoals = () => {
         Savings Goals
       </Text>
 
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {/* title */}
         <Text variant="caption">Set and track your savings goals.</Text>
 
@@ -228,7 +276,7 @@ const savingsGoals = () => {
             <SavingsGoalCard
               key={goal._id}
               goal={goal}
-              categories={inputSavingsGoalCategories}
+              categories={savingsGoalCategories}
               onEdit={(goal) => {
                 console.log("Edit:", goal);
               }}

@@ -10,7 +10,7 @@ type SavingsGoal = {
   category: string;
   targetAmount: number | string;
   currentAmount: number | string;
-  deadline: string;
+  deadline: Date | undefined;
 };
 
 type SavingsGoalCategory = {
@@ -28,9 +28,9 @@ type Props = {
 };
 
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-PK", {
     style: "currency",
-    currency: "USD",
+    currency: "PKR",
   }).format(value);
 };
 
@@ -67,6 +67,8 @@ export default function SavingsGoalCard({
   const remaining = Math.max(0, targetAmount - currentAmount);
 
   const category = categories.find((item) => item.name === goal.category);
+
+  console.log(goal)
 
   return (
     <View
@@ -203,14 +205,16 @@ export default function SavingsGoalCard({
         >
           <Calendar size={14} color={mutedForeground} />
 
-          <Text
-            variant="caption"
-            style={{
-              fontSize: 12,
-            }}
-          >
-            {formatDate(goal.deadline)}
-          </Text>
+          {goal.deadline && (
+            <Text
+              variant="caption"
+              style={{
+                fontSize: 12,
+              }}
+            >
+              {formatDate(goal.deadline.toString())}
+            </Text>
+          )}
         </View>
       </View>
 
