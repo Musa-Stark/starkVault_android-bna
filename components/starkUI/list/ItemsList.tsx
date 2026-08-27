@@ -17,6 +17,7 @@ import { useColor } from "@/hooks/useColor";
 import { BORDER_RADIUS } from "@/theme/globals";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import globalStyles from "@/starkwind/globalStyle";
 
 export type Item = {
   id: string;
@@ -73,11 +74,12 @@ function SelectableListItem({
         style={{
           backgroundColor: cardColor,
           padding: 15,
+          paddingLeft: 0,
           borderRadius: 18,
           marginRight: 10,
         }}
       >
-        {<Icon size={22} color={foreground} />}
+        {<Icon size={24} color={foreground} />}
       </View>
 
       {/* Heading + caption */}
@@ -88,7 +90,7 @@ function SelectableListItem({
           minWidth: 0,
         }}
       >
-        <Text numberOfLines={1}>{item.title}</Text>
+        <Text numberOfLines={1} style={{fontWeight: 600}}>{item.title}</Text>
 
         {item.caption && (
           <Text variant="caption" style={{ fontSize: 14, ...item.captionStyle }} numberOfLines={1}>

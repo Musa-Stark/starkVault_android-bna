@@ -25,12 +25,33 @@ const formatDate = (date: string) => {
   });
 };
 
+export const categories = [
+  { name: "Entertainment", color: "#fbcfe8" },
+  { name: "Software", color: "#bfdbfe" },
+  { name: "Streaming", color: "#fecdd3" },
+  { name: "Music", color: "#bbf7d0" },
+  { name: "Gaming", color: "#c4b5fd" },
+  { name: "Fitness", color: "#fde68a" },
+  { name: "News & Magazines", color: "#fed7aa" },
+  { name: "Education", color: "#ddd6fe" },
+  { name: "Cloud Storage", color: "#c7d2fe" },
+  { name: "Other", color: "#d1d5db" },
+];
+
+export type BillingCycle =
+  | "Daily"
+  | "Weekly"
+  | "Monthly"
+  | "Quarterly"
+  | "Yearly"
+  | "";
+
 type Subscription = {
   _id: string;
   subscriptionName: string;
-  category: string;
+  category: (typeof categories)[number]["name"];
   cost: number | string;
-  billingCycle: "Monthly" | "Yearly";
+  billingCycle: BillingCycle;
   date: string;
 };
 
@@ -110,7 +131,7 @@ export default function SubscriptionCard({
                 padding: 16,
                 borderRadius: 16,
                 backgroundColor: cardColor,
-                elevation: 1
+                elevation: 1,
               }}
             >
               {/* Top section */}

@@ -4,12 +4,23 @@ import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
 import { ItemsListSkeleton } from "@/components/starkUI/skeleton/ItemsListSkeleton";
+import type { LucideIcon } from "lucide-react-native";
 import {
-  CircleDollarSign,
-  Plus,
-  ShoppingCart,
+  Utensils,
+  House,
+  Car,
+  ShoppingBag,
+  HeartPulse,
+  Clapperboard,
+  Receipt,
+  Plane,
+  GraduationCap,
+  UsersRound,
   Wallet,
+  Shapes,
+  Plus,
 } from "lucide-react-native";
+
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useApp } from "@/providers/app-context";
 import handleExpenseForm from "@/components/starkUI/upload/expenses.form";
@@ -37,6 +48,21 @@ const expenses = () => {
   const apiCall = useAPICall();
   const { toast } = useToast();
 
+  const categoryIcons: Record<string, LucideIcon> = {
+    "Food & Dining": Utensils,
+    Housing: House,
+    Transportation: Car,
+    Shopping: ShoppingBag,
+    Health: HeartPulse,
+    Entertainment: Clapperboard,
+    "Bills & Subscriptions": Receipt,
+    Travel: Plane,
+    Education: GraduationCap,
+    "Family & Personal": UsersRound,
+    Finance: Wallet,
+    Other: Shapes,
+  };
+
   const [itemState, setItemState] = useState<"found" | "notFound" | "fetching">(
     "fetching",
   );
@@ -58,11 +84,11 @@ const expenses = () => {
           id: el._id,
           title: el.merchant,
           caption: el.category,
-          // Icon: el.category,
+          Icon: categoryIcons[el.category],
           right: {
             type: "text",
             text: `Rs ${el.amount}/-`,
-            textStyle: { color: red, fontSize: 15, fontWeight: 600 },
+            textStyle: { color: red, fontSize: 15 },
           },
         })),
       ]);
@@ -94,7 +120,7 @@ const expenses = () => {
           id: response.data._id,
           title: response.data.merchant,
           caption: response.data.category,
-          // Icon: response.data.category,
+          Icon: categoryIcons[response.data.category],
           right: {
             type: "text",
             text: `Rs ${response.data.amount}/-`,
@@ -103,7 +129,7 @@ const expenses = () => {
         },
       ]);
 
-      setItemState("found")
+      setItemState("found");
 
       setUploadForm({
         inputs: undefined,
