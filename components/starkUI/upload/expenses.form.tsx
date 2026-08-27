@@ -11,6 +11,8 @@ export interface ExpenseForm {
   amount: string;
   setAmount: SetString;
   amountRef: Ref;
+  method?: "POST" | "PATCH";
+  itemId?: string;
 }
 
 const handleExpenseForm = ({
@@ -24,11 +26,15 @@ const handleExpenseForm = ({
   amount,
   setAmount,
   amountRef,
+  method = "POST",
+  itemId = ""
 }: ExpenseForm) => {
   setUploadForm((prev) => ({
     ...prev,
     show: true,
     name: "Expense",
+    method,
+    itemId,
 
     inputs: [
       {

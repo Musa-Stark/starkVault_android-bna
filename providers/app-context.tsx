@@ -13,6 +13,8 @@ interface UploadFormInput {
   name: string;
   inputs: InputWithLabel[] | undefined;
   submit: boolean;
+  method?: "POST" | "PATCH";
+  itemId?: string;
 }
 
 export type SetString = React.Dispatch<React.SetStateAction<string>>;
@@ -137,6 +139,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     name: "Service Name",
     inputs: undefined,
     submit: false,
+    method: "POST",
+    itemId: ""
   });
 
   const [merchant, setMerchant] = useState("");

@@ -106,7 +106,8 @@ const expenses = () => {
       const response = await apiCall({
         page: "expenses",
         data: { merchant, amount, category },
-        method: "POST",
+        method: uploadForm.method!,
+        itemId: uploadForm.itemId,
       });
 
       if (!response.success) {
@@ -114,20 +115,40 @@ const expenses = () => {
         return;
       }
 
-      setItems((prev) => [
-        ...prev,
-        {
-          id: response.data._id,
-          title: response.data.merchant,
-          caption: response.data.category,
-          Icon: categoryIcons[response.data.category],
-          right: {
-            type: "text",
-            text: `Rs ${response.data.amount}/-`,
-            textStyle: { color: red, fontSize: 15, fontWeight: 600 },
+      if (uploadForm.method === "POST") {
+        setItems((prev) => [
+          ...prev,
+          {
+            id: response.data._id,
+            title: response.data.merchant,
+            caption: response.data.category,
+            Icon: categoryIcons[response.data.category],
+            right: {
+              type: "text",
+              text: `Rs ${response.data.amount}/-`,
+              textStyle: { color: red, fontSize: 15, fontWeight: 600 },
+            },
           },
-        },
-      ]);
+        ]);
+      } else {
+        setItems((prev) => [
+          ...prev.map((el) =>
+            el.id === response.data._id
+              ? ({
+                  id: response.data._id,
+                  title: response.data.merchant,
+                  caption: response.data.category,
+                  Icon: categoryIcons[response.data.category],
+                  right: {
+                    type: "text",
+                    text: `Rs ${response.data.amount}/-`,
+                    textStyle: { color: red, fontSize: 15, fontWeight: 600 },
+                  },
+                } satisfies Item)
+              : el,
+          ),
+        ]);
+      }
 
       setItemState("found");
 
@@ -136,6 +157,7 @@ const expenses = () => {
         name: "",
         show: false,
         submit: false,
+        method: "POST",
       });
 
       setMerchant("");
@@ -146,11 +168,37 @@ const expenses = () => {
     uploadExpense();
   }, [uploadForm.submit]);
 
+  // sections
   const itemSections = {
     found: (
       <ViewAll
         items={items}
         header="List"
+        clearSelection={uploadForm.submit}
+        onEdit={(item) => {
+          const newAmount = item.right?.text?.replace(/[^0-9.]/g, "") ?? "";
+          const newCategory = item.caption ?? "";
+          const newMerchant = item.title;
+
+          setAmount(newAmount);
+          setCategory(newCategory);
+          setMerchant(newMerchant);
+
+          handleExpenseForm({
+            amount: newAmount,
+            amountRef,
+            category: newCategory,
+            categoryRef,
+            merchant: newMerchant,
+            merchantRef,
+            setAmount,
+            setCategory,
+            setMerchant,
+            setUploadForm,
+            method: "PATCH",
+            itemId: item.id,
+          });
+        }}
         onDelete={(selectedItems: Item[]) => {
           console.log("Delete:", selectedItems[0].id);
         }}
@@ -190,6 +238,7 @@ const expenses = () => {
               setCategory,
               setMerchant,
               setUploadForm,
+              method: "POST",
             })
           }
         >
