@@ -11,6 +11,7 @@ import { useApp } from "@/providers/app-context";
 import handlePasswordForm from "@/components/starkUI/upload/passwords.form";
 import useAPICall from "@/utils/apiCall";
 import { useToast } from "@/providers/toast-provider";
+import TableSkeleton from "@/components/starkUI/skeleton/TableSkeleton";
 
 interface Row {
   service: string;
@@ -139,7 +140,7 @@ const passwords = () => {
         Passwords
       </Text>
 
-      <Text variant="caption">0 credentials secured</Text>
+      <Text variant="caption">{passwords.length} credentials secured</Text>
 
       <Button
         icon={Plus}
@@ -165,57 +166,62 @@ const passwords = () => {
         New Password
       </Button>
 
-      <Table
-        style={{ marginTop: 20, marginBottom: 300 }}
-        onRowPress={handleRowPress}
-        onRowLongPress={handleLongRowPress}
-        columns={[
-          {
-            id: "1",
-            header: "Service",
-            accessorKey: "service",
-            sortable: true,
-            minWidth: 130,
-            align: "left",
-            filterable: true,
-          },
-          {
-            id: "2",
-            header: "Username",
-            accessorKey: "username",
-            sortable: true,
-            filterable: true,
-            minWidth: 130,
-            align: "left",
-          },
-          {
-            id: "3",
-            header: "Password",
-            accessorKey: "password",
-            sortable: true,
-            filterable: true,
-            minWidth: 130,
-            align: "left",
-          },
-          {
-            id: "4",
-            header: "Actions",
-            accessorKey: "actions",
-            width: 150,
-            align: "center",
-            filterable: false,
-            sortable: false,
-            cell: (_, row) => (
-              <View style={{ ...globalStyles.flexBoxHorizantal }}>
-                <Button variant="ghost" size="icon" icon={Pen} />
+      {itemState === "fetching" ? (
+        <TableSkeleton style={{ marginTop: 20 }} />
+      ) : (
+        <Table
+          style={{ marginTop: 20, marginBottom: 300 }}
+          emptyMessage="Passwords not found"
+          onRowPress={handleRowPress}
+          onRowLongPress={handleLongRowPress}
+          columns={[
+            {
+              id: "1",
+              header: "Service",
+              accessorKey: "service",
+              sortable: true,
+              minWidth: 130,
+              align: "left",
+              filterable: true,
+            },
+            {
+              id: "2",
+              header: "Username",
+              accessorKey: "username",
+              sortable: true,
+              filterable: true,
+              minWidth: 130,
+              align: "left",
+            },
+            {
+              id: "3",
+              header: "Password",
+              accessorKey: "password",
+              sortable: true,
+              filterable: true,
+              minWidth: 130,
+              align: "left",
+            },
+            {
+              id: "4",
+              header: "Actions",
+              accessorKey: "actions",
+              width: 150,
+              align: "center",
+              filterable: false,
+              sortable: false,
+              cell: (_, row) => (
+                <View style={{ ...globalStyles.flexBoxHorizantal }}>
+                  <Button variant="ghost" size="icon" icon={Pen} />
 
-                <Button variant="ghost" size="icon" icon={Trash2} />
-              </View>
-            ),
-          },
-        ]}
-        data={passwords}
-      />
+                  <Button variant="ghost" size="icon" icon={Trash2} />
+                </View>
+              ),
+            },
+          ]}
+          data={passwords}
+        />
+      )}
     </View>
   );
 };
