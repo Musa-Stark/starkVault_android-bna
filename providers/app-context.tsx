@@ -101,8 +101,8 @@ interface CreateContext {
   setCardHolder: SetString;
   cardHolderRef: Ref;
 
-  expiryDate: string;
-  setExpiryDate: SetString;
+  expiryDate: Date | undefined;
+  setExpiryDate: SetDate;
   expiryDateRef: Ref;
 
   cvv: string;
@@ -159,7 +159,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [cardNumber, setCardNumber] = useState("");
   const [cvv, setCvv] = useState("");
   const [label, setLabel] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
+  const [expiryDate, setExpiryDate] = useState<Date | undefined>(undefined);
   const [file, setFile] = useState<MediaAsset>({
     id: "random-id",
     type: "image",

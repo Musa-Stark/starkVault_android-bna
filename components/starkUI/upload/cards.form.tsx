@@ -1,4 +1,4 @@
-import type { SetUploadForm, SetString, Ref } from "@/providers/app-context";
+import type { SetUploadForm, SetString, Ref, SetDate } from "@/providers/app-context";
 
 export interface CardForm {
   setUploadForm: SetUploadForm;
@@ -19,8 +19,8 @@ export interface CardForm {
   setCardHolder: SetString;
   cardHolderRef: Ref;
 
-  expiryDate: string;
-  setExpiryDate: SetString;
+  expiryDate: Date | undefined;
+  setExpiryDate: SetDate;
   expiryDateRef: Ref;
 
   cvv: string;
@@ -124,10 +124,11 @@ const handleCardForm = ({
       },
 
       {
+        inputType: "datePicker",
         label: "Expiry Date",
         placeholderText: "e.g. 08/29",
         value: expiryDate,
-        setStringValue: setExpiryDate,
+        setDateValue: setExpiryDate,
         ref: expiryDateRef,
         nextRef: cvvRef,
         entryKeyHint: "next",

@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import * as Clipboard from "expo-clipboard";
 
 import { Text } from "@/components/ui/text";
@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react-native";
 import { useApp } from "@/providers/app-context";
 import handleCardForm from "@/components/starkUI/upload/cards.form";
+import useAPICall from "@/utils/apiCall";
+import { useToast } from "@/providers/toast-provider";
 
 const cards = () => {
   const {
@@ -43,33 +45,81 @@ const cards = () => {
     setUploadForm,
   } = useApp();
 
+  const [cards, setCards] = useState([]);
+
+  const apiCall = useAPICall();
+  const { toast } = useToast();
+
+  const [itemState, setItemState] = useState<"found" | "notFound" | "fetching">(
+    "fetching",
+  );
+
+  // fetch - GET
   useEffect(() => {
-    if (!uploadForm.submit) return;
+    const fetchSubscriptions = async () => {
+      const response = await apiCall({ page: "cards", method: "GET" });
 
-    console.log({
-      label,
-      brand,
-      cardNumber,
-      cardHolder,
-      expiryDate,
-      cvv,
-      bank,
-    });
+      if (!response.success && response.message === "Data not found") {
+        setItemState("notFound");
+        return;
+      }
 
-    setUploadForm({
-      inputs: undefined,
-      name: "",
-      show: false,
-      submit: false,
-    });
+      console.log("GET /cards: ", response.data)
 
-    setLabel("");
-    setBrand("");
-    setCardNumber("");
-    setCardHolder("");
-    setExpiryDate("");
-    setCvv("");
-    setBank("");
+      setCards([]);
+
+      setItemState("found");
+    };
+
+    fetchSubscriptions();
+  }, []);
+
+  // upload - POST
+  useEffect(() => {
+    const uploadSubscription = async () => {
+      if (!uploadForm.submit) return;
+
+      const response = await apiCall({
+        page: "cards",
+        data: {
+          label,
+          brand,
+          cardNumber,
+          cardHolder,
+          expiryDate,
+          cvv,
+          bank,
+        },
+        method: "POST",
+      });
+      console.log("POST /cards: ", response)
+
+
+      if (!response.success) {
+        toast.error(response.message || "Something went wrong");
+        return;
+      }
+      setCards([]);
+
+      setItemState("found");
+
+      setUploadForm({
+        inputs: undefined,
+        name: "",
+        show: false,
+        submit: false,
+      });
+
+      setLabel("");
+      setBrand("");
+      setCardNumber("");
+      setCardHolder("");
+      setExpiryDate(undefined);
+      setCvv("");
+      setBank("");
+    };
+
+    uploadSubscription();
   }, [uploadForm.submit]);
 
   return (
