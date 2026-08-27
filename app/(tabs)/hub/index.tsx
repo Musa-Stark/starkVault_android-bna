@@ -15,7 +15,6 @@ import {
   LucideProps,
   NotebookPenIcon,
   Repeat,
-  Scale,
   Wallet,
 } from "lucide-react-native";
 import { Href, useRouter } from "expo-router";
@@ -80,12 +79,12 @@ const Money = () => {
     },
     { icon: KeyRound, text: "Passwords", category: "vault", route: "/hub/passwords" },
     { icon: CreditCard, text: "Cards", category: "vault", route: "/hub/cards" },
-    {
-      icon: FileLock,
-      text: "Documents",
-      category: "vault",
-      route: "/hub/documents",
-    },
+    // {
+    //   icon: FileLock,
+    //   text: "Documents",
+    //   category: "vault",
+    //   route: "/hub/documents",
+    // },
     {
       icon: NotebookPenIcon,
       text: "Notes",

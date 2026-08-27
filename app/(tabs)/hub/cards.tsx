@@ -110,8 +110,6 @@ const Cards = () => {
       setCards(fetchedCards);
       setItemState(fetchedCards.length > 0 ? "found" : "notFound");
     } catch (error) {
-      console.error("GET /cards error:", error);
-
       toast.error("Failed to fetch cards");
       setCards([]);
       setItemState("notFound");
@@ -147,8 +145,6 @@ const Cards = () => {
           method: "POST",
         });
 
-        console.log("POST /cards:", response);
-
         if (!response.success) {
           toast.error(response.message || "Something went wrong");
           return;
@@ -179,8 +175,6 @@ const Cards = () => {
 
         toast.success("Card added successfully");
       } catch (error) {
-        console.error("POST /cards error:", error);
-
         toast.error("Failed to add card");
       }
     };

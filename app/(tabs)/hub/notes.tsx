@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
@@ -10,6 +10,9 @@ import handleNoteForm from "@/components/starkUI/upload/notes.form";
 import NoteCard from "@/components/starkUI/list/NoteCard";
 import { ScrollView } from "react-native-gesture-handler";
 import { Card } from "@/components/ui/card";
+import useAPICall from "@/utils/apiCall";
+import { useToast } from "@/providers/toast-provider";
+import NoteCardSkeleton from "@/components/starkUI/skeleton/NoteCardSkeleton";
 
 const notes = () => {
   const {
@@ -29,28 +32,144 @@ const notes = () => {
     setUploadForm,
   } = useApp();
 
+  interface Note {
+    _id: string;
+    title: string;
+    content: string;
+    category: string;
+    pin: boolean;
+    updatedAt: string;
+  }
+
+  const [notes, setNotes] = useState<Note[]>([]);
+
+  const apiCall = useAPICall();
+  const { toast } = useToast();
+
+  const [itemState, setItemState] = useState<"found" | "notFound" | "fetching">(
+    "fetching",
+  );
+
+  // fetch - GET
   useEffect(() => {
-    if (!uploadForm.submit) return;
+    const fetch = async () => {
+      const response = await apiCall({ page: "notes", method: "GET" });
 
-    console.log({
-      noteTitle,
-      content,
-      category,
-      pin,
-    });
+      if (!response.success && response.message === "Data not found") {
+        setItemState("notFound");
+        return;
+      }
 
-    setUploadForm({
-      inputs: undefined,
-      name: "",
-      show: false,
-      submit: false,
-    });
+      setNotes(
+        response.data.map((note: any) => ({
+          _id: note._id,
+          category: note.category,
+          content: note.content,
+          pin: note.pin,
+          title: note.noteTitle,
+          updatedAt: note.updatedAt,
+        })),
+      );
 
-    setNoteTitle("");
-    setContent("");
-    setCategory("");
-    setPin(false);
+      setItemState("found");
+    };
+
+    fetch();
+  }, []);
+
+  // upload - POST
+  useEffect(() => {
+    const upload = async () => {
+      if (!uploadForm.submit) return;
+
+      const response = await apiCall({
+        page: "notes",
+        data: {
+          noteTitle,
+          content,
+          category,
+          pin,
+        },
+        method: "POST",
+      });
+
+      if (!response.success) {
+        toast.error(response.message || "Something went wrong");
+        return;
+      }
+
+      setNotes((prev) => [
+        ...prev,
+        {
+          _id: response.data._id,
+          category: response.data.category,
+          content: response.data.content,
+          pin: response.data.pin,
+          title: response.data.noteTitle,
+          updatedAt: response.data.updatedAt,
+        },
+      ]);
+
+      setItemState("found");
+
+      setUploadForm({
+        inputs: undefined,
+        name: "",
+        show: false,
+        submit: false,
+      });
+
+      setNoteTitle("");
+      setContent("");
+      setCategory("");
+      setPin(false);
+    };
+
+    upload();
   }, [uploadForm.submit]);
+
+  const notesScreens = {
+    notFound: (
+      <Card style={{ marginTop: 20, ...globalStyles.flexBox }}>
+        <Text variant="caption">No notes added yet</Text>
+      </Card>
+    ),
+    fetching: (
+      <View style={{ marginTop: 10, gap: 10 }}>
+        <NoteCardSkeleton />
+        <NoteCardSkeleton />
+      </View>
+    ),
+    found: (
+      <View style={{ marginVertical: 20, gap: 10 }}>
+        {notes.map((note) => (
+          <NoteCard
+            key={note._id}
+            note={{
+              _id: note._id,
+              title: note.title,
+              content: note.content,
+              category: note.category,
+              pinned: note.pin,
+              updatedAt: note.updatedAt,
+            }}
+            onView={(note) => {
+              console.log("View", note);
+            }}
+            onEdit={(note) => {
+              console.log("Edit", note);
+            }}
+            onDelete={(note) => {
+              console.log("Delete", note);
+            }}
+            onTogglePin={(note) => {
+              console.log("Toggle pin", note);
+            }}
+          />
+        ))}
+      </View>
+    ),
+  };
 
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
@@ -89,35 +208,8 @@ const notes = () => {
           New Note
         </Button>
 
-        <Card style={{ marginTop: 20, ...globalStyles.flexBox }}>
-          <Text variant="caption">No notes added yet</Text>
-        </Card>
-
         {/* notes */}
-        <View style={{ marginVertical: 20 }}>
-          <NoteCard
-            note={{
-              _id: "1",
-              title: "Meeting Notes",
-              content: "Discuss the new dashboard design, API integration, and release timeline. Discuss the new dashboard design, \n\n\nAPI integration, and release timeline. Discuss the new dashboard design, API integration, and release timeline. Discuss the new dashboard design, API integration, and release timeline.",
-              category: "Work",
-              pinned: true,
-              updatedAt: new Date().toISOString(),
-            }}
-            onView={(note) => {
-              console.log("View", note);
-            }}
-            onEdit={(note) => {
-              console.log("Edit", note);
-            }}
-            onDelete={(note) => {
-              console.log("Delete", note);
-            }}
-            onTogglePin={(note) => {
-              console.log("Toggle pin", note);
-            }}
-          />
-        </View>
+        {notesScreens[itemState]}
       </ScrollView>
     </View>
   );

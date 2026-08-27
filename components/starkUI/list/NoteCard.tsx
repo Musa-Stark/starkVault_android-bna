@@ -58,7 +58,7 @@ export default function NoteCard({
   const background = useColor("background");
   const cardColor = useColor("card");
   const mutedForeground = useColor("mutedForeground");
-  const blue = useColor("blue");
+  const green = useColor("green");
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
@@ -127,7 +127,7 @@ export default function NoteCard({
           borderRadius: 16,
           backgroundColor: cardColor,
           borderWidth: 1,
-          borderColor: note.pinned ? blue : background,
+          borderColor: note.pinned ? green : background,
           elevation: 1,
         }}
       >
@@ -186,11 +186,11 @@ export default function NoteCard({
               alignItems: "center",
               justifyContent: "center",
               borderRadius: 999,
-              backgroundColor: note.pinned ? `${blue}18` : "transparent",
+              backgroundColor: note.pinned ? `${green}18` : "transparent",
             }}
           >
             {note.pinned ? (
-              <Pin size={21} color={blue} fill={blue} strokeWidth={2} />
+              <Pin size={21} color={green} fill={green} strokeWidth={2} />
             ) : (
               <PinOff size={21} color={mutedForeground} strokeWidth={2} />
             )}
@@ -208,14 +208,14 @@ export default function NoteCard({
               paddingHorizontal: 10,
               paddingVertical: 5,
               borderRadius: 999,
-              backgroundColor: `${blue}15`,
+              backgroundColor: `${green}15`,
             }}
           >
             <Text
               style={{
                 fontSize: 11,
                 fontWeight: "600",
-                color: blue,
+                color: green,
               }}
             >
               {note.category}
@@ -320,68 +320,6 @@ export default function NoteCard({
           )}
         </View>
       </View>
-
-      {/* ====================================================== */}
-      {/* Copied Toast                                            */}
-      {/* ====================================================== */}
-
-      {!showCopied && (
-        <View
-          pointerEvents="none"
-          style={{
-            position: "absolute",
-            left: 16,
-            right: 16,
-            bottom: 12,
-            zIndex: 100,
-            alignItems: "center",
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 8,
-              paddingHorizontal: 14,
-              paddingVertical: 15,
-              borderRadius: 999,
-              backgroundColor: foreground,
-              elevation: 6,
-              shadowColor: "#000",
-              shadowOffset: {
-                width: 0,
-                height: 3,
-              },
-              shadowOpacity: 0.2,
-              shadowRadius: 6,
-              width: "100%"
-            }}
-          >
-            <View
-              style={{
-                width: 22,
-                height: 22,
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: 999,
-                backgroundColor: "#22c55e",
-              }}
-            >
-              <Check size={14} color="#ffffff" strokeWidth={3} />
-            </View>
-
-            <Text
-              style={{
-                fontSize: 13,
-                fontWeight: "600",
-                color: background,
-              }}
-            >
-              Note copied
-            </Text>
-          </View>
-        </View>
-      )}
 
       {/* ====================================================== */}
       {/* Delete Modal                                            */}
