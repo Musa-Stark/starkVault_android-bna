@@ -15,6 +15,7 @@ import ItemsCard, {
 } from "@/components/starkUI/list/SubscriptionCard";
 import useAPICall from "@/utils/apiCall";
 import { useToast } from "@/providers/toast-provider";
+import useDeleteOne from "@/components/starkUI/DeleteOne";
 
 interface Subscription {
   _id: string;
@@ -49,6 +50,7 @@ const Subscriptions = () => {
 
   const apiCall = useAPICall();
   const { toast } = useToast();
+  const deleteOne = useDeleteOne();
 
   const [itemState, setItemState] = useState<"found" | "notFound" | "fetching">(
     "fetching",
@@ -161,9 +163,13 @@ const Subscriptions = () => {
             key={el._id}
             categories={categories}
             subscriptions={[el]}
-            onDelete={(item) => {
-              console.log("deleted: ", item);
-            }}
+            onDelete={(item) =>
+              deleteOne({
+                id: item._id,
+                page: "subscriptions",
+                setState: setSubscriptions,
+              })
+            }
             onEdit={(item) => {
               const newBillingCycle = item.billingCycle;
               const newCategory = item.category;

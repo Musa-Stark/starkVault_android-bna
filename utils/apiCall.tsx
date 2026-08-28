@@ -1,7 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
 import { APIResponse } from "@/providers/auth-provider";
-import { useToast } from "@/providers/toast-provider";
 
 export type APIPages =
   | "expenses"
