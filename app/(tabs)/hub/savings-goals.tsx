@@ -13,6 +13,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import useAPICall from "@/utils/apiCall";
 import { useToast } from "@/providers/toast-provider";
 import SavingsGoalCardSkeleton from "@/components/starkUI/skeleton/SavingsGoalsSkeleton";
+import useDeleteOne from "@/components/starkUI/DeleteOne";
 
 const savingsGoals = () => {
   const {
@@ -39,6 +40,7 @@ const savingsGoals = () => {
     uploadForm,
     setUploadForm,
   } = useApp();
+  const deleteOne = useDeleteOne();
 
   const savingsGoalCategories = [
     {
@@ -218,11 +220,11 @@ const savingsGoals = () => {
               const newDeadline = new Date(item.deadline!);
               const newGoalName = item.goalName;
 
-              setCurrentAmount(newCurrentAmount)
+              setCurrentAmount(newCurrentAmount);
               setCategory(newCategory);
               setDeadline(newDeadline);
-              setTargetAmount(newTargetAmount)
-              setGoalName(newGoalName)
+              setTargetAmount(newTargetAmount);
+              setGoalName(newGoalName);
 
               handleSavingsGoalsForm({
                 goalName: newGoalName,
@@ -251,9 +253,13 @@ const savingsGoals = () => {
                 itemId: item._id,
               });
             }}
-            onDelete={(goal) => {
-              console.log("Delete:", goal);
-            }}
+            onDelete={(goal) =>
+              deleteOne({
+                id: goal._id,
+                page: "savings-goals",
+                setState: setSavings,
+              })
+            }
             onContribute={(goal) => {
               console.log("Contribute:", goal);
             }}

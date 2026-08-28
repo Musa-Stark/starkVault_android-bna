@@ -20,8 +20,6 @@ const useDeleteOne = () => {
       itemId: id,
     });
 
-    console.log(response);
-
     if (!response.success) {
       toast.error(response.message || "Something went wrong");
       return;
