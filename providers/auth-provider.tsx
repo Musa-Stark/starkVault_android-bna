@@ -111,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
        */
       await getCurrentUser();
     } catch (error) {
-      console.error("Failed to restore authentication:", error);
+      console.log("Failed to restore authentication:", error);
 
       await clearTokens();
 
@@ -130,11 +130,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-
     const response = await fetch(`${API_URL}/api/v1/account/${routes.me}`, {
+      method: "POST",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify({ accessToken }),
     });
 
     if (!response.ok) {
@@ -232,7 +233,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json();
 
-      await SecureStore.setItemAsync("access_token", data.accessToken);
+      if (data.purpose === "password_reset") return data;
+
+      await SecureStore.setItemAsync("access_token", data?.accessToken);
 
       await SecureStore.setItemAsync("refresh_token", data?.refreshToken);
 
@@ -311,16 +314,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const resetPassword = async (email: string, password: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/v1/auth/${routes.resetPassword}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${API_URL}/api/v1/auth/${routes.resetPassword}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
         },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      );
 
       const data = await response.json();
 
