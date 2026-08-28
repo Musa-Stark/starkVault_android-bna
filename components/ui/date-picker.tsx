@@ -125,7 +125,6 @@ export function DatePicker(props: DatePickerProps) {
   }, [value, mode]);
 
   const [currentDate, setCurrentDate] = useState(() => getCurrentDate());
-  console.log("CURRENT DATE: ", currentDate)
   const [viewMode, setViewMode] = useState<'date' | 'time' | 'month' | 'year'>(
     'date'
   );
