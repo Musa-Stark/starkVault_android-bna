@@ -29,6 +29,7 @@ export type SetString = React.Dispatch<React.SetStateAction<string>>;
 export type SetBoolean = React.Dispatch<React.SetStateAction<boolean>>;
 export type SetFile = React.Dispatch<React.SetStateAction<MediaAsset>>;
 export type SetDate = React.Dispatch<React.SetStateAction<Date | undefined>>;
+export type SetNumber = React.Dispatch<React.SetStateAction<number>>;
 export type Ref = React.RefObject<null>;
 
 export type SetUploadForm = React.Dispatch<
@@ -145,6 +146,9 @@ interface CreateContext {
   pin: boolean;
   setPin: SetBoolean;
   pinRef: Ref;
+
+  clearSelection: number;
+  setClearSelection: SetNumber;
 }
 const AppContext = createContext<CreateContext | undefined>(undefined);
 
@@ -194,6 +198,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [noteTitle, setNoteTitle] = useState("");
   const [content, setContent] = useState("");
   const [pin, setPin] = useState(false);
+  const [clearSelection, setClearSelection] = useState(0);
 
   const merchantRef = useRef(null);
   const categoryRef = useRef(null);
@@ -327,6 +332,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     pin,
     setPin,
     pinRef,
+
+    clearSelection,
+    setClearSelection,
   };
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;

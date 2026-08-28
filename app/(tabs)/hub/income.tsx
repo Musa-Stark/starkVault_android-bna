@@ -53,6 +53,9 @@ const income = () => {
     amountRef,
     uploadForm,
     setUploadForm,
+    clearSelection,
+    setClearSelection,
+    setDeleteModal,
   } = useApp();
 
   const [itemState, setItemState] = useState<"found" | "notFound" | "fetching">(
@@ -157,6 +160,8 @@ const income = () => {
               : el,
           ),
         ]);
+
+        setClearSelection((prev) => prev + 1);
       }
 
       setItemState("found");
@@ -181,7 +186,7 @@ const income = () => {
       <ViewAll
         items={items}
         header="List"
-        clearSelection={uploadForm.submit}
+        clearSelection={clearSelection}
         onEdit={(item) => {
           const newAmount = item.right?.text?.replace(/[^0-9.]/g, "") ?? "";
           const newType = item.caption ?? "";
@@ -207,7 +212,12 @@ const income = () => {
           });
         }}
         onDelete={(selectedItems: Item[]) => {
-          console.log("Delete:", selectedItems[0].id);
+          setDeleteModal({
+            show: true,
+            ids: selectedItems.map((item) => item.id),
+            page: "incomes",
+            setState: setItems,
+          });
         }}
         style={{ marginVertical: 20 }}
       />

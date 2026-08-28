@@ -10,7 +10,7 @@ import useAPICall from "@/utils/apiCall";
 import { useToast } from "@/providers/toast-provider";
 
 const DeleteModal = () => {
-  const { deleteModal, setDeleteModal } = useApp();
+  const { deleteModal, setDeleteModal, setClearSelection } = useApp();
   const apiCall = useAPICall();
   const { toast } = useToast();
 
@@ -44,6 +44,8 @@ const DeleteModal = () => {
     }
 
     setState((prev: any) => prev.filter((item: any) => !ids.includes(item.id)));
+
+    setClearSelection((prev) => prev + 1);
 
     setDeleteModal({
       show: false,
@@ -154,7 +156,7 @@ const DeleteModal = () => {
                     color: foreground,
                   }}
                 >
-                    Selected Item(s)
+                  Selected Item(s)
                 </Text>
                 . This action cannot be undone.
               </Text>
