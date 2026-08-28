@@ -100,22 +100,39 @@ const passwords = () => {
           username,
           password,
         },
-        method: "POST",
+        method: uploadForm.method!,
+        itemId: uploadForm.itemId,
       });
 
       if (!response.success) {
         toast.error(response.message || "Something went wrong");
         return;
       }
-      setPasswords((prev) => [
-        ...prev,
-        {
-          _id: response.data._id,
-          password: response.data.password,
-          service: response.data.name,
-          username: response.data.username,
-        },
-      ]);
+
+      if (uploadForm.method === "POST") {
+        setPasswords((prev) => [
+          ...prev,
+          {
+            _id: response.data._id,
+            password: response.data.password,
+            service: response.data.name,
+            username: response.data.username,
+          },
+        ]);
+      } else {
+        setPasswords((prev) => [
+          ...prev.map((el) =>
+            el._id === response.data._id
+              ? ({
+                  _id: response.data._id,
+                  password: response.data.password,
+                  service: response.data.name,
+                  username: response.data.username,
+                } satisfies Password)
+              : el,
+          ),
+        ]);
+      }
 
       setItemState("found");
 
@@ -212,9 +229,46 @@ const passwords = () => {
               sortable: false,
               cell: (_, row) => (
                 <View style={{ ...globalStyles.flexBoxHorizantal }}>
-                  <Button variant="ghost" size="icon" icon={Pen} />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    icon={Pen}
+                    onPress={() => {
+                      const newPassword = row.password;
+                      const newUsername = row.username;
+                      const newService = row.service;
 
-                  <Button variant="ghost" size="icon" icon={Trash2} />
+                      setPassword(newPassword);
+                      setUsername(newUsername);
+                      setService(newService);
+
+                      handlePasswordForm({
+                        service: newService,
+                        setService,
+                        serviceRef,
+
+                        username: newUsername,
+                        setUsername,
+                        usernameRef,
+
+                        password: newPassword,
+                        setPassword,
+                        passwordRef,
+
+                        setUploadForm,
+
+                        method: "PATCH",
+                        itemId: row._id,
+                      });
+                    }}
+                  />
+
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    icon={Trash2}
+                    onPress={() => console.log("DELETE PASSWORD:", row)}
+                  />
                 </View>
               ),
             },

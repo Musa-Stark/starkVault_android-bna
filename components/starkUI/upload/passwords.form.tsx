@@ -11,6 +11,8 @@ export interface PasswordForm {
   password: string;
   setPassword: SetString;
   passwordRef: Ref;
+  method?: "POST" | "PATCH";
+  itemId?: string;
 }
 
 const handlePasswordForm = ({
@@ -24,11 +26,15 @@ const handlePasswordForm = ({
   password,
   setPassword,
   passwordRef,
+  method = "POST",
+  itemId = "",
 }: PasswordForm) => {
   setUploadForm((prev) => ({
     ...prev,
     show: true,
     name: "Password",
+    method,
+    itemId,
 
     inputs: [
       {
