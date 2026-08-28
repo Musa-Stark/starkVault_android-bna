@@ -65,7 +65,7 @@ const passwords = () => {
 
   // fetch - GET
   useEffect(() => {
-    const fetchSubscriptions = async () => {
+    const fetch = async () => {
       const response = await apiCall({ page: "passwords", method: "GET" });
 
       if (!response.success && response.message === "Data not found") {
@@ -85,12 +85,12 @@ const passwords = () => {
       setItemState("found");
     };
 
-    fetchSubscriptions();
+    fetch();
   }, []);
 
   // upload - POST
   useEffect(() => {
-    const uploadSubscription = async () => {
+    const upload  = async () => {
       if (!uploadForm.submit) return;
 
       const response = await apiCall({
@@ -148,7 +148,7 @@ const passwords = () => {
       setPassword("");
     };
 
-    uploadSubscription();
+    upload();
   }, [uploadForm.submit]);
 
   return (

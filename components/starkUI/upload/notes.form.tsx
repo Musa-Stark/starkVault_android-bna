@@ -23,6 +23,9 @@ export interface NoteForm {
   pin: boolean;
   setPin: SetBoolean;
   pinRef: Ref;
+
+  method?: "POST" | "PATCH";
+  itemId?: string;
 }
 
 const handleNoteForm = ({
@@ -39,11 +42,15 @@ const handleNoteForm = ({
   pin,
   setPin,
   pinRef,
+  method = "POST",
+  itemId = "",
 }: NoteForm) => {
   setUploadForm((prev) => ({
     ...prev,
     show: true,
     name: "Note",
+    method,
+    itemId,
 
     inputs: [
       {

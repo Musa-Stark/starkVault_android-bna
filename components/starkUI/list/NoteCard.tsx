@@ -23,7 +23,7 @@ export type Note = {
   title: string;
   content: string;
   category?: string;
-  pinned: boolean;
+  pin: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -127,7 +127,7 @@ export default function NoteCard({
           borderRadius: 16,
           backgroundColor: cardColor,
           borderWidth: 1,
-          borderColor: note.pinned ? green : background,
+          borderColor: note.pin ? green : background,
           elevation: 1,
         }}
       >
@@ -186,10 +186,10 @@ export default function NoteCard({
               alignItems: "center",
               justifyContent: "center",
               borderRadius: 999,
-              backgroundColor: note.pinned ? `${green}18` : "transparent",
+              backgroundColor: note.pin ? `${green}18` : "transparent",
             }}
           >
-            {note.pinned ? (
+            {note.pin ? (
               <Pin size={21} color={green} fill={green} strokeWidth={2} />
             ) : (
               <PinOff size={21} color={mutedForeground} strokeWidth={2} />

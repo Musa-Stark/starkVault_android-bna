@@ -15,37 +15,46 @@ export interface APIData {
   data?: any;
   method: "GET" | "POST" | "PATCH" | "DELETE";
   itemId?: string;
+  option?: string;
 }
 
 const useAPICall = () => {
   const router = useRouter();
 
-  return async ({ page, data, method, itemId }: APIData): Promise<APIResponse> => {
+  return async ({
+    page,
+    data,
+    method,
+    itemId,
+    option,
+  }: APIData): Promise<APIResponse> => {
     const accessToken = await SecureStore.getItemAsync("access_token");
     if (!accessToken) {
       router.replace("/login");
       return { success: false, message: "" };
     }
-    
+
     const response = await fetch(
-      `${process.env.EXPO_PUBLIC_API_URL}/api/v1/${page}${itemId ? `/${itemId}` : "/"}`,
+      `${process.env.EXPO_PUBLIC_API_URL}/api/v1/${page}${itemId ? `/${itemId}` : ""}${option ? `/${option}` : ""}`,
       {
         method,
         headers: {
           "Content-Type": "application/json",
         },
         body:
-        method !== "GET"
-        ? JSON.stringify({ accessToken, ...data })
-        : undefined,
+          method !== "GET"
+            ? JSON.stringify({ accessToken, ...data })
+            : undefined,
       },
     );
-    
+
     if (!response.ok) {
-      console.log("RESPONSE: =====================================================");
-      console.log(response)
+      console.log(
+        "RESPONSE: =====================================================",
+      );
+      console.log(response);
     }
-    
+
     const res = await response.json();
     return res;
   };

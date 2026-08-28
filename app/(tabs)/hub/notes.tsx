@@ -90,7 +90,8 @@ const notes = () => {
           category,
           pin,
         },
-        method: "POST",
+        method: uploadForm.method!,
+        itemId: uploadForm.itemId,
       });
 
       if (!response.success) {
@@ -98,17 +99,34 @@ const notes = () => {
         return;
       }
 
-      setNotes((prev) => [
-        ...prev,
-        {
-          _id: response.data._id,
-          category: response.data.category,
-          content: response.data.content,
-          pin: response.data.pin,
-          title: response.data.noteTitle,
-          updatedAt: response.data.updatedAt,
-        },
-      ]);
+      if (uploadForm.method === "POST") {
+        setNotes((prev) => [
+          ...prev,
+          {
+            _id: response.data._id,
+            category: response.data.category,
+            content: response.data.content,
+            pin: response.data.pin,
+            title: response.data.noteTitle,
+            updatedAt: response.data.updatedAt,
+          },
+        ]);
+      } else {
+        setNotes((prev) => [
+          ...prev.map((el) =>
+            el._id === response.data._id
+              ? ({
+                  _id: response.data._id,
+                  category: response.data.category,
+                  content: response.data.content,
+                  pin: response.data.pin,
+                  title: response.data.noteTitle,
+                  updatedAt: response.data.updatedAt,
+                } satisfies Note)
+              : el,
+          ),
+        ]);
+      }
 
       setItemState("found");
 
@@ -127,6 +145,44 @@ const notes = () => {
 
     upload();
   }, [uploadForm.submit]);
+
+  // handlePin
+  const handleNotePin = async (id: string, pin: boolean) => {
+    setNotes((prev) =>
+      prev.map((note) =>
+        note._id === id
+          ? {
+              ...note,
+              pin: !pin,
+            }
+          : note,
+      ),
+    );
+
+    const response = await apiCall({
+      page: "notes",
+      data: {
+        pin,
+      },
+      method: "PATCH",
+      itemId: id,
+      option: "pin",
+    });
+
+    if (!response.success) {
+      toast.error(response.message || "Something went wrong");
+      setNotes((prev) =>
+        prev.map((note) =>
+          note._id === id
+            ? {
+                ...note,
+                pin: pin,
+              }
+            : note,
+        ),
+      );
+    }
+  };
 
   const notesScreens = {
     notFound: (
@@ -150,21 +206,48 @@ const notes = () => {
               title: note.title,
               content: note.content,
               category: note.category,
-              pinned: note.pin,
+              pin: note.pin,
               updatedAt: note.updatedAt,
             }}
-            onView={(note) => {
-              console.log("View", note);
-            }}
             onEdit={(note) => {
-              console.log("Edit", note);
+              const newTitle = note.title;
+              const newContent = note.content;
+              const newCategory = note.category ?? "";
+              const newPin = note.pin;
+
+              setNoteTitle(newTitle);
+              setContent(newContent);
+              setCategory(newCategory);
+              setPin(newPin);
+
+              handleNoteForm({
+                category: newCategory,
+                categoryRef,
+
+                content: newContent,
+                contentRef,
+
+                noteTitle: newTitle,
+                noteTitleRef,
+
+                pin: newPin,
+                pinRef,
+
+                setCategory,
+                setContent,
+                setNoteTitle,
+                setPin,
+
+                setUploadForm,
+
+                method: "PATCH",
+                itemId: note._id,
+              });
             }}
             onDelete={(note) => {
               console.log("Delete", note);
             }}
-            onTogglePin={(note) => {
-              console.log("Toggle pin", note);
-            }}
+            onTogglePin={(note) => handleNotePin(note._id, note.pin)}
           />
         ))}
       </View>
