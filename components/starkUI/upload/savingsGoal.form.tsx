@@ -27,6 +27,9 @@ export interface SavingsGoalForm {
   category: string;
   setCategory: SetString;
   categoryRef: Ref;
+
+  method?: "POST" | "PATCH";
+  itemId?: string;
 }
 
 const savingsGoalsForm = ({
@@ -51,11 +54,16 @@ const savingsGoalsForm = ({
   category,
   setCategory,
   categoryRef,
+
+  method = "POST",
+  itemId = "",
 }: SavingsGoalForm) => {
   setUploadForm((prev) => ({
     ...prev,
     show: true,
     name: "Savings Goal",
+    method,
+    itemId,
 
     inputs: [
       {

@@ -7,11 +7,12 @@ import { Plus } from "lucide-react-native";
 import { Card, CardTitle, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useApp } from "@/providers/app-context";
-import savingsGoalsForm from "@/components/starkUI/upload/savingsGoal.form";
+import handleSavingsGoalsForm from "@/components/starkUI/upload/savingsGoal.form";
 import SavingsGoalCard from "@/components/starkUI/list/SavingsCard";
 import { ScrollView } from "react-native-gesture-handler";
 import useAPICall from "@/utils/apiCall";
 import { useToast } from "@/providers/toast-provider";
+import SavingsGoalCardSkeleton from "@/components/starkUI/skeleton/SavingsGoalsSkeleton";
 
 const savingsGoals = () => {
   const {
@@ -40,53 +41,53 @@ const savingsGoals = () => {
   } = useApp();
 
   const savingsGoalCategories = [
-  {
-    name: "Emergency Fund",
-    color: "#fecaca",
-  },
-  {
-    name: "Travel",
-    color: "#bfdbfe",
-  },
-  {
-    name: "Education",
-    color: "#fbcfe8",
-  },
-  {
-    name: "Home",
-    color: "#bbf7d0",
-  },
-  {
-    name: "Car",
-    color: "#fde68a",
-  },
-  {
-    name: "Electronics",
-    color: "#ddd6fe",
-  },
-  {
-    name: "Wedding",
-    color: "#f5d0fe",
-  },
-  {
-    name: "Investment",
-    color: "#a7f3d0",
-  },
-  {
-    name: "Health",
-    color: "#fed7aa",
-  },
-  {
-    name: "Personal",
-    color: "#bae6fd",
-  },
-  {
-    name: "Other",
-    color: "#e5e7eb",
-  },
-];
+    {
+      name: "Emergency Fund",
+      color: "#fecaca",
+    },
+    {
+      name: "Travel",
+      color: "#bfdbfe",
+    },
+    {
+      name: "Education",
+      color: "#fbcfe8",
+    },
+    {
+      name: "Home",
+      color: "#bbf7d0",
+    },
+    {
+      name: "Car",
+      color: "#fde68a",
+    },
+    {
+      name: "Electronics",
+      color: "#ddd6fe",
+    },
+    {
+      name: "Wedding",
+      color: "#f5d0fe",
+    },
+    {
+      name: "Investment",
+      color: "#a7f3d0",
+    },
+    {
+      name: "Health",
+      color: "#fed7aa",
+    },
+    {
+      name: "Personal",
+      color: "#bae6fd",
+    },
+    {
+      name: "Other",
+      color: "#e5e7eb",
+    },
+  ];
 
-  interface SavingsGoals {
+  interface SavingsGoal {
     _id: string;
     goalName: string;
     category: (typeof savingsGoalCategories)[number]["name"];
@@ -95,7 +96,7 @@ const savingsGoals = () => {
     deadline: Date | undefined;
   }
 
-  const [savings, setSavings] = useState<SavingsGoals[]>([]);
+  const [savings, setSavings] = useState<SavingsGoal[]>([]);
 
   const apiCall = useAPICall();
   const { toast } = useToast();
@@ -115,7 +116,7 @@ const savingsGoals = () => {
       }
 
       setSavings([
-        ...response.data.map((el: SavingsGoals) => ({
+        ...response.data.map((el: SavingsGoal) => ({
           _id: el._id,
           category: el.category,
           currentAmount: el.currentAmount,
@@ -145,7 +146,8 @@ const savingsGoals = () => {
           deadline,
           category,
         },
-        method: "POST",
+        method: uploadForm.method!,
+        itemId: uploadForm.itemId,
       });
 
       if (!response.success) {
@@ -153,17 +155,34 @@ const savingsGoals = () => {
         return;
       }
 
-      setSavings((prev) => [
-        ...prev,
-        {
-          _id: response.data._id,
-          category: response.data.category,
-          currentAmount: response.data.currentAmount,
-          deadline: response.data.deadline,
-          goalName: response.data.goalName,
-          targetAmount: response.data.targetAmount,
-        },
-      ]);
+      if (uploadForm.method === "POST") {
+        setSavings((prev) => [
+          ...prev,
+          {
+            _id: response.data._id,
+            category: response.data.category,
+            currentAmount: response.data.currentAmount,
+            deadline: response.data.deadline,
+            goalName: response.data.goalName,
+            targetAmount: response.data.targetAmount,
+          },
+        ]);
+      } else {
+        setSavings((prev) => [
+          ...prev.map((el) =>
+            el._id === response.data._id
+              ? ({
+                  _id: response.data._id,
+                  category: response.data.category,
+                  currentAmount: response.data.currentAmount,
+                  deadline: response.data.deadline,
+                  goalName: response.data.goalName,
+                  targetAmount: response.data.targetAmount,
+                } satisfies SavingsGoal)
+              : el,
+          ),
+        ]);
+      }
 
       setItemState("found");
 
@@ -184,6 +203,72 @@ const savingsGoals = () => {
     uploadSubscription();
   }, [uploadForm.submit]);
 
+  const savingsGoalsScreens = {
+    found: (
+      <View style={{ gap: 12, marginVertical: 20 }}>
+        {savings.map((goal) => (
+          <SavingsGoalCard
+            key={goal._id}
+            goal={goal}
+            categories={savingsGoalCategories}
+            onEdit={(item) => {
+              const newCurrentAmount = item.currentAmount.toString();
+              const newTargetAmount = item.targetAmount.toString();
+              const newCategory = item.category;
+              const newDeadline = new Date(item.deadline!);
+              const newGoalName = item.goalName;
+
+              setCurrentAmount(newCurrentAmount)
+              setCategory(newCategory);
+              setDeadline(newDeadline);
+              setTargetAmount(newTargetAmount)
+              setGoalName(newGoalName)
+
+              handleSavingsGoalsForm({
+                goalName: newGoalName,
+                setGoalName,
+                goalNameRef,
+
+                currentAmount: newCurrentAmount,
+                setCurrentAmount,
+                currentAmountRef,
+
+                targetAmount: newTargetAmount,
+                setTargetAmount,
+                targetAmountRef,
+
+                category: newCategory,
+                setCategory,
+                categoryRef,
+
+                deadline: newDeadline,
+                setDeadline,
+                deadlineRef,
+
+                setUploadForm,
+
+                method: "PATCH",
+                itemId: item._id,
+              });
+            }}
+            onDelete={(goal) => {
+              console.log("Delete:", goal);
+            }}
+            onContribute={(goal) => {
+              console.log("Contribute:", goal);
+            }}
+          />
+        ))}
+      </View>
+    ),
+    notFound: (
+      <Card style={{ marginTop: 20, ...globalStyles.flexBox }}>
+        <Text variant="caption">No savings goals added yet</Text>
+      </Card>
+    ),
+    fetching: <SavingsGoalCardSkeleton count={2} />,
+  };
+
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
       {/* heading */}
@@ -200,7 +285,7 @@ const savingsGoals = () => {
           icon={Plus}
           style={{ marginTop: 20 }}
           onPress={() =>
-            savingsGoalsForm({
+            handleSavingsGoalsForm({
               goalName,
               setGoalName,
               goalNameRef,
@@ -263,28 +348,7 @@ const savingsGoals = () => {
         </Card>
 
         {/* savings goals */}
-        <Card style={{ marginTop: 20, ...globalStyles.flexBox }}>
-          <Text variant="caption">No savings goals added yet</Text>
-        </Card>
-
-        <View style={{ gap: 12, marginVertical: 20 }}>
-          {savings.map((goal) => (
-            <SavingsGoalCard
-              key={goal._id}
-              goal={goal}
-              categories={savingsGoalCategories}
-              onEdit={(goal) => {
-                console.log("Edit:", goal);
-              }}
-              onDelete={(goal) => {
-                console.log("Delete:", goal);
-              }}
-              onContribute={(goal) => {
-                console.log("Contribute:", goal);
-              }}
-            />
-          ))}
-        </View>
+        {savingsGoalsScreens[itemState]}
       </ScrollView>
     </View>
   );

@@ -117,7 +117,7 @@ export default function SavingsGoalCard({
               style={{
                 fontSize: 11,
                 fontWeight: "500",
-                color: foreground,
+                color: "black",
               }}
             >
               {goal.category}
