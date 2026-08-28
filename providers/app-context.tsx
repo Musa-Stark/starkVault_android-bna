@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import type { InputWithLabel } from "@/components/starkUI/input/InputWithLabel";
 import { MediaAsset } from "@/components/ui/media-picker";
+import type { APIPages } from "@/utils/apiCall";
 
 interface UploadFormInput {
   show: boolean;
@@ -15,6 +16,13 @@ interface UploadFormInput {
   submit: boolean;
   method?: "POST" | "PATCH";
   itemId?: string;
+}
+
+interface DeleteModalInput {
+  show: boolean;
+  ids: string[];
+  page: APIPages | undefined;
+  setState: any;
 }
 
 export type SetString = React.Dispatch<React.SetStateAction<string>>;
@@ -27,9 +35,16 @@ export type SetUploadForm = React.Dispatch<
   React.SetStateAction<UploadFormInput>
 >;
 
+export type SetDeleteModal = React.Dispatch<
+  React.SetStateAction<DeleteModalInput>
+>;
+
 interface CreateContext {
   uploadForm: UploadFormInput;
   setUploadForm: SetUploadForm;
+
+  deleteModal: DeleteModalInput;
+  setDeleteModal: SetDeleteModal;
 
   merchant: string;
   setMerchant: SetString;
@@ -140,7 +155,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     inputs: undefined,
     submit: false,
     method: "POST",
-    itemId: ""
+    itemId: "",
+  });
+
+  const [deleteModal, setDeleteModal] = useState<DeleteModalInput>({
+    show: false,
+    ids: [],
+    page: undefined,
+    setState: undefined,
   });
 
   const [merchant, setMerchant] = useState("");
@@ -202,6 +224,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const values: CreateContext = {
     uploadForm,
     setUploadForm,
+
+    deleteModal,
+    setDeleteModal,
 
     merchant,
     setMerchant,

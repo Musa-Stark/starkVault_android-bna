@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Pressable, Modal, TouchableWithoutFeedback } from "react-native";
+import { View, Pressable, } from "react-native";
 import {
   Copy,
   Pin,
@@ -8,9 +8,7 @@ import {
   Trash2,
   Eye,
   EyeOff,
-  X,
-  AlertTriangle,
-  Check,
+ 
 } from "lucide-react-native";
 import * as Clipboard from "expo-clipboard";
 
@@ -325,141 +323,7 @@ export default function NoteCard({
       {/* Delete Modal                                            */}
       {/* ====================================================== */}
 
-      <Modal
-        visible={showDeleteModal}
-        transparent
-        animationType="fade"
-        onRequestClose={handleCancelDelete}
-      >
-        <TouchableWithoutFeedback onPress={handleCancelDelete}>
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingHorizontal: 24,
-              backgroundColor: "rgba(0, 0, 0, 0.55)",
-            }}
-          >
-            <TouchableWithoutFeedback>
-              <View
-                style={{
-                  width: "100%",
-                  maxWidth: 400,
-                  borderRadius: 24,
-                  padding: 22,
-                  backgroundColor: cardColor,
-                  elevation: 10,
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 8,
-                  },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 20,
-                }}
-              >
-                {/* Close */}
-
-                <Button
-                  icon={X}
-                  size="icon"
-                  variant="default"
-                  onPress={handleCancelDelete}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    width: 34,
-                    height: 34,
-                  }}
-                />
-
-                {/* Warning Icon */}
-
-                <View
-                  style={{
-                    width: 52,
-                    height: 52,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 16,
-                    backgroundColor: "#ef444418",
-                    marginBottom: 16,
-                  }}
-                >
-                  <AlertTriangle size={26} color="#ef4444" strokeWidth={2} />
-                </View>
-
-                {/* Title */}
-
-                <Text
-                  style={{
-                    fontSize: 19,
-                    fontWeight: "700",
-                    color: foreground,
-                  }}
-                >
-                  Delete note?
-                </Text>
-
-                {/* Description */}
-
-                <Text
-                  style={{
-                    marginTop: 8,
-                    fontSize: 13,
-                    lineHeight: 20,
-                    color: mutedForeground,
-                  }}
-                >
-                  This will permanently delete{" "}
-                  <Text
-                    style={{
-                      fontWeight: "600",
-                      color: foreground,
-                    }}
-                  >
-                    "{note.title}"
-                  </Text>
-                  . This action cannot be undone.
-                </Text>
-
-                {/* Buttons */}
-
-                <View
-                  style={{
-                    flexDirection: "row",
-                    gap: 10,
-                    marginTop: 22,
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  {/* Cancel */}
-
-                  <Button
-                    size="sm"
-                    variant="success"
-                    onPress={handleCancelDelete}
-                  >
-                    Cancel
-                  </Button>
-
-                  {/* Delete */}
-
-                  <Button
-                    size="sm"
-                    onPress={handleConfirmDelete}
-                    variant="destructive"
-                  >
-                    Delete
-                  </Button>
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+      
     </>
   );
 }

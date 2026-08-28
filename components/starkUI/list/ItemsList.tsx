@@ -142,7 +142,7 @@ type ViewAllProps = {
   onDelete?: (selectedItems: Item[]) => void;
   style?: ViewStyle;
   header?: string;
-  clearSelection?: boolean;
+  clearSelection?: number;
 };
 
 export function ViewAll({

@@ -3,16 +3,18 @@ import { useRouter } from "expo-router";
 import { APIResponse } from "@/providers/auth-provider";
 import { useToast } from "@/providers/toast-provider";
 
+export type APIPages =
+  | "expenses"
+  | "incomes"
+  | "subscriptions"
+  | "savings-goals"
+  | "passwords"
+  | "cards"
+  | "documents"
+  | "notes";
+
 export interface APIData {
-  page:
-    | "expenses"
-    | "incomes"
-    | "subscriptions"
-    | "savings-goals"
-    | "passwords"
-    | "cards"
-    | "documents"
-    | "notes";
+  page: APIPages;
   data?: any;
   method: "GET" | "POST" | "PATCH" | "DELETE";
   itemId?: string;
@@ -21,7 +23,6 @@ export interface APIData {
 
 const useAPICall = () => {
   const router = useRouter();
-  const {toast} = useToast()
 
   return async ({
     page,
@@ -50,14 +51,11 @@ const useAPICall = () => {
       },
     );
 
-    if (!response.ok) {
-      console.log(
-        "RESPONSE: =====================================================",
-      );
-      console.log(response);
-    }
-
     const res = await response.json();
+    if (!res.success) {
+      console.log("RES: =====================================================");
+      console.log(res);
+    }
     return res;
   };
 };

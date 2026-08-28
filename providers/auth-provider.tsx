@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (!response.ok) {
-        await clearTokens();
+        // await clearTokens();
 
         setStatus("unauthenticated");
         return;
@@ -113,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.log("Failed to restore authentication:", error);
 
-      await clearTokens();
+      // await clearTokens();
 
       setStatus("unauthenticated");
     }

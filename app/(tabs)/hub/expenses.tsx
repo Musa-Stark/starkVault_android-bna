@@ -43,6 +43,8 @@ const expenses = () => {
     setMerchant,
     setUploadForm,
     uploadForm,
+    deleteModal,
+    setDeleteModal,
   } = useApp();
   const red = useColor("red");
   const apiCall = useAPICall();
@@ -68,6 +70,7 @@ const expenses = () => {
   );
 
   const [items, setItems] = useState<Item[]>([]);
+  const [clearSelection, setClearSelection] = useState(0)
 
   // fetch
   useEffect(() => {
@@ -150,6 +153,8 @@ const expenses = () => {
               : el,
           ),
         ]);
+
+        setClearSelection((prev) => prev + 1)
       }
 
       setItemState("found");
@@ -170,13 +175,14 @@ const expenses = () => {
     uploadExpense();
   }, [uploadForm.submit]);
 
+
   // sections
   const itemSections = {
     found: (
       <ViewAll
         items={items}
         header="List"
-        clearSelection={uploadForm.submit}
+        clearSelection={clearSelection}
         onEdit={(item) => {
           const newAmount = item.right?.text?.replace(/[^0-9.]/g, "") ?? "";
           const newCategory = item.caption ?? "";
@@ -202,7 +208,14 @@ const expenses = () => {
           });
         }}
         onDelete={(selectedItems: Item[]) => {
-          console.log("Delete:", selectedItems[0].id);
+          setDeleteModal({
+            show: true,
+            ids: selectedItems.map((item) => item.id),
+            page: "expenses",
+            setState: setItems,
+          });
+
+          setClearSelection((prev) => prev + 1)
         }}
         style={{ marginVertical: 20 }}
       />

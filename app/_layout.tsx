@@ -19,6 +19,7 @@ import { AppProvider } from "@/providers/app-context";
 import { AuthProvider } from "@/providers/auth-provider";
 import { ToastProvider } from "@/providers/toast-provider";
 import { useAuth } from "@/providers/auth-provider";
+import DeleteModal from "@/components/starkUI/DeleteModal";
 
 // SplashScreen.setOptions({
 //   duration: 200,
@@ -63,12 +64,13 @@ const RootNavigator = () => {
 
   const screens = {
     loading: <Redirect href={"/loading"} />,
-    authenticated: <Redirect href={"/(tabs)/hub/notes"} />,
+    authenticated: <Redirect href={"/(tabs)/hub/expenses"} />,
     unauthenticated: <Redirect href={"/(auth)/login"} />,
   };
 
   return (
     <>
+      <DeleteModal />
       <UploadForm />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="loading" options={{ headerShown: false }} />
