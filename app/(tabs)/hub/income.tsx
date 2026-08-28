@@ -95,7 +95,7 @@ const income = () => {
           Icon: categoryIcons[el.type],
           right: {
             type: "text",
-            text: `Rs ${el.amount}/-`,
+            text: `PKR ${el.amount}`,
             textStyle: { color: green, fontSize: 15 },
           },
         })),
@@ -123,9 +123,6 @@ const income = () => {
         toast.error(response.message || "Something went wrong");
         return;
       }
-
-      console.log(response.data)
-      console.log(uploadForm.method)
 
       if (uploadForm.method === "POST") {
         setItems((prev) => [

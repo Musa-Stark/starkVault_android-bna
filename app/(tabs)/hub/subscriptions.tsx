@@ -16,11 +16,11 @@ import ItemsCard, {
 import useAPICall from "@/utils/apiCall";
 import { useToast } from "@/providers/toast-provider";
 
-interface Subscriptions {
+interface Subscription {
   _id: string;
   subscriptionName: string;
   category: (typeof categories)[number]["name"];
-  cost: number;
+  cost: string;
   billingCycle: BillingCycle;
   date: string;
 }
@@ -54,8 +54,9 @@ const Subscriptions = () => {
     "fetching",
   );
 
-  const [subscriptions, setSubscriptions] = useState<Subscriptions[]>([]);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 
+  // fetch
   useEffect(() => {
     const fetchSubscriptions = async () => {
       const response = await apiCall({ page: "subscriptions", method: "GET" });
@@ -83,6 +84,7 @@ const Subscriptions = () => {
     fetchSubscriptions();
   }, []);
 
+  // upload
   useEffect(() => {
     const uploadSubscription = async () => {
       if (!uploadForm.submit) return;
@@ -95,7 +97,8 @@ const Subscriptions = () => {
           billingCycle,
           category,
         },
-        method: "POST",
+        method: uploadForm.method!,
+        itemId: uploadForm.itemId,
       });
 
       if (!response.success) {
@@ -103,17 +106,34 @@ const Subscriptions = () => {
         return;
       }
 
-      setSubscriptions((prev) => [
-        ...prev,
-        {
-          _id: response.data._id,
-          billingCycle: response.data.billingCycle,
-          category: response.data.category,
-          cost: response.data.cost,
-          date: response.data.createdAt,
-          subscriptionName: response.data.subscriptionName,
-        },
-      ]);
+      if (uploadForm.method === "POST") {
+        setSubscriptions((prev) => [
+          ...prev,
+          {
+            _id: response.data._id,
+            billingCycle: response.data.billingCycle,
+            category: response.data.category,
+            cost: response.data.cost,
+            date: response.data.createdAt,
+            subscriptionName: response.data.subscriptionName,
+          },
+        ]);
+      } else {
+        setSubscriptions((prev) => [
+          ...prev.map((el) =>
+            el._id === response.data._id
+              ? ({
+                  _id: response.data._id,
+                  billingCycle: response.data.billingCycle,
+                  category: response.data.category,
+                  cost: response.data.cost,
+                  date: response.data.createdAt,
+                  subscriptionName: response.data.subscriptionName,
+                } satisfies Subscription)
+              : el,
+          ),
+        ]);
+      }
 
       setItemState("found");
 
@@ -134,22 +154,54 @@ const Subscriptions = () => {
   }, [uploadForm.submit]);
 
   const subscriptionScreens = {
-    found: subscriptions.map((el) => (
-      <ItemsCard
-        key={el._id}
-        categories={categories}
-        subscriptions={[el]}
-        onAdd={() => {
-          console.log("added");
-        }}
-        onDelete={(item) => {
-          console.log("deleted: ", item);
-        }}
-        onEdit={(item) => {
-          console.log("edited: ", item);
-        }}
-      />
-    )),
+    found: (
+      <View style={{ marginTop: 15, gap: 15 }}>
+        {subscriptions.map((el) => (
+          <ItemsCard
+            key={el._id}
+            categories={categories}
+            subscriptions={[el]}
+            onDelete={(item) => {
+              console.log("deleted: ", item);
+            }}
+            onEdit={(item) => {
+              const newBillingCycle = item.billingCycle;
+              const newCategory = item.category;
+              const newCost = item.cost.toString();
+              const newSubscriptionName = item.subscriptionName;
+
+              setBillingCycle(newBillingCycle);
+              setCategory(newCategory);
+              setAmount(newCost);
+              setSubscriptionName(newSubscriptionName);
+
+              handleSubscriptionForm({
+                subscriptionName: newSubscriptionName,
+                setSubscriptionName,
+                subscriptionNameRef,
+
+                amount: newCost,
+                setAmount,
+                amountRef,
+
+                billingCycle: newBillingCycle,
+                setBillingCycle,
+                billingCycleRef,
+
+                category: newCategory,
+                setCategory,
+                categoryRef,
+
+                setUploadForm,
+
+                method: "PATCH",
+                itemId: item._id,
+              });
+            }}
+          />
+        ))}
+      </View>
+    ),
     notFound: (
       <Card style={{ marginTop: 20, ...globalStyles.flexBox }}>
         <Text variant="caption">No subscriptions added yet</Text>

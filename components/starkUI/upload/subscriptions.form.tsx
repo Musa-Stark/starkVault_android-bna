@@ -18,6 +18,9 @@ export interface SubscriptionForm {
   category: string;
   setCategory: SetString;
   categoryRef: Ref;
+
+  method?: "POST" | "PATCH";
+  itemId?: string;
 }
 
 const handleSubscriptionForm = ({
@@ -38,11 +41,16 @@ const handleSubscriptionForm = ({
   category,
   setCategory,
   categoryRef,
+
+  method = "POST",
+  itemId = "",
 }: SubscriptionForm) => {
   setUploadForm((prev) => ({
     ...prev,
     show: true,
     name: "Subscription",
+    method,
+    itemId,
 
     inputs: [
       {

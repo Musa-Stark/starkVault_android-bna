@@ -11,9 +11,9 @@ const daysUntil = (isoDate: string) => {
 };
 
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("PK", {
     style: "currency",
-    currency: "USD",
+    currency: "Pkr",
   }).format(value);
 };
 
@@ -50,7 +50,7 @@ type Subscription = {
   _id: string;
   subscriptionName: string;
   category: (typeof categories)[number]["name"];
-  cost: number | string;
+  cost: string;
   billingCycle: BillingCycle;
   date: string;
 };
@@ -64,8 +64,6 @@ type Props = {
   subscriptions: Subscription[];
   categories: SubscriptionCategory[];
 
-  onAdd: () => void;
-
   onEdit: (subscription: Subscription) => void;
 
   onDelete: (subscription: Subscription) => void;
@@ -74,7 +72,6 @@ type Props = {
 export default function SubscriptionCard({
   subscriptions,
   categories,
-  onAdd,
   onEdit,
   onDelete,
 }: Props) {
@@ -105,13 +102,6 @@ export default function SubscriptionCard({
   const nextSubscription = upcoming[0] ?? null;
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        paddingTop: 20,
-        paddingBottom: 40,
-      }}
-      showsVerticalScrollIndicator={false}
-    >
       <View style={{ gap: 12 }}>
         {upcoming.map((subscription) => {
           const urgent = subscription.days <= 7;
@@ -321,6 +311,5 @@ export default function SubscriptionCard({
           );
         })}
       </View>
-    </ScrollView>
   );
 }

@@ -88,7 +88,7 @@ const expenses = () => {
           Icon: categoryIcons[el.category],
           right: {
             type: "text",
-            text: `Rs ${el.amount}/-`,
+            text: `PKR ${el.amount}`,
             textStyle: { color: red, fontSize: 15 },
           },
         })),

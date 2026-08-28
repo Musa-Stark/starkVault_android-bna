@@ -32,7 +32,8 @@ const UploadForm = () => {
       const stringValidation =
         typeof item.value === "string" && item.value?.trim();
 
-      const dateValidation = typeof item.value === "object" && item.value !== undefined;
+      const dateValidation =
+        typeof item.value === "object" && item.value !== undefined;
 
       const booleanValidation = item.inputType === "checkbox";
 
