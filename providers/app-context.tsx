@@ -149,6 +149,9 @@ interface CreateContext {
 
   clearSelection: number;
   setClearSelection: SetNumber;
+
+  deleteOneBusy: boolean;
+  setDeleteOneBusy: SetBoolean;
 }
 const AppContext = createContext<CreateContext | undefined>(undefined);
 
@@ -199,6 +202,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [content, setContent] = useState("");
   const [pin, setPin] = useState(false);
   const [clearSelection, setClearSelection] = useState(0);
+  const [deleteOneBusy, setDeleteOneBusy] = useState(false)
 
   const merchantRef = useRef(null);
   const categoryRef = useRef(null);
@@ -335,6 +339,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
     clearSelection,
     setClearSelection,
+
+    deleteOneBusy,
+    setDeleteOneBusy
   };
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;

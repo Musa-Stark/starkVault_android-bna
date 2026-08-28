@@ -3,6 +3,8 @@ import { View, Pressable } from "react-native";
 import { Calendar, Trash2, Pen, Plus } from "lucide-react-native";
 import { Text } from "@/components/ui/text";
 import { useColor } from "@/hooks/useColor";
+import { Button } from "@/components/ui/button";
+import { useApp } from "@/providers/app-context";
 
 type SavingsGoal = {
   _id: string;
@@ -49,6 +51,8 @@ export default function SavingsGoalCard({
   onDelete,
   onContribute,
 }: Props) {
+  const { deleteOneBusy } = useApp();
+
   const foreground = useColor("foreground");
   const mutedForeground = useColor("mutedForeground");
   const background = useColor("background");
@@ -258,7 +262,7 @@ export default function SavingsGoalCard({
             alignItems: "center",
           }}
         >
-          <Pressable
+          <Button
             onPress={() => onEdit(goal)}
             hitSlop={8}
             style={{
@@ -268,11 +272,14 @@ export default function SavingsGoalCard({
               justifyContent: "center",
               borderRadius: 999,
             }}
+            size="icon"
+            variant="ghost"
+            disabled={deleteOneBusy}
           >
             <Pen size={18} color={mutedForeground} />
-          </Pressable>
+          </Button>
 
-          <Pressable
+          <Button
             onPress={() => onDelete(goal)}
             hitSlop={8}
             style={{
@@ -282,9 +289,13 @@ export default function SavingsGoalCard({
               justifyContent: "center",
               borderRadius: 999,
             }}
+            size="icon"
+            variant="ghost"
+            loading={deleteOneBusy}
+            disabled={deleteOneBusy}
           >
             <Trash2 size={18} color="#ef4444" />
-          </Pressable>
+          </Button>
         </View>
       </View>
 

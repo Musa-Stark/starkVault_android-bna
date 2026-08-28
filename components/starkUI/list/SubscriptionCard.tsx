@@ -3,6 +3,8 @@ import { ScrollView, View, Pressable } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Plus, Calendar, Trash2, Pen, Clock3 } from "lucide-react-native";
 import { useColor } from "@/hooks/useColor";
+import { Button } from "@/components/ui/button";
+import { useApp } from "@/providers/app-context";
 
 const daysUntil = (isoDate: string) => {
   const milliseconds = new Date(isoDate).getTime() - Date.now();
@@ -75,6 +77,8 @@ export default function SubscriptionCard({
   onEdit,
   onDelete,
 }: Props) {
+  const { deleteOneBusy } = useApp();
+
   const monthlyTotal = useMemo(() => {
     return subscriptions
       .filter((subscription) => subscription.billingCycle === "Monthly")
@@ -102,214 +106,221 @@ export default function SubscriptionCard({
   const nextSubscription = upcoming[0] ?? null;
 
   return (
-      <View style={{ gap: 12 }}>
-        {upcoming.map((subscription) => {
-          const urgent = subscription.days <= 7;
+    <View style={{ gap: 12 }}>
+      {upcoming.map((subscription) => {
+        const urgent = subscription.days <= 7;
 
-          const category = categories.find(
-            (category) => category.name === subscription.category,
-          );
+        const category = categories.find(
+          (category) => category.name === subscription.category,
+        );
 
-          const cardColor = useColor("card");
-          const foreground = useColor("foreground");
-          const background = useColor("background");
+        const cardColor = useColor("card");
+        const foreground = useColor("foreground");
+        const background = useColor("background");
 
-          return (
+        return (
+          <View
+            key={subscription._id}
+            style={{
+              padding: 16,
+              borderRadius: 16,
+              backgroundColor: cardColor,
+              elevation: 1,
+            }}
+          >
+            {/* Top section */}
             <View
-              key={subscription._id}
               style={{
-                padding: 16,
-                borderRadius: 16,
-                backgroundColor: cardColor,
-                elevation: 1,
+                flexDirection: "row",
+                alignItems: "flex-start",
+                justifyContent: "space-between",
+                gap: 12,
               }}
             >
-              {/* Top section */}
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "flex-start",
-                  justifyContent: "space-between",
-                  gap: 12,
-                }}
-              >
-                {/* Identity */}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    flex: 1,
-                    gap: 12,
-                  }}
-                >
-                  <View
-                    style={{
-                      width: 44,
-                      height: 44,
-                      borderRadius: 12,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: background,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontWeight: "800",
-                        color: foreground,
-                      }}
-                    >
-                      {subscription.subscriptionName?.slice(0, 2).toUpperCase()}
-                    </Text>
-                  </View>
-
-                  <View
-                    style={{
-                      flex: 1,
-                    }}
-                  >
-                    <Text
-                      numberOfLines={1}
-                      style={{
-                        fontSize: 15,
-                        fontWeight: "700",
-                        color: foreground,
-                      }}
-                    >
-                      {subscription.subscriptionName}
-                    </Text>
-
-                    <View
-                      style={{
-                        alignSelf: "flex-start",
-                        marginTop: 5,
-                        paddingHorizontal: 8,
-                        paddingVertical: 3,
-                        borderRadius: 999,
-                        backgroundColor: category?.color ?? foreground,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: 11,
-                          fontWeight: "600",
-                          color: background,
-                        }}
-                      >
-                        {subscription.category}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-
-                {/* Price */}
-                <Text
-                  style={{
-                    fontSize: 15,
-                    fontWeight: "700",
-                    color: foreground,
-                  }}
-                >
-                  {formatCurrency(Number(subscription.cost))}
-                </Text>
-              </View>
-
-              {/* Bottom section */}
+              {/* Identity */}
               <View
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  marginTop: 18,
+                  flex: 1,
+                  gap: 12,
                 }}
               >
                 <View
                   style={{
-                    flexDirection: "row",
+                    width: 44,
+                    height: 44,
+                    borderRadius: 12,
                     alignItems: "center",
-                    gap: 10,
+                    justifyContent: "center",
+                    backgroundColor: background,
                   }}
                 >
-                  {/* Date */}
-                  <View
+                  <Text
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 5,
+                      fontSize: 14,
+                      fontWeight: "800",
+                      color: foreground,
                     }}
                   >
-                    <Calendar size={14} color="#737373" />
+                    {subscription.subscriptionName?.slice(0, 2).toUpperCase()}
+                  </Text>
+                </View>
 
-                    <Text
-                      style={{
-                        fontSize: 12,
-                      }}
-                      variant="caption"
-                    >
-                      {formatDate(subscription.date)}
-                    </Text>
-                  </View>
+                <View
+                  style={{
+                    flex: 1,
+                  }}
+                >
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      fontSize: 15,
+                      fontWeight: "700",
+                      color: foreground,
+                    }}
+                  >
+                    {subscription.subscriptionName}
+                  </Text>
 
-                  {/* Billing cycle */}
                   <View
                     style={{
+                      alignSelf: "flex-start",
+                      marginTop: 5,
                       paddingHorizontal: 8,
-                      paddingVertical: 4,
+                      paddingVertical: 3,
                       borderRadius: 999,
-                      backgroundColor: urgent ? "#fef3c7" : "#86ff0581",
+                      backgroundColor: category?.color ?? foreground,
                     }}
                   >
                     <Text
                       style={{
                         fontSize: 11,
                         fontWeight: "600",
-                        color: urgent ? "#92400e" : foreground,
+                        color: background,
                       }}
                     >
-                      {subscription.billingCycle}
+                      {subscription.category}
                     </Text>
                   </View>
                 </View>
+              </View>
 
-                {/* Actions */}
+              {/* Price */}
+              <Text
+                style={{
+                  fontSize: 15,
+                  fontWeight: "700",
+                  color: foreground,
+                }}
+              >
+                {formatCurrency(Number(subscription.cost))}
+              </Text>
+            </View>
+
+            {/* Bottom section */}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginTop: 18,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 10,
+                }}
+              >
+                {/* Date */}
                 <View
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
+                    gap: 5,
                   }}
                 >
-                  <Pressable
-                    onPress={() => onEdit(subscription)}
-                    hitSlop={8}
-                    style={{
-                      width: 38,
-                      height: 38,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: 999,
-                    }}
-                  >
-                    <Pen size={18} color="#737373" />
-                  </Pressable>
+                  <Calendar size={14} color="#737373" />
 
-                  <Pressable
-                    onPress={() => onDelete(subscription)}
-                    hitSlop={8}
+                  <Text
                     style={{
-                      width: 38,
-                      height: 38,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: 999,
+                      fontSize: 12,
+                    }}
+                    variant="caption"
+                  >
+                    {formatDate(subscription.date)}
+                  </Text>
+                </View>
+
+                {/* Billing cycle */}
+                <View
+                  style={{
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                    borderRadius: 999,
+                    backgroundColor: urgent ? "#fef3c7" : "#86ff0581",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      fontWeight: "600",
+                      color: urgent ? "#92400e" : foreground,
                     }}
                   >
-                    <Trash2 size={18} color="#ef4444" />
-                  </Pressable>
+                    {subscription.billingCycle}
+                  </Text>
                 </View>
               </View>
+
+              {/* Actions */}
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Button
+                  onPress={() => onEdit(subscription)}
+                  hitSlop={8}
+                  style={{
+                    width: 38,
+                    height: 38,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 999,
+                  }}
+                  disabled={deleteOneBusy}
+                  variant="ghost"
+                  size="icon"
+                >
+                  <Pen size={18} color="#737373" />
+                </Button>
+
+                <Button
+                  onPress={() => onDelete(subscription)}
+                  hitSlop={8}
+                  style={{
+                    width: 38,
+                    height: 38,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: 999,
+                  }}
+                  loading={deleteOneBusy}
+                  disabled={deleteOneBusy}
+                  variant="ghost"
+                  size="icon"
+                >
+                  <Trash2 size={18} color="#ef4444" />
+                </Button>
+              </View>
             </View>
-          );
-        })}
-      </View>
+          </View>
+        );
+      })}
+    </View>
   );
 }
