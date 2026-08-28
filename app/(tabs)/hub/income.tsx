@@ -76,6 +76,7 @@ const income = () => {
 
   const [items, setItems] = useState<Item[]>([]);
 
+  // fetch
   useEffect(() => {
     const fetchIncomes = async () => {
       const response = await apiCall({ page: "incomes", method: "GET" });
@@ -106,6 +107,7 @@ const income = () => {
     fetchIncomes();
   }, []);
 
+  // upload
   useEffect(() => {
     const uploadIncome = async () => {
       if (!uploadForm.submit) return;
@@ -113,7 +115,8 @@ const income = () => {
       const response = await apiCall({
         page: "incomes",
         data: { source, type, amount },
-        method: "POST",
+        method: uploadForm.method!,
+        itemId: uploadForm.itemId,
       });
 
       if (!response.success) {
@@ -121,20 +124,43 @@ const income = () => {
         return;
       }
 
-      setItems((prev) => [
-        ...prev,
-        {
-          id: response.data._id,
-          title: response.data.source,
-          caption: response.data.type,
-          Icon: categoryIcons[response.data.type],
-          right: {
-            type: "text",
-            text: `Rs ${response.data.amount}/-`,
-            textStyle: { color: green, fontSize: 15, fontWeight: 600 },
+      console.log(response.data)
+      console.log(uploadForm.method)
+
+      if (uploadForm.method === "POST") {
+        setItems((prev) => [
+          ...prev,
+          {
+            id: response.data._id,
+            title: response.data.source,
+            caption: response.data.type,
+            Icon: categoryIcons[response.data.type],
+            right: {
+              type: "text",
+              text: `Rs ${response.data.amount}/-`,
+              textStyle: { color: green, fontSize: 15, fontWeight: 600 },
+            },
           },
-        },
-      ]);
+        ]);
+      } else {
+        setItems((prev) => [
+          ...prev.map((el) =>
+            el.id === response.data._id
+              ? ({
+                  id: response.data._id,
+                  title: response.data.source,
+                  caption: response.data.type,
+                  Icon: categoryIcons[response.data.type],
+                  right: {
+                    type: "text",
+                    text: `Rs ${response.data.amount}/-`,
+                    textStyle: { color: green, fontSize: 15, fontWeight: 600 },
+                  },
+                } satisfies Item)
+              : el,
+          ),
+        ]);
+      }
 
       setItemState("found");
 
@@ -158,9 +184,31 @@ const income = () => {
       <ViewAll
         items={items}
         header="List"
-        // onEdit={(selectedItems) => {
-        //   console.log("Edit:", selectedItems);
-        // }}
+        clearSelection={uploadForm.submit}
+        onEdit={(item) => {
+          const newAmount = item.right?.text?.replace(/[^0-9.]/g, "") ?? "";
+          const newType = item.caption ?? "";
+          const newSource = item.title;
+
+          setAmount(newAmount);
+          setType(newType);
+          setSource(newSource);
+
+          handleIncomeForm({
+            amount: newAmount,
+            amountRef,
+            source: newSource,
+            sourceRef,
+            type: newType,
+            typeRef,
+            setAmount,
+            setType,
+            setSource,
+            setUploadForm,
+            method: "PATCH",
+            itemId: item.id,
+          });
+        }}
         onDelete={(selectedItems: Item[]) => {
           console.log("Delete:", selectedItems[0].id);
         }}

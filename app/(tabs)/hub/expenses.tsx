@@ -69,6 +69,7 @@ const expenses = () => {
 
   const [items, setItems] = useState<Item[]>([]);
 
+  // fetch
   useEffect(() => {
     const fetchExpenses = async () => {
       const response = await apiCall({ page: "expenses", method: "GET" });
@@ -99,6 +100,7 @@ const expenses = () => {
     fetchExpenses();
   }, []);
 
+  // upload
   useEffect(() => {
     const uploadExpense = async () => {
       if (!uploadForm.submit) return;
