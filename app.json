@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "android-bna",
-    "slug": "android-bna",
-    "scheme": "android-bna",
+    "name": "Stark Vault",
+    "slug": "stark-vault",
+    "scheme": "stark-vault",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -19,7 +19,9 @@
         "monochromeImage": "./assets/images/splash.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": true
+      "predictiveBackGestureEnabled": true,
+      "package": "com.stark.starkVault",
+      "versionCode": 1
     },
     "web": {
       "output": "static",
