@@ -15,7 +15,7 @@ import {
 type SadapayCardProps = {
   cardNumber?: string;
   cardHolder?: string;
-  expiry?: string;
+  expiry?: Date | undefined;
   cvv?: string;
   style?: ViewStyle;
 };
@@ -23,7 +23,7 @@ type SadapayCardProps = {
 export default function SadapayCard({
   cardNumber = "4242 4242 4242 4242",
   cardHolder = "MUHAMMAD AHMED",
-  expiry = "12/28",
+  expiry = undefined,
   cvv = "123",
   style,
 }: SadapayCardProps) {
@@ -142,7 +142,13 @@ export default function SadapayCard({
           <View>
             <Text style={styles.label}>EXPIRES</Text>
 
-            <Text style={styles.expiry}>{expiry}</Text>
+            {expiry && (
+              <Text style={styles.expiry}>
+                {new Date(expiry).toLocaleDateString("PK", {
+                  dateStyle: "short",
+                })}
+              </Text>
+            )}
           </View>
         </View>
 
@@ -249,19 +255,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
 
     borderColor: "rgba(255,255,255,0.12)",
-
-    shadowColor: "#000",
-
-    shadowOffset: {
-      width: 0,
-      height: 16,
-    },
-
-    shadowOpacity: 0.45,
-
-    shadowRadius: 24,
-
-    elevation: 15,
 
     backfaceVisibility: "hidden",
   },

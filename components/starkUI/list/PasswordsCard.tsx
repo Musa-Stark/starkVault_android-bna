@@ -39,6 +39,8 @@ export default function PasswordCard({
         padding: 16,
         borderRadius: 16,
         backgroundColor: cardColor,
+        borderWidth: 1,
+        borderColor,
         elevation: 1,
       }}
     >

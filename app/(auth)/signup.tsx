@@ -68,13 +68,13 @@ const Signup = () => {
     }, 3000);
   };
 
-  const handleOAuthPress = () => {
-    console.log("OAuth button pressed");
-    setIsOAuthLoading(true);
-    setTimeout(() => {
-      setIsOAuthLoading(false);
-    }, 3000);
-  };
+  // const handleOAuthPress = () => {
+  //   console.log("OAuth button pressed");
+  //   setIsOAuthLoading(true);
+  //   setTimeout(() => {
+  //     setIsOAuthLoading(false);
+  //   }, 3000);
+  // };
 
   return (
     <View
@@ -160,13 +160,13 @@ const Signup = () => {
       <AuthDivider />
 
       {/* Google sign in */}
-      <OAuthButton
+      {/* <OAuthButton
         text="Continue with Google"
         imgSource={require("@/assets/images/google.png")}
         variant="outline"
         onPress={handleOAuthPress}
         loading={isOAuthLoading}
-      />
+      /> */}
 
       {/* AuthPrompt */}
       <AuthPrompt

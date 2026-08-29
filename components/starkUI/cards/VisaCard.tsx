@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 import {
   Animated,
   Easing,
@@ -7,20 +7,20 @@ import {
   Text,
   View,
   useWindowDimensions,
-} from 'react-native';
+} from "react-native";
 
 type VisaCardProps = {
   cardNumber?: string;
   cardHolder?: string;
-  expiry?: string;
+  expiry?: Date | undefined;
   cvv?: string;
 };
 
 export default function VisaCard({
-  cardNumber = '4242 4242 4242 4242',
-  cardHolder = 'JOHN DOE',
-  expiry = '12/28',
-  cvv = '123',
+  cardNumber = "4242 4242 4242 4242",
+  cardHolder = "JOHN DOE",
+  expiry = undefined,
+  cvv = "123",
 }: VisaCardProps) {
   const { width } = useWindowDimensions();
 
@@ -46,12 +46,12 @@ export default function VisaCard({
 
   const frontRotate = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
+    outputRange: ["0deg", "180deg"],
   });
 
   const backRotate = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['180deg', '360deg'],
+    outputRange: ["180deg", "360deg"],
   });
 
   return (
@@ -72,10 +72,7 @@ export default function VisaCard({
           {
             width: cardWidth,
             height: cardHeight,
-            transform: [
-              { perspective: 1000 },
-              { rotateY: frontRotate },
-            ],
+            transform: [{ perspective: 1000 }, { rotateY: frontRotate }],
           },
         ]}
       >
@@ -130,7 +127,13 @@ export default function VisaCard({
 
           <View style={styles.expiryContainer}>
             <Text style={styles.label}>EXPIRES</Text>
-            <Text style={styles.value}>{expiry}</Text>
+            {expiry && (
+              <Text style={styles.value}>
+                {new Date(expiry).toLocaleDateString("PK", {
+                  dateStyle: "short",
+                })}
+              </Text>
+            )}
           </View>
         </View>
 
@@ -146,10 +149,7 @@ export default function VisaCard({
           {
             width: cardWidth,
             height: cardHeight,
-            transform: [
-              { perspective: 1000 },
-              { rotateY: backRotate },
-            ],
+            transform: [{ perspective: 1000 }, { rotateY: backRotate }],
           },
         ]}
       >
@@ -164,9 +164,7 @@ export default function VisaCard({
         {/* CVV */}
         <View style={styles.signatureSection}>
           <View style={styles.signatureBox}>
-            <Text style={styles.signatureText}>
-              {cardHolder.toUpperCase()}
-            </Text>
+            <Text style={styles.signatureText}>{cardHolder.toUpperCase()}</Text>
           </View>
 
           <View style={styles.cvvContainer}>
@@ -184,9 +182,7 @@ export default function VisaCard({
         </Text>
 
         <View style={styles.backBottom}>
-          <Text style={styles.backNumber}>
-            •••• {cardNumber.slice(-4)}
-          </Text>
+          <Text style={styles.backNumber}>•••• {cardNumber.slice(-4)}</Text>
 
           <Text style={styles.visaBack}>VISA</Text>
         </View>
@@ -198,101 +194,89 @@ export default function VisaCard({
           This is the touch layer.
           It sits above both card faces.
       */}
-      <Pressable
-        onPress={flipCard}
-        style={StyleSheet.absoluteFill}
-      />
+      <Pressable onPress={flipCard} style={StyleSheet.absoluteFill} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: 'center',
+    alignSelf: "center",
   },
 
   card: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     top: 0,
 
     borderRadius: 22,
     padding: 24,
 
-    overflow: 'hidden',
+    overflow: "hidden",
 
-    backgroundColor: '#101c3a',
+    backgroundColor: "#101c3a",
 
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 12,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 18,
-    elevation: 12,
-
-    backfaceVisibility: 'hidden',
+    backfaceVisibility: "hidden",
   },
 
   backCard: {
-    backgroundColor: '#0c1630',
+    backgroundColor: "#0c1630",
   },
 
   /* FRONT */
 
   glowOne: {
-    position: 'absolute',
+    position: "absolute",
     width: 260,
     height: 260,
     borderRadius: 130,
     right: -130,
     top: -130,
-    backgroundColor: 'rgba(70, 110, 255, 0.22)',
+    backgroundColor: "rgba(70, 110, 255, 0.22)",
   },
 
   glowTwo: {
-    position: 'absolute',
+    position: "absolute",
     width: 220,
     height: 220,
     borderRadius: 110,
     left: -150,
     bottom: -150,
-    backgroundColor: 'rgba(0, 200, 255, 0.12)',
+    backgroundColor: "rgba(0, 200, 255, 0.12)",
   },
 
   topRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
 
   bankName: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 14,
-    fontWeight: '800',
+    fontWeight: "800",
     letterSpacing: 1.5,
   },
 
   bankSub: {
-    color: 'rgba(255,255,255,0.45)',
+    color: "rgba(255,255,255,0.45)",
     fontSize: 7,
-    fontWeight: '600',
+    fontWeight: "600",
     letterSpacing: 1.3,
     marginTop: 2,
   },
 
   visa: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 32,
-    fontStyle: 'italic',
-    fontWeight: '900',
+    fontStyle: "italic",
+    fontWeight: "900",
     letterSpacing: -2,
   },
 
   chipRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 18,
   },
 
@@ -300,88 +284,88 @@ const styles = StyleSheet.create({
     width: 48,
     height: 36,
     borderRadius: 7,
-    backgroundColor: '#d6b86a',
-    overflow: 'hidden',
+    backgroundColor: "#d6b86a",
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.25)',
+    borderColor: "rgba(255,255,255,0.25)",
   },
 
   chipHorizontal: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     right: 0,
     top: 17,
     height: 1,
-    backgroundColor: '#927b3e',
+    backgroundColor: "#927b3e",
   },
 
   chipVertical: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     bottom: 0,
     left: 23,
     width: 1,
-    backgroundColor: '#927b3e',
+    backgroundColor: "#927b3e",
   },
 
   chipSmallVertical: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     bottom: 0,
     left: 11,
     width: 1,
-    backgroundColor: '#927b3e',
+    backgroundColor: "#927b3e",
   },
 
   contactless: {
     width: 28,
     height: 28,
     marginLeft: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    transform: [{ rotate: '-45deg' }],
+    justifyContent: "center",
+    alignItems: "center",
+    transform: [{ rotate: "-45deg" }],
   },
 
   contactArcOne: {
-    position: 'absolute',
+    position: "absolute",
     width: 8,
     height: 8,
     borderRightWidth: 2,
     borderTopWidth: 2,
-    borderColor: 'rgba(255,255,255,0.75)',
+    borderColor: "rgba(255,255,255,0.75)",
     borderRadius: 10,
   },
 
   contactArcTwo: {
-    position: 'absolute',
+    position: "absolute",
     width: 15,
     height: 15,
     borderRightWidth: 2,
     borderTopWidth: 2,
-    borderColor: 'rgba(255,255,255,0.55)',
+    borderColor: "rgba(255,255,255,0.55)",
     borderRadius: 12,
   },
 
   contactArcThree: {
-    position: 'absolute',
+    position: "absolute",
     width: 22,
     height: 22,
     borderRightWidth: 2,
     borderTopWidth: 2,
-    borderColor: 'rgba(255,255,255,0.35)',
+    borderColor: "rgba(255,255,255,0.35)",
     borderRadius: 15,
   },
 
   cardNumber: {
-    color: '#fff',
-    fontWeight: '500',
+    color: "#fff",
+    fontWeight: "500",
     letterSpacing: 2,
     marginTop: 18,
   },
 
   bottomRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
+    flexDirection: "row",
+    alignItems: "flex-end",
     marginTop: 14,
   },
 
@@ -395,25 +379,25 @@ const styles = StyleSheet.create({
   },
 
   label: {
-    color: 'rgba(255,255,255,0.45)',
+    color: "rgba(255,255,255,0.45)",
     fontSize: 7,
-    fontWeight: '600',
+    fontWeight: "600",
     letterSpacing: 1,
     marginBottom: 3,
   },
 
   value: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
     letterSpacing: 0.8,
   },
 
   tapHint: {
-    position: 'absolute',
+    position: "absolute",
     right: 24,
     bottom: 10,
-    color: 'rgba(255,255,255,0.28)',
+    color: "rgba(255,255,255,0.28)",
     fontSize: 6,
     letterSpacing: 1,
   },
@@ -421,53 +405,53 @@ const styles = StyleSheet.create({
   /* BACK */
 
   backTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 
   backTitle: {
-    color: 'rgba(255,255,255,0.55)',
+    color: "rgba(255,255,255,0.55)",
     fontSize: 9,
-    fontWeight: '700',
+    fontWeight: "700",
     letterSpacing: 1.5,
   },
 
   visaSmall: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 24,
-    fontStyle: 'italic',
-    fontWeight: '900',
+    fontStyle: "italic",
+    fontWeight: "900",
   },
 
   magneticStripe: {
     height: 42,
-    backgroundColor: '#050b19',
-    position: 'absolute',
+    backgroundColor: "#050b19",
+    position: "absolute",
     left: 0,
     right: 0,
     top: 58,
   },
 
   signatureSection: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
+    flexDirection: "row",
+    alignItems: "flex-end",
     marginTop: 52,
   },
 
   signatureBox: {
     height: 36,
     flex: 1,
-    backgroundColor: '#e5e7eb',
-    justifyContent: 'center',
+    backgroundColor: "#e5e7eb",
+    justifyContent: "center",
     paddingHorizontal: 10,
     marginRight: 8,
   },
 
   signatureText: {
-    color: '#111827',
+    color: "#111827",
     fontSize: 9,
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
 
   cvvContainer: {
@@ -475,61 +459,61 @@ const styles = StyleSheet.create({
   },
 
   cvvLabel: {
-    color: 'rgba(255,255,255,0.4)',
+    color: "rgba(255,255,255,0.4)",
     fontSize: 7,
     marginBottom: 3,
   },
 
   cvvBox: {
     height: 36,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 3,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 
   cvv: {
-    color: '#111827',
+    color: "#111827",
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 
   backDescription: {
-    color: 'rgba(255,255,255,0.4)',
+    color: "rgba(255,255,255,0.4)",
     fontSize: 7,
     lineHeight: 10,
     marginTop: 14,
-    maxWidth: '85%',
+    maxWidth: "85%",
   },
 
   backBottom: {
-    position: 'absolute',
+    position: "absolute",
     left: 24,
     right: 24,
     bottom: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 
   backNumber: {
-    color: 'rgba(255,255,255,0.5)',
+    color: "rgba(255,255,255,0.5)",
     fontSize: 9,
     letterSpacing: 2,
   },
 
   visaBack: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontStyle: 'italic',
-    fontWeight: '900',
+    fontStyle: "italic",
+    fontWeight: "900",
   },
 
   tapHintBack: {
-    position: 'absolute',
+    position: "absolute",
     right: 24,
     bottom: 7,
-    color: 'rgba(255,255,255,0.25)',
+    color: "rgba(255,255,255,0.25)",
     fontSize: 6,
     letterSpacing: 1,
   },

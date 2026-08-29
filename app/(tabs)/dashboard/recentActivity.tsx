@@ -15,7 +15,7 @@ const RecentActivity = ({
   service: string;
   state: string;
 }) => {
-  const foreground = useColor("foreground");
+  const green = useColor("green");
   const borderColor = useColor("muted");
   const cardColor = useColor("card");
 
@@ -40,7 +40,7 @@ const RecentActivity = ({
           marginRight: 10,
         }}
       >
-        <Icon color={foreground} />
+        <Icon color={green} />
       </View>
       <View
         style={{

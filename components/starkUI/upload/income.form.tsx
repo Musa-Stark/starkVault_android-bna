@@ -11,6 +11,8 @@ export interface IncomeForm {
   amount: string;
   setAmount: SetString;
   amountRef: Ref;
+  method?: "POST" | "PATCH";
+  itemId?: string;
 }
 
 const handleIncomeForm = ({
@@ -24,11 +26,15 @@ const handleIncomeForm = ({
   amount,
   setAmount,
   amountRef,
+  method = "POST",
+  itemId = "",
 }: IncomeForm) => {
   setUploadForm((prev) => ({
     ...prev,
     show: true,
     name: "Income",
+    method,
+    itemId,
 
     inputs: [
       {

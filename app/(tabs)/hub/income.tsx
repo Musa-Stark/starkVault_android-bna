@@ -5,6 +5,7 @@ import { Text } from "@/components/ui/text";
 import { ViewAll } from "@/components/starkUI/list/ItemsList";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
+import { ItemsListSkeleton } from "@/components/starkUI/skeleton/ItemsListSkeleton";
 import {
   CircleDollarSign,
   Plus,
@@ -16,9 +17,29 @@ import { useApp } from "@/providers/app-context";
 import handleIncomeForm from "@/components/starkUI/upload/income.form";
 import { ScrollView } from "react-native-gesture-handler";
 import { useColor } from "@/hooks/useColor";
+import useAPICall from "@/utils/apiCall";
+import { useToast } from "@/providers/toast-provider";
+import {
+  BriefcaseBusiness,
+  Laptop,
+  Building2,
+  TrendingUp,
+  Percent,
+  House,
+  BadgeDollarSign,
+  Gift,
+  RotateCcw,
+  ChartNoAxesCombined,
+  Landmark,
+  Shapes,
+} from "lucide-react-native";
 
-const income = () => {
-  const green = useColor("green");
+import type { LucideIcon } from "lucide-react-native";
+
+const Income = () => {
+  const primary = useColor("primary");
+  const apiCall = useAPICall();
+  const { toast } = useToast();
 
   const {
     source,
@@ -32,55 +53,182 @@ const income = () => {
     amountRef,
     uploadForm,
     setUploadForm,
+    clearSelection,
+    setClearSelection,
+    setDeleteModal,
   } = useApp();
 
+  const [itemState, setItemState] = useState<"found" | "notFound" | "fetching">(
+    "fetching",
+  );
+
+  const categoryIcons: Record<string, LucideIcon> = {
+    Salary: BriefcaseBusiness,
+    Freelance: Laptop,
+    Business: Building2,
+    Investment: TrendingUp,
+    Interest: Percent,
+    "Rental Income": House,
+    Bonus: BadgeDollarSign,
+    Gift: Gift,
+    Refund: RotateCcw,
+    Dividends: ChartNoAxesCombined,
+    Pension: Landmark,
+    Other: Shapes,
+  };
+
+  const [items, setItems] = useState<Item[]>([]);
+
+  // fetch
   useEffect(() => {
-    if (!uploadForm.submit) return;
+    const fetchIncomes = async () => {
+      const response = await apiCall({ page: "incomes", method: "GET" });
 
-    console.log({ source, type, amount });
+      if (!response.success && response.message === "Data not found") {
+        setItems([]);
+        setItemState("notFound");
+        return;
+      }
 
-    setUploadForm({
-      inputs: undefined,
-      name: "",
-      show: false,
-      submit: false,
-    });
+      setItems([
+        ...response.data.map((el: any) => ({
+          id: el._id,
+          title: el.source,
+          caption: el.type,
+          Icon: categoryIcons[el.type],
+          right: {
+            type: "text",
+            text: `PKR ${el.amount}`,
+            textStyle: { color: primary, fontSize: 15 },
+          },
+        })),
+      ]);
 
-    setSource("");
-    setType("");
-    setAmount("");
+      setItemState("found");
+    };
+
+    fetchIncomes();
+  }, []);
+
+  // upload
+  useEffect(() => {
+    const uploadIncome = async () => {
+      if (!uploadForm.submit) return;
+
+      const response = await apiCall({
+        page: "incomes",
+        data: { source, type, amount },
+        method: uploadForm.method!,
+        itemId: uploadForm.itemId,
+      });
+
+      if (!response.success) {
+        toast.error(response.message || "Something went wrong");
+        return;
+      }
+
+      if (uploadForm.method === "POST") {
+        setItems((prev) => [
+          ...prev,
+          {
+            id: response.data._id,
+            title: response.data.source,
+            caption: response.data.type,
+            Icon: categoryIcons[response.data.type],
+            right: {
+              type: "text",
+              text: `Rs ${response.data.amount}/-`,
+              textStyle: { color: primary, fontSize: 15, fontWeight: 600 },
+            },
+          },
+        ]);
+      } else {
+        setItems((prev) => [
+          ...prev.map((el) =>
+            el.id === response.data._id
+              ? ({
+                  id: response.data._id,
+                  title: response.data.source,
+                  caption: response.data.type,
+                  Icon: categoryIcons[response.data.type],
+                  right: {
+                    type: "text",
+                    text: `Rs ${response.data.amount}/-`,
+                    textStyle: { color: primary, fontSize: 15, fontWeight: 600 },
+                  },
+                } satisfies Item)
+              : el,
+          ),
+        ]);
+
+        setClearSelection((prev) => prev + 1);
+      }
+
+      setItemState("found");
+
+      setUploadForm({
+        inputs: undefined,
+        name: "",
+        show: false,
+        submit: false,
+      });
+
+      setSource("");
+      setType("");
+      setAmount("");
+    };
+
+    uploadIncome();
   }, [uploadForm.submit]);
 
-  const [items, setItems] = useState<Item[]>([
-    {
-      id: "1",
-      title: "Food",
-      Icon: ShoppingCart,
-      caption: new Date()
-        .toLocaleDateString("pk", {
-          dateStyle: "full",
-        })
-        .toString(),
-      captionStyle: {
-        fontSize: 12,
-      },
-      right: {
-        type: "text",
-        text: "+Rs 2000",
-        textStyle: { color: green },
-      },
-    },
-    {
-      id: "2",
-      title: "Shopping",
-      Icon: Wallet,
-    },
-    {
-      id: "3",
-      title: "Savings",
-      Icon: CircleDollarSign,
-    },
-  ]);
+  const itemSections = {
+    found: (
+      <ViewAll
+        items={items}
+        header="List"
+        clearSelection={clearSelection}
+        onEdit={(item) => {
+          const newAmount = item.right?.text?.replace(/[^0-9.]/g, "") ?? "";
+          const newType = item.caption ?? "";
+          const newSource = item.title;
+
+          setAmount(newAmount);
+          setType(newType);
+          setSource(newSource);
+
+          handleIncomeForm({
+            amount: newAmount,
+            amountRef,
+            source: newSource,
+            sourceRef,
+            type: newType,
+            typeRef,
+            setAmount,
+            setType,
+            setSource,
+            setUploadForm,
+            method: "PATCH",
+            itemId: item.id,
+          });
+        }}
+        onDelete={(selectedItems: Item[]) => {
+          setDeleteModal({
+            show: true,
+            ids: selectedItems.map((item) => item.id),
+            page: "incomes",
+            setState: setItems,
+          });
+        }}
+        style={{ marginVertical: 20 }}
+      />
+    ),
+    notFound: (
+      <Card style={{ marginTop: 20, ...globalStyles.flexBox }}>
+        <Text variant="caption">No income added yet</Text>
+      </Card>
+    ),
+    fetching: <ItemsListSkeleton style={{ marginTop: 20 }} />,
+  };
 
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
@@ -143,27 +291,10 @@ const income = () => {
           </CardHeader>
         </Card>
 
-        {/* income */}
-        {items.length ? (
-          <ViewAll
-            items={items}
-            header="List"
-            // onEdit={(selectedItems) => {
-            //   console.log("Edit:", selectedItems);
-            // }}
-            onDelete={(selectedItems: Item[]) => {
-              console.log("Delete:", selectedItems[0].id);
-            }}
-            style={{ marginVertical: 20 }}
-          />
-        ) : (
-          <Card style={{ marginTop: 20, ...globalStyles.flexBox }}>
-            <Text variant="caption">No expenses added yet</Text>
-          </Card>
-        )}
+        {itemSections[itemState]}
       </ScrollView>
     </View>
   );
 };
 
-export default income;
+export default Income;

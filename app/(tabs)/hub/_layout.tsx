@@ -10,7 +10,7 @@ export default function Layout() {
       <Stack.Screen name="subscriptions" />
       <Stack.Screen name="passwords" />
       <Stack.Screen name="cards" />
-      <Stack.Screen name="documents" />
+      {/* <Stack.Screen name="documents" /> */}
       <Stack.Screen name="notes" />
     </Stack>
   );

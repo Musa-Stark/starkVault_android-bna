@@ -65,8 +65,8 @@ export default function DocumentCard({
   const foreground = useColor("foreground");
   const background = useColor("background");
   const cardColor = useColor("card");
+  const borderColor = useColor("border");
   const mutedForeground = useColor("mutedForeground");
-  const blue = useColor("blue");
 
   const [status, setStatus] = useState(docFile.uploadStatus || "");
   const [progress, setProgress] = useState(docFile.progress || 0);
@@ -135,7 +135,7 @@ export default function DocumentCard({
         backgroundColor: cardColor,
         elevation: 1,
         borderWidth: 1,
-        borderColor: cardColor,
+        borderColor,
       }}
     >
       {/* ========================================================= */}

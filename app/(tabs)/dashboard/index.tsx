@@ -41,8 +41,6 @@ const DashBoard = () => {
   useEffect(() => {
     if (!uploadForm.submit) return;
 
-    console.log({ merchant, category, amount });
-
     setUploadForm((prev) => ({ ...prev, submit: false }));
     setMerchant("");
     setCategory("");
@@ -112,11 +110,7 @@ const DashBoard = () => {
         </View>
 
         {/* add password */}
-        <Button
-          icon={Sparkles}
-          variant="default"
-          style={{ marginTop: 15 }}
-        >
+        <Button icon={Sparkles} variant="default" style={{ marginTop: 15 }}>
           <Text style={{ color: background }}>Add Password</Text>
         </Button>
 

@@ -17,13 +17,15 @@ import { Picker, PickerOption } from "@/components/ui/picker";
 import { useColor } from "@/hooks/useColor";
 import { Input } from "../../ui/input";
 import { MediaAsset, MediaPicker } from "@/components/ui/media-picker";
+import { DatePicker } from "@/components/ui/date-picker";
 
 export interface InputWithLabel {
   label?: string;
   placeholderText?: string;
-  value?: string | boolean | MediaAsset;
+  value?: string | boolean | MediaAsset | Date | undefined;
   setStringValue?: (value: string) => void;
   setBooleanValue?: (value: boolean) => void;
+  setDateValue?: (value: Date | undefined) => void;
   inputMode?: TextInputProps["inputMode"];
   entryKeyHint?: EnterKeyHintType;
   returnKeyType?: ReturnKeyType;
@@ -38,7 +40,7 @@ export interface InputWithLabel {
   containerStyle?: ViewStyle;
   pickerOptions?: PickerOption[];
   showErrorText?: boolean;
-  inputType?: "picker" | "text" | "checkbox" | "mediaPicker";
+  inputType?: "picker" | "text" | "checkbox" | "mediaPicker" | "datePicker";
   checkboxAccessibilityLabel?: string;
   multiline?: boolean;
 }
@@ -47,6 +49,7 @@ const InputWithLabel = ({
   value,
   setStringValue,
   setBooleanValue,
+  setDateValue,
   label,
   placeholderText,
   inputMode,
@@ -145,6 +148,16 @@ const InputWithLabel = ({
         onClose={() => {
           if (!value) setPickerError(`${label} is required`);
         }}
+      />
+    ),
+    datePicker: (
+      <DatePicker
+        // label={"Select a date"}
+        style={{ marginTop: 3, ...containerStyle }}
+        placeholder={placeholderText}
+        haptic={true}
+        value={(value as Date) || (value as undefined)}
+        onChange={setDateValue!}
       />
     ),
     text: (

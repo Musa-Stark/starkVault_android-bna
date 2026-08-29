@@ -7,26 +7,45 @@ import React, {
 } from "react";
 import type { InputWithLabel } from "@/components/starkUI/input/InputWithLabel";
 import { MediaAsset } from "@/components/ui/media-picker";
+import type { APIPages } from "@/utils/apiCall";
 
 interface UploadFormInput {
   show: boolean;
   name: string;
   inputs: InputWithLabel[] | undefined;
   submit: boolean;
+  method?: "POST" | "PATCH";
+  itemId?: string;
+}
+
+interface DeleteModalInput {
+  show: boolean;
+  ids: string[];
+  page: APIPages | undefined;
+  setState: any;
 }
 
 export type SetString = React.Dispatch<React.SetStateAction<string>>;
 export type SetBoolean = React.Dispatch<React.SetStateAction<boolean>>;
 export type SetFile = React.Dispatch<React.SetStateAction<MediaAsset>>;
+export type SetDate = React.Dispatch<React.SetStateAction<Date | undefined>>;
+export type SetNumber = React.Dispatch<React.SetStateAction<number>>;
 export type Ref = React.RefObject<null>;
 
 export type SetUploadForm = React.Dispatch<
   React.SetStateAction<UploadFormInput>
 >;
 
+export type SetDeleteModal = React.Dispatch<
+  React.SetStateAction<DeleteModalInput>
+>;
+
 interface CreateContext {
   uploadForm: UploadFormInput;
   setUploadForm: SetUploadForm;
+
+  deleteModal: DeleteModalInput;
+  setDeleteModal: SetDeleteModal;
 
   merchant: string;
   setMerchant: SetString;
@@ -68,8 +87,8 @@ interface CreateContext {
   setCurrentAmount: SetString;
   currentAmountRef: Ref;
 
-  deadline: string;
-  setDeadline: SetString;
+  deadline: Date | undefined;
+  setDeadline: SetDate;
   deadlineRef: Ref;
 
   service: string;
@@ -100,8 +119,8 @@ interface CreateContext {
   setCardHolder: SetString;
   cardHolderRef: Ref;
 
-  expiryDate: string;
-  setExpiryDate: SetString;
+  expiryDate: Date | undefined;
+  setExpiryDate: SetDate;
   expiryDateRef: Ref;
 
   cvv: string;
@@ -127,6 +146,12 @@ interface CreateContext {
   pin: boolean;
   setPin: SetBoolean;
   pinRef: Ref;
+
+  clearSelection: number;
+  setClearSelection: SetNumber;
+
+  deleteOneBusy: boolean;
+  setDeleteOneBusy: SetBoolean;
 }
 const AppContext = createContext<CreateContext | undefined>(undefined);
 
@@ -136,6 +161,15 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     name: "Service Name",
     inputs: undefined,
     submit: false,
+    method: "POST",
+    itemId: "",
+  });
+
+  const [deleteModal, setDeleteModal] = useState<DeleteModalInput>({
+    show: false,
+    ids: [],
+    page: undefined,
+    setState: undefined,
   });
 
   const [merchant, setMerchant] = useState("");
@@ -148,7 +182,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [goalName, setGoalName] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
   const [currentAmount, setCurrentAmount] = useState("");
-  const [deadline, setDeadline] = useState("");
+  const [deadline, setDeadline] = useState<Date | undefined>(undefined);
   const [service, setService] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -158,7 +192,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [cardNumber, setCardNumber] = useState("");
   const [cvv, setCvv] = useState("");
   const [label, setLabel] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
+  const [expiryDate, setExpiryDate] = useState<Date | undefined>(undefined);
   const [file, setFile] = useState<MediaAsset>({
     id: "random-id",
     type: "image",
@@ -167,6 +201,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [noteTitle, setNoteTitle] = useState("");
   const [content, setContent] = useState("");
   const [pin, setPin] = useState(false);
+  const [clearSelection, setClearSelection] = useState(0);
+  const [deleteOneBusy, setDeleteOneBusy] = useState(false)
 
   const merchantRef = useRef(null);
   const categoryRef = useRef(null);
@@ -197,6 +233,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const values: CreateContext = {
     uploadForm,
     setUploadForm,
+
+    deleteModal,
+    setDeleteModal,
 
     merchant,
     setMerchant,
@@ -297,6 +336,12 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     pin,
     setPin,
     pinRef,
+
+    clearSelection,
+    setClearSelection,
+
+    deleteOneBusy,
+    setDeleteOneBusy
   };
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;

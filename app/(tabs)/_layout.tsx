@@ -1,11 +1,13 @@
 import { Tabs } from "expo-router";
-import {  CircleDollarSign, FolderLock, LayoutDashboard, LayoutGrid, Search, Settings, User2, Vault } from "lucide-react-native";
+import { LayoutDashboard, LayoutGrid, Search, User2 } from "lucide-react-native";
 import { useColor } from "@/hooks/useColor";
 import { View, Text } from "react-native";
 
 export default function Layout() {
   const background = useColor("background");
-  const foreground = useColor("foreground");
+  const primary = useColor("primary");
+  const muted = useColor("mutedForeground");
+  const border = useColor("border");
 
   return (
     <Tabs
@@ -14,12 +16,13 @@ export default function Layout() {
 
         // Entire bottom navigation
         tabBarStyle: {
-          height: 100,
+          height: 88,
           backgroundColor: background,
-          paddingTop: 8,
-          paddingBottom: 20,
-          borderTopWidth: 0,
-          elevation: 10,
+          paddingTop: 7,
+          paddingBottom: 12,
+          borderTopWidth: 1,
+          borderTopColor: border,
+          elevation: 0,
         },
 
         // Label
@@ -30,8 +33,8 @@ export default function Layout() {
         },
 
         // Colors
-        tabBarInactiveTintColor: foreground,
-        tabBarActiveTintColor: foreground,
+        tabBarInactiveTintColor: muted,
+        tabBarActiveTintColor: primary,
       }}
     >
       <Tabs.Screen
@@ -43,19 +46,19 @@ export default function Layout() {
                 borderRadius: 22,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: focused ? "#84d89951" : "transparent",
-                paddingHorizontal: 18,
-                paddingVertical: 6,
+                backgroundColor: focused ? `${primary}18` : "transparent",
+                paddingHorizontal: 16,
+                paddingVertical: 5,
               }}
             >
-              <LayoutDashboard size={24} color={foreground} />
+              <LayoutDashboard size={23} color={focused ? primary : muted} />
             </View>
           ),
 
-          tabBarLabel: () => (
+          tabBarLabel: ({ focused }) => (
             <View>
               <Text
-                style={{ color: foreground, fontWeight: 600, marginTop: 2 }}
+                style={{ color: focused ? primary : muted, fontWeight: "700", marginTop: 2, fontSize: 11 }}
               >
                 Dashboard
               </Text>
@@ -74,19 +77,19 @@ export default function Layout() {
                 borderRadius: 22,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: focused ? "#84d89951" : "transparent",
-                paddingHorizontal: 18,
-                paddingVertical: 6,
+                backgroundColor: focused ? `${primary}18` : "transparent",
+                paddingHorizontal: 16,
+                paddingVertical: 5,
               }}
             >
-              <LayoutGrid size={24} color={foreground} />
+              <LayoutGrid size={23} color={focused ? primary : muted} />
             </View>
           ),
 
-          tabBarLabel: () => (
+          tabBarLabel: ({ focused }) => (
             <View>
               <Text
-                style={{ color: foreground, fontWeight: 600, marginTop: 2 }}
+                style={{ color: focused ? primary : muted, fontWeight: "700", marginTop: 2, fontSize: 11 }}
               >
                 Hub
               </Text>
@@ -105,19 +108,19 @@ export default function Layout() {
                 borderRadius: 22,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: focused ? "#84d89951" : "transparent",
-                paddingHorizontal: 18,
-                paddingVertical: 6,
+                backgroundColor: focused ? `${primary}18` : "transparent",
+                paddingHorizontal: 16,
+                paddingVertical: 5,
               }}
             >
-              <Search size={24} color={foreground} />
+              <Search size={23} color={focused ? primary : muted} />
             </View>
           ),
 
-          tabBarLabel: () => (
+          tabBarLabel: ({ focused }) => (
             <View>
               <Text
-                style={{ color: foreground, fontWeight: 600, marginTop: 2 }}
+                style={{ color: focused ? primary : muted, fontWeight: "700", marginTop: 2, fontSize: 11 }}
               >
                 Search
               </Text>
@@ -137,19 +140,19 @@ export default function Layout() {
                 borderRadius: 22,
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: focused ? "#84d89951" : "transparent",
-                paddingHorizontal: 18,
-                paddingVertical: 6,
+                backgroundColor: focused ? `${primary}18` : "transparent",
+                paddingHorizontal: 16,
+                paddingVertical: 5,
               }}
             >
-              <User2 size={24} color={foreground} />
+              <User2 size={23} color={focused ? primary : muted} />
             </View>
           ),
 
-          tabBarLabel: () => (
+          tabBarLabel: ({ focused }) => (
             <View>
               <Text
-                style={{ color: foreground, fontWeight: 600, marginTop: 2 }}
+                style={{ color: focused ? primary : muted, fontWeight: "700", marginTop: 2, fontSize: 11 }}
               >
                 Profile
               </Text>

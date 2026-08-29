@@ -3,6 +3,8 @@ import { View, Pressable } from "react-native";
 import { Calendar, Trash2, Pen, Plus } from "lucide-react-native";
 import { Text } from "@/components/ui/text";
 import { useColor } from "@/hooks/useColor";
+import { Button } from "@/components/ui/button";
+import { useApp } from "@/providers/app-context";
 
 type SavingsGoal = {
   _id: string;
@@ -10,7 +12,7 @@ type SavingsGoal = {
   category: string;
   targetAmount: number | string;
   currentAmount: number | string;
-  deadline: string;
+  deadline: Date | undefined;
 };
 
 type SavingsGoalCategory = {
@@ -28,9 +30,9 @@ type Props = {
 };
 
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("en-PK", {
     style: "currency",
-    currency: "USD",
+    currency: "PKR",
   }).format(value);
 };
 
@@ -49,6 +51,8 @@ export default function SavingsGoalCard({
   onDelete,
   onContribute,
 }: Props) {
+  const { deleteOneBusy } = useApp();
+
   const foreground = useColor("foreground");
   const mutedForeground = useColor("mutedForeground");
   const background = useColor("background");
@@ -74,6 +78,8 @@ export default function SavingsGoalCard({
         padding: 18,
         borderRadius: 16,
         backgroundColor: cardColor,
+        borderWidth: 1,
+        borderColor,
         elevation: 1,
       }}
     >
@@ -117,7 +123,7 @@ export default function SavingsGoalCard({
               style={{
                 fontSize: 11,
                 fontWeight: "500",
-                color: foreground,
+                color: "black",
               }}
             >
               {goal.category}
@@ -203,14 +209,16 @@ export default function SavingsGoalCard({
         >
           <Calendar size={14} color={mutedForeground} />
 
-          <Text
-            variant="caption"
-            style={{
-              fontSize: 12,
-            }}
-          >
-            {formatDate(goal.deadline)}
-          </Text>
+          {goal.deadline && (
+            <Text
+              variant="caption"
+              style={{
+                fontSize: 12,
+              }}
+            >
+              {formatDate(goal.deadline.toString())}
+            </Text>
+          )}
         </View>
       </View>
 
@@ -256,7 +264,7 @@ export default function SavingsGoalCard({
             alignItems: "center",
           }}
         >
-          <Pressable
+          <Button
             onPress={() => onEdit(goal)}
             hitSlop={8}
             style={{
@@ -266,11 +274,14 @@ export default function SavingsGoalCard({
               justifyContent: "center",
               borderRadius: 999,
             }}
+            size="icon"
+            variant="ghost"
+            disabled={deleteOneBusy}
           >
             <Pen size={18} color={mutedForeground} />
-          </Pressable>
+          </Button>
 
-          <Pressable
+          <Button
             onPress={() => onDelete(goal)}
             hitSlop={8}
             style={{
@@ -280,9 +291,13 @@ export default function SavingsGoalCard({
               justifyContent: "center",
               borderRadius: 999,
             }}
+            size="icon"
+            variant="ghost"
+            loading={deleteOneBusy}
+            disabled={deleteOneBusy}
           >
             <Trash2 size={18} color="#ef4444" />
-          </Pressable>
+          </Button>
         </View>
       </View>
 

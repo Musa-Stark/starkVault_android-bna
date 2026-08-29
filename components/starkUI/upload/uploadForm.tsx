@@ -32,9 +32,12 @@ const UploadForm = () => {
       const stringValidation =
         typeof item.value === "string" && item.value?.trim();
 
+      const dateValidation =
+        typeof item.value === "object" && item.value !== undefined;
+
       const booleanValidation = item.inputType === "checkbox";
 
-      if (stringValidation || booleanValidation) return true;
+      if (stringValidation || dateValidation || booleanValidation) return true;
     });
 
   const backgroundColor = useColor("background");
@@ -196,6 +199,17 @@ const UploadForm = () => {
                     pickerOptions={el.pickerOptions}
                     ref={el.ref}
                     returnKeyType={el.returnKeyType}
+                    setDateValue={(date) => {
+                      el.setDateValue?.(date);
+                      setUploadForm((prev) => ({
+                        ...prev,
+                        inputs: prev.inputs?.map((item) =>
+                          el.label === item.label
+                            ? { ...item, value: date }
+                            : item,
+                        ),
+                      }));
+                    }}
                     setStringValue={(text) => {
                       el.setStringValue?.(text);
                       setUploadForm((prev) => ({

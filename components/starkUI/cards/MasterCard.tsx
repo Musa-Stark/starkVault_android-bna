@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 import {
   Animated,
   Easing,
@@ -7,20 +7,20 @@ import {
   Text,
   View,
   useWindowDimensions,
-} from 'react-native';
+} from "react-native";
 
 type MastercardProps = {
   cardNumber?: string;
   cardHolder?: string;
-  expiry?: string;
+  expiry?: Date | undefined;
   cvv?: string;
 };
 
 export default function Mastercard({
-  cardNumber = '5555 5555 5555 4444',
-  cardHolder = 'JOHN DOE',
-  expiry = '12/28',
-  cvv = '123',
+  cardNumber = "5555 5555 5555 4444",
+  cardHolder = "JOHN DOE",
+  expiry = undefined,
+  cvv = "123",
 }: MastercardProps) {
   const { width } = useWindowDimensions();
 
@@ -45,12 +45,12 @@ export default function Mastercard({
 
   const frontRotation = rotation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
+    outputRange: ["0deg", "180deg"],
   });
 
   const backRotation = rotation.interpolate({
     inputRange: [0, 1],
-    outputRange: ['180deg', '360deg'],
+    outputRange: ["180deg", "360deg"],
   });
 
   return (
@@ -74,10 +74,7 @@ export default function Mastercard({
           {
             width: cardWidth,
             height: cardHeight,
-            transform: [
-              { perspective: 1200 },
-              { rotateY: frontRotation },
-            ],
+            transform: [{ perspective: 1200 }, { rotateY: frontRotation }],
           },
         ]}
       >
@@ -131,7 +128,13 @@ export default function Mastercard({
 
           <View>
             <Text style={styles.smallLabel}>VALID THRU</Text>
-            <Text style={styles.name}>{expiry}</Text>
+            {expiry && (
+              <Text style={styles.name}>
+                {new Date(expiry).toLocaleDateString("PK", {
+                  dateStyle: "short",
+                })}
+              </Text>
+            )}
           </View>
         </View>
 
@@ -150,10 +153,7 @@ export default function Mastercard({
           {
             width: cardWidth,
             height: cardHeight,
-            transform: [
-              { perspective: 1200 },
-              { rotateY: backRotation },
-            ],
+            transform: [{ perspective: 1200 }, { rotateY: backRotation }],
           },
         ]}
       >
@@ -170,9 +170,7 @@ export default function Mastercard({
         {/* Signature */}
         <View style={styles.signatureRow}>
           <View style={styles.signature}>
-            <Text style={styles.signatureName}>
-              {cardHolder.toUpperCase()}
-            </Text>
+            <Text style={styles.signatureName}>{cardHolder.toUpperCase()}</Text>
           </View>
 
           <View style={styles.cvvContainer}>
@@ -186,15 +184,13 @@ export default function Mastercard({
 
         {/* Info */}
         <Text style={styles.info}>
-          This card is issued by NOVA. Use of this card is subject to the
-          terms and conditions of the issuing institution.
+          This card is issued by NOVA. Use of this card is subject to the terms
+          and conditions of the issuing institution.
         </Text>
 
         {/* Bottom logo */}
         <View style={styles.backBottom}>
-          <Text style={styles.lastFour}>
-            •••• {cardNumber.slice(-4)}
-          </Text>
+          <Text style={styles.lastFour}>•••• {cardNumber.slice(-4)}</Text>
 
           <View style={styles.smallLogo}>
             <View style={styles.smallRed} />
@@ -209,21 +205,18 @@ export default function Mastercard({
           TOUCH LAYER
       ===================================================== */}
 
-      <Pressable
-        onPress={flipCard}
-        style={StyleSheet.absoluteFill}
-      />
+      <Pressable onPress={flipCard} style={StyleSheet.absoluteFill} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    alignSelf: 'center',
+    alignSelf: "center",
   },
 
   card: {
-    position: 'absolute',
+    position: "absolute",
 
     left: 0,
     top: 0,
@@ -232,25 +225,15 @@ const styles = StyleSheet.create({
 
     borderRadius: 24,
 
-    overflow: 'hidden',
+    overflow: "hidden",
 
-    backgroundColor: '#21140c',
+    backgroundColor: "#21140c",
 
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 14,
-    },
-    shadowOpacity: 0.35,
-    shadowRadius: 20,
-
-    elevation: 12,
-
-    backfaceVisibility: 'hidden',
+    backfaceVisibility: "hidden",
   },
 
   backCard: {
-    backgroundColor: '#160d08',
+    backgroundColor: "#160d08",
   },
 
   /* =========================
@@ -258,7 +241,7 @@ const styles = StyleSheet.create({
   ========================== */
 
   largeCircle: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 260,
     height: 260,
@@ -268,13 +251,13 @@ const styles = StyleSheet.create({
     right: -145,
     top: -115,
 
-    backgroundColor: '#d65318',
+    backgroundColor: "#d65318",
 
     opacity: 0.2,
   },
 
   ringOne: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 210,
     height: 210,
@@ -286,11 +269,11 @@ const styles = StyleSheet.create({
 
     borderWidth: 1,
 
-    borderColor: 'rgba(255,170,90,0.18)',
+    borderColor: "rgba(255,170,90,0.18)",
   },
 
   ringTwo: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 170,
     height: 170,
@@ -302,7 +285,7 @@ const styles = StyleSheet.create({
 
     borderWidth: 1,
 
-    borderColor: 'rgba(255,170,90,0.12)',
+    borderColor: "rgba(255,170,90,0.12)",
   },
 
   /* =========================
@@ -310,29 +293,29 @@ const styles = StyleSheet.create({
   ========================== */
 
   header: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
 
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
 
   brand: {
-    color: '#fff',
+    color: "#fff",
 
     fontSize: 15,
 
-    fontWeight: '900',
+    fontWeight: "900",
 
     letterSpacing: 2,
   },
 
   cardType: {
-    color: 'rgba(255,190,130,0.45)',
+    color: "rgba(255,190,130,0.45)",
 
     fontSize: 7,
 
-    fontWeight: '700',
+    fontWeight: "700",
 
     letterSpacing: 1.5,
 
@@ -347,15 +330,15 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
 
-    transform: [{ rotate: '-45deg' }],
+    transform: [{ rotate: "-45deg" }],
 
-    justifyContent: 'center',
+    justifyContent: "center",
 
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   arc1: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 8,
     height: 8,
@@ -363,13 +346,13 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
     borderRightWidth: 2,
 
-    borderColor: '#ffb36b',
+    borderColor: "#ffb36b",
 
     borderRadius: 8,
   },
 
   arc2: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 15,
     height: 15,
@@ -377,13 +360,13 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
     borderRightWidth: 2,
 
-    borderColor: 'rgba(255,179,107,0.65)',
+    borderColor: "rgba(255,179,107,0.65)",
 
     borderRadius: 12,
   },
 
   arc3: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 22,
     height: 22,
@@ -391,7 +374,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
     borderRightWidth: 2,
 
-    borderColor: 'rgba(255,179,107,0.35)',
+    borderColor: "rgba(255,179,107,0.35)",
 
     borderRadius: 15,
   },
@@ -406,19 +389,19 @@ const styles = StyleSheet.create({
 
     borderRadius: 7,
 
-    backgroundColor: '#c89550',
+    backgroundColor: "#c89550",
 
     marginTop: 17,
 
-    overflow: 'hidden',
+    overflow: "hidden",
 
     borderWidth: 1,
 
-    borderColor: 'rgba(255,220,170,0.3)',
+    borderColor: "rgba(255,220,170,0.3)",
   },
 
   chipLineHorizontal: {
-    position: 'absolute',
+    position: "absolute",
 
     left: 0,
     right: 0,
@@ -427,11 +410,11 @@ const styles = StyleSheet.create({
 
     height: 1,
 
-    backgroundColor: '#88652f',
+    backgroundColor: "#88652f",
   },
 
   chipLineVertical: {
-    position: 'absolute',
+    position: "absolute",
 
     top: 0,
     bottom: 0,
@@ -440,11 +423,11 @@ const styles = StyleSheet.create({
 
     width: 1,
 
-    backgroundColor: '#88652f',
+    backgroundColor: "#88652f",
   },
 
   chipLineSmall: {
-    position: 'absolute',
+    position: "absolute",
 
     top: 0,
     bottom: 0,
@@ -453,7 +436,7 @@ const styles = StyleSheet.create({
 
     width: 1,
 
-    backgroundColor: '#88652f',
+    backgroundColor: "#88652f",
   },
 
   /* =========================
@@ -461,7 +444,7 @@ const styles = StyleSheet.create({
   ========================== */
 
   mastercard: {
-    position: 'absolute',
+    position: "absolute",
 
     right: 24,
     top: 87,
@@ -471,7 +454,7 @@ const styles = StyleSheet.create({
   },
 
   mcRed: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 32,
     height: 32,
@@ -480,11 +463,11 @@ const styles = StyleSheet.create({
 
     left: 7,
 
-    backgroundColor: '#e53922',
+    backgroundColor: "#e53922",
   },
 
   mcOrange: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 32,
     height: 32,
@@ -493,23 +476,23 @@ const styles = StyleSheet.create({
 
     right: 7,
 
-    backgroundColor: '#ff9d28',
+    backgroundColor: "#ff9d28",
   },
 
   mcText: {
-    position: 'absolute',
+    position: "absolute",
 
     bottom: 0,
 
-    width: '100%',
+    width: "100%",
 
-    textAlign: 'center',
+    textAlign: "center",
 
-    color: '#fff',
+    color: "#fff",
 
     fontSize: 7,
 
-    fontWeight: '700',
+    fontWeight: "700",
   },
 
   /* =========================
@@ -521,11 +504,11 @@ const styles = StyleSheet.create({
   },
 
   number: {
-    color: '#fff',
+    color: "#fff",
 
     fontSize: 20,
 
-    fontWeight: '500',
+    fontWeight: "500",
 
     letterSpacing: 2,
   },
@@ -535,17 +518,17 @@ const styles = StyleSheet.create({
   ========================== */
 
   bottom: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
 
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
 
     marginTop: 14,
   },
 
   smallLabel: {
-    color: 'rgba(255,190,130,0.4)',
+    color: "rgba(255,190,130,0.4)",
 
     fontSize: 7,
 
@@ -555,22 +538,22 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    color: '#fff',
+    color: "#fff",
 
     fontSize: 12,
 
-    fontWeight: '600',
+    fontWeight: "600",
 
     letterSpacing: 0.8,
   },
 
   flipText: {
-    position: 'absolute',
+    position: "absolute",
 
     right: 24,
     bottom: 9,
 
-    color: 'rgba(255,190,130,0.28)',
+    color: "rgba(255,190,130,0.28)",
 
     fontSize: 6,
 
@@ -582,25 +565,25 @@ const styles = StyleSheet.create({
   ========================== */
 
   backHeader: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
 
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   backBrand: {
-    color: '#fff',
+    color: "#fff",
 
     fontSize: 14,
 
-    fontWeight: '900',
+    fontWeight: "900",
 
     letterSpacing: 2,
   },
 
   backCardType: {
-    color: 'rgba(255,190,130,0.45)',
+    color: "rgba(255,190,130,0.45)",
 
     fontSize: 7,
 
@@ -608,7 +591,7 @@ const styles = StyleSheet.create({
   },
 
   stripe: {
-    position: 'absolute',
+    position: "absolute",
 
     top: 58,
 
@@ -617,7 +600,7 @@ const styles = StyleSheet.create({
 
     height: 43,
 
-    backgroundColor: '#070504',
+    backgroundColor: "#070504",
   },
 
   /* =========================
@@ -625,9 +608,9 @@ const styles = StyleSheet.create({
   ========================== */
 
   signatureRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
 
     marginTop: 52,
   },
@@ -641,17 +624,17 @@ const styles = StyleSheet.create({
 
     paddingHorizontal: 10,
 
-    justifyContent: 'center',
+    justifyContent: "center",
 
-    backgroundColor: '#e9e5e1',
+    backgroundColor: "#e9e5e1",
   },
 
   signatureName: {
-    color: '#27211d',
+    color: "#27211d",
 
     fontSize: 9,
 
-    fontStyle: 'italic',
+    fontStyle: "italic",
   },
 
   cvvContainer: {
@@ -659,7 +642,7 @@ const styles = StyleSheet.create({
   },
 
   cvvLabel: {
-    color: 'rgba(255,190,130,0.4)',
+    color: "rgba(255,190,130,0.4)",
 
     fontSize: 7,
 
@@ -669,21 +652,21 @@ const styles = StyleSheet.create({
   cvvBox: {
     height: 36,
 
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
 
     borderRadius: 4,
 
-    justifyContent: 'center',
+    justifyContent: "center",
 
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   cvv: {
-    color: '#20150e',
+    color: "#20150e",
 
     fontSize: 13,
 
-    fontWeight: '800',
+    fontWeight: "800",
   },
 
   /* =========================
@@ -691,7 +674,7 @@ const styles = StyleSheet.create({
   ========================== */
 
   info: {
-    color: 'rgba(255,190,130,0.38)',
+    color: "rgba(255,190,130,0.38)",
 
     fontSize: 7,
 
@@ -699,7 +682,7 @@ const styles = StyleSheet.create({
 
     marginTop: 14,
 
-    maxWidth: '86%',
+    maxWidth: "86%",
   },
 
   /* =========================
@@ -707,22 +690,22 @@ const styles = StyleSheet.create({
   ========================== */
 
   backBottom: {
-    position: 'absolute',
+    position: "absolute",
 
     left: 24,
     right: 24,
 
     bottom: 20,
 
-    flexDirection: 'row',
+    flexDirection: "row",
 
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
 
-    alignItems: 'center',
+    alignItems: "center",
   },
 
   lastFour: {
-    color: 'rgba(255,190,130,0.5)',
+    color: "rgba(255,190,130,0.5)",
 
     fontSize: 9,
 
@@ -733,11 +716,11 @@ const styles = StyleSheet.create({
     width: 36,
     height: 18,
 
-    position: 'relative',
+    position: "relative",
   },
 
   smallRed: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 18,
     height: 18,
@@ -746,11 +729,11 @@ const styles = StyleSheet.create({
 
     left: 3,
 
-    backgroundColor: '#e53922',
+    backgroundColor: "#e53922",
   },
 
   smallOrange: {
-    position: 'absolute',
+    position: "absolute",
 
     width: 18,
     height: 18,
@@ -759,16 +742,16 @@ const styles = StyleSheet.create({
 
     right: 3,
 
-    backgroundColor: '#ff9d28',
+    backgroundColor: "#ff9d28",
   },
 
   flipBack: {
-    position: 'absolute',
+    position: "absolute",
 
     right: 24,
     bottom: 7,
 
-    color: 'rgba(255,190,130,0.25)',
+    color: "rgba(255,190,130,0.25)",
 
     fontSize: 6,
 

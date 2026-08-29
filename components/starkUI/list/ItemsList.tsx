@@ -1,28 +1,19 @@
 import React, { useCallback, useState } from "react";
-import {
-  Pressable,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native";
+import { Pressable, TextStyle, View, ViewStyle } from "react-native";
 import { Text } from "@/components/ui/text";
-import {
-  Check,
-  Edit3,
-  LucideIcon,
-  Trash2,
-} from "lucide-react-native";
+import { Check, Edit3, File, LucideIcon, Trash2 } from "lucide-react-native";
 import { useColor } from "@/hooks/useColor";
 import { BORDER_RADIUS } from "@/theme/globals";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import globalStyles from "@/starkwind/globalStyle";
 
 export type Item = {
   id: string;
   title: string;
   caption?: string;
-  captionStyle?: TextStyle,
-  Icon: LucideIcon;
+  captionStyle?: TextStyle;
+  Icon?: LucideIcon;
 
   // Anything you want displayed on the right
   right?: {
@@ -51,6 +42,7 @@ function SelectableListItem({
   const borderColor = useColor("muted");
   const cardColor = useColor("card");
   const background = useColor("background");
+  const Icon = item.Icon || File;
 
   return (
     <Pressable
@@ -71,11 +63,12 @@ function SelectableListItem({
         style={{
           backgroundColor: cardColor,
           padding: 15,
+          paddingLeft: 0,
           borderRadius: 18,
           marginRight: 10,
         }}
       >
-        {<item.Icon size={22} color={foreground} />}
+        {<Icon size={24} color={foreground} />}
       </View>
 
       {/* Heading + caption */}
@@ -86,10 +79,16 @@ function SelectableListItem({
           minWidth: 0,
         }}
       >
-        <Text numberOfLines={1}>{item.title}</Text>
+        <Text numberOfLines={1} style={{ fontWeight: 600 }}>
+          {item.title}
+        </Text>
 
         {item.caption && (
-          <Text variant="caption" style={{ fontSize: 14, ...item.captionStyle }} numberOfLines={1}>
+          <Text
+            variant="caption"
+            style={{ fontSize: 14, ...item.captionStyle }}
+            numberOfLines={1}
+          >
             {item.caption}
           </Text>
         )}
@@ -139,10 +138,11 @@ function SelectableListItem({
 
 type ViewAllProps = {
   items: Item[];
-  onEdit?: (selectedItems: Item[]) => void;
+  onEdit?: (selectedItems: Item) => void;
   onDelete?: (selectedItems: Item[]) => void;
   style?: ViewStyle;
   header?: string;
+  clearSelection?: number;
 };
 
 export function ViewAll({
@@ -151,10 +151,17 @@ export function ViewAll({
   onDelete,
   style,
   header,
+  clearSelection,
 }: ViewAllProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const selectionMode = selectedIds.length > 0;
+
+  React.useEffect(() => {
+    if (clearSelection) {
+      setSelectedIds([]);
+    }
+  }, [clearSelection]);
 
   const toggleSelection = useCallback((id: string) => {
     setSelectedIds((current) => {
@@ -173,7 +180,7 @@ export function ViewAll({
   const handleEdit = () => {
     const selectedItems = items.filter((item) => selectedIds.includes(item.id));
 
-    onEdit?.(selectedItems);
+    onEdit?.(selectedItems[0]);
   };
 
   const handleDelete = () => {
@@ -246,13 +253,12 @@ export function ViewAll({
               gap: 8,
             }}
           >
-            {onEdit && (
+            {onEdit && selectedIds.length < 2 && (
               <Button
                 onPress={handleEdit}
                 hitSlop={8}
                 icon={Edit3}
                 size="icon"
-                variant="ghost"
               />
             )}
             {onDelete && (

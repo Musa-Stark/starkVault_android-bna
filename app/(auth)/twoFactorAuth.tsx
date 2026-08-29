@@ -60,7 +60,6 @@ const TwoFactorAuth = () => {
     setIsLoading(true);
 
     const response = await twoFactorAuth(email, code, purpose);
-    console.log(response);
 
     setIsLoading(false);
 

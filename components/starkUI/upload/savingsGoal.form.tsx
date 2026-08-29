@@ -1,4 +1,9 @@
-import type { SetUploadForm, SetString, Ref } from "@/providers/app-context";
+import type {
+  SetUploadForm,
+  SetString,
+  SetDate,
+  Ref,
+} from "@/providers/app-context";
 
 export interface SavingsGoalForm {
   setUploadForm: SetUploadForm;
@@ -15,13 +20,16 @@ export interface SavingsGoalForm {
   setCurrentAmount: SetString;
   currentAmountRef: Ref;
 
-  deadline: string;
-  setDeadline: SetString;
+  deadline: Date | undefined;
+  setDeadline: SetDate;
   deadlineRef: Ref;
 
   category: string;
   setCategory: SetString;
   categoryRef: Ref;
+
+  method?: "POST" | "PATCH";
+  itemId?: string;
 }
 
 const savingsGoalsForm = ({
@@ -46,11 +54,16 @@ const savingsGoalsForm = ({
   category,
   setCategory,
   categoryRef,
+
+  method = "POST",
+  itemId = "",
 }: SavingsGoalForm) => {
   setUploadForm((prev) => ({
     ...prev,
     show: true,
     name: "Savings Goal",
+    method,
+    itemId,
 
     inputs: [
       {
@@ -90,19 +103,18 @@ const savingsGoalsForm = ({
         returnKeyType: "next",
         showErrorText: false,
       },
-
       {
+        inputType: "datePicker",
         label: "Deadline",
-        placeholderText: "e.g. 31 Dec 2026",
+        placeholderText: "e.g. 27 Aug 2026",
         value: deadline,
-        setStringValue: setDeadline,
+        setDateValue: setDeadline,
         ref: deadlineRef,
         nextRef: categoryRef,
         entryKeyHint: "next",
         returnKeyType: "next",
         showErrorText: false,
       },
-
       {
         inputType: "picker",
         label: "Category",

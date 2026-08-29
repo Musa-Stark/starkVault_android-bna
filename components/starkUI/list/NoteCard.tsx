@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Pressable, Modal, TouchableWithoutFeedback } from "react-native";
+import { View, Pressable } from "react-native";
 import {
   Copy,
   Pin,
@@ -8,9 +8,6 @@ import {
   Trash2,
   Eye,
   EyeOff,
-  X,
-  AlertTriangle,
-  Check,
 } from "lucide-react-native";
 import * as Clipboard from "expo-clipboard";
 
@@ -23,7 +20,7 @@ export type Note = {
   title: string;
   content: string;
   category?: string;
-  pinned: boolean;
+  pin: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -35,6 +32,7 @@ type NoteCardProps = {
   onEdit?: (note: Note) => void;
   onDelete?: (note: Note) => void;
   onTogglePin?: (note: Note) => void;
+  isDeleting?: boolean;
 };
 
 const formatDate = (date?: string) => {
@@ -53,14 +51,15 @@ export default function NoteCard({
   onEdit,
   onDelete,
   onTogglePin,
+  isDeleting
 }: NoteCardProps) {
   const foreground = useColor("foreground");
   const background = useColor("background");
   const cardColor = useColor("card");
+  const borderColor = useColor("border");
   const mutedForeground = useColor("mutedForeground");
-  const blue = useColor("blue");
+  const green = useColor("green");
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
 
   // Hide note content by default
@@ -103,16 +102,7 @@ export default function NoteCard({
    * Delete
    */
   const handleDeletePress = () => {
-    setShowDeleteModal(true);
-  };
-
-  const handleConfirmDelete = () => {
-    setShowDeleteModal(false);
-    onDelete?.(note);
-  };
-
-  const handleCancelDelete = () => {
-    setShowDeleteModal(false);
+      onDelete?.(note);
   };
 
   return (
@@ -127,7 +117,7 @@ export default function NoteCard({
           borderRadius: 16,
           backgroundColor: cardColor,
           borderWidth: 1,
-          borderColor: note.pinned ? blue : background,
+          borderColor: note.pin ? green : borderColor,
           elevation: 1,
         }}
       >
@@ -186,11 +176,11 @@ export default function NoteCard({
               alignItems: "center",
               justifyContent: "center",
               borderRadius: 999,
-              backgroundColor: note.pinned ? `${blue}18` : "transparent",
+              backgroundColor: note.pin ? `${green}18` : "transparent",
             }}
           >
-            {note.pinned ? (
-              <Pin size={21} color={blue} fill={blue} strokeWidth={2} />
+            {note.pin ? (
+              <Pin size={21} color={green} fill={green} strokeWidth={2} />
             ) : (
               <PinOff size={21} color={mutedForeground} strokeWidth={2} />
             )}
@@ -208,14 +198,14 @@ export default function NoteCard({
               paddingHorizontal: 10,
               paddingVertical: 5,
               borderRadius: 999,
-              backgroundColor: `${blue}15`,
+              backgroundColor: `${green}15`,
             }}
           >
             <Text
               style={{
                 fontSize: 11,
                 fontWeight: "600",
-                color: blue,
+                color: green,
               }}
             >
               {note.category}
@@ -310,218 +300,23 @@ export default function NoteCard({
               size="icon"
               variant="ghost"
               onPress={handleDeletePress}
-              icon={Trash2}
               style={{
                 width: 44,
                 height: 44,
                 borderRadius: 999,
               }}
-            />
+              loading={isDeleting}
+              disabled={isDeleting}
+            >
+              <Trash2 size={20} color={"red"} />
+            </Button>
           )}
         </View>
       </View>
 
       {/* ====================================================== */}
-      {/* Copied Toast                                            */}
-      {/* ====================================================== */}
-
-      {!showCopied && (
-        <View
-          pointerEvents="none"
-          style={{
-            position: "absolute",
-            left: 16,
-            right: 16,
-            bottom: 12,
-            zIndex: 100,
-            alignItems: "center",
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 8,
-              paddingHorizontal: 14,
-              paddingVertical: 15,
-              borderRadius: 999,
-              backgroundColor: foreground,
-              elevation: 6,
-              shadowColor: "#000",
-              shadowOffset: {
-                width: 0,
-                height: 3,
-              },
-              shadowOpacity: 0.2,
-              shadowRadius: 6,
-              width: "100%"
-            }}
-          >
-            <View
-              style={{
-                width: 22,
-                height: 22,
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: 999,
-                backgroundColor: "#22c55e",
-              }}
-            >
-              <Check size={14} color="#ffffff" strokeWidth={3} />
-            </View>
-
-            <Text
-              style={{
-                fontSize: 13,
-                fontWeight: "600",
-                color: background,
-              }}
-            >
-              Note copied
-            </Text>
-          </View>
-        </View>
-      )}
-
-      {/* ====================================================== */}
       {/* Delete Modal                                            */}
       {/* ====================================================== */}
-
-      <Modal
-        visible={showDeleteModal}
-        transparent
-        animationType="fade"
-        onRequestClose={handleCancelDelete}
-      >
-        <TouchableWithoutFeedback onPress={handleCancelDelete}>
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              paddingHorizontal: 24,
-              backgroundColor: "rgba(0, 0, 0, 0.55)",
-            }}
-          >
-            <TouchableWithoutFeedback>
-              <View
-                style={{
-                  width: "100%",
-                  maxWidth: 400,
-                  borderRadius: 24,
-                  padding: 22,
-                  backgroundColor: cardColor,
-                  elevation: 10,
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 8,
-                  },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 20,
-                }}
-              >
-                {/* Close */}
-
-                <Button
-                  icon={X}
-                  size="icon"
-                  variant="default"
-                  onPress={handleCancelDelete}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    width: 34,
-                    height: 34,
-                  }}
-                />
-
-                {/* Warning Icon */}
-
-                <View
-                  style={{
-                    width: 52,
-                    height: 52,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderRadius: 16,
-                    backgroundColor: "#ef444418",
-                    marginBottom: 16,
-                  }}
-                >
-                  <AlertTriangle size={26} color="#ef4444" strokeWidth={2} />
-                </View>
-
-                {/* Title */}
-
-                <Text
-                  style={{
-                    fontSize: 19,
-                    fontWeight: "700",
-                    color: foreground,
-                  }}
-                >
-                  Delete note?
-                </Text>
-
-                {/* Description */}
-
-                <Text
-                  style={{
-                    marginTop: 8,
-                    fontSize: 13,
-                    lineHeight: 20,
-                    color: mutedForeground,
-                  }}
-                >
-                  This will permanently delete{" "}
-                  <Text
-                    style={{
-                      fontWeight: "600",
-                      color: foreground,
-                    }}
-                  >
-                    "{note.title}"
-                  </Text>
-                  . This action cannot be undone.
-                </Text>
-
-                {/* Buttons */}
-
-                <View
-                  style={{
-                    flexDirection: "row",
-                    gap: 10,
-                    marginTop: 22,
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  {/* Cancel */}
-
-                  <Button
-                    size="sm"
-                    variant="success"
-                    onPress={handleCancelDelete}
-                  >
-                    Cancel
-                  </Button>
-
-                  {/* Delete */}
-
-                  <Button
-                    size="sm"
-                    onPress={handleConfirmDelete}
-                    variant="destructive"
-                  >
-                    Delete
-                  </Button>
-                </View>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
     </>
   );
 }

@@ -12,10 +12,12 @@ type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 type User = {
   _id: string;
   email: string;
-  name?: string;
+  firstName: string;
+  lastName?: string;
+  avatar: string;
 };
 
-type Response = {
+export type APIResponse = {
   success: boolean;
   message?: string;
   data?: any;
@@ -26,20 +28,20 @@ type AuthContextType = {
   status: AuthStatus;
   user: User | null;
 
-  login: (email: string, password: string) => Promise<Response>;
+  login: (email: string, password: string) => Promise<APIResponse>;
   signup: (
     fullName: string,
     email: string,
     password: string,
-  ) => Promise<Response>;
+  ) => Promise<APIResponse>;
   twoFactorAuth: (
     email: string,
     otp: string,
     purpose: string,
-  ) => Promise<Response>;
-  resendOTP: (email: string) => Promise<Response>;
-  forgotPassword: (email: string) => Promise<Response>;
-  resetPassword: (email: string, password: string) => Promise<Response>;
+  ) => Promise<APIResponse>;
+  resendOTP: (email: string) => Promise<APIResponse>;
+  forgotPassword: (email: string) => Promise<APIResponse>;
+  resetPassword: (email: string, password: string) => Promise<APIResponse>;
   logout: () => Promise<void>;
 
   refreshSession: () => Promise<void>;
@@ -85,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const response = await fetch(`${API_URL}/api/v1/auth/refresh`, {
+      const response = await fetch(`${API_URL}/api/v1/auth/refresh-token`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -111,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
        */
       await getCurrentUser();
     } catch (error) {
-      console.error("Failed to restore authentication:", error);
+      console.log("Failed to restore authentication:", error);
 
       await clearTokens();
 
@@ -130,10 +132,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const response = await fetch(`${API_URL}/api/v1/auth/${routes.me}`, {
+    const response = await fetch(`${API_URL}/api/v1/account/${routes.me}`, {
+      method: "POST",
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
       },
+      body: JSON.stringify({ accessToken }),
     });
 
     if (!response.ok) {
@@ -143,9 +147,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const data = await response.json();
+    const res = await response.json();
 
-    setUser(data.user);
+    setUser(res.data);
     setStatus("authenticated");
   };
 
@@ -231,12 +235,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json();
 
-      // await SecureStore.setItemAsync("access_token", data.accessToken);
+      if (data.purpose === "password_reset") return data;
 
-      // await SecureStore.setItemAsync("refresh_token", data?.refreshToken);
+      await SecureStore.setItemAsync("access_token", data?.accessToken);
 
-      // setUser(data.user);
-      // setStatus("authenticated");
+      await SecureStore.setItemAsync("refresh_token", data?.refreshToken);
+
+      setUser(data.user);
+      setStatus("authenticated");
 
       return data;
     } catch (error) {
@@ -310,16 +316,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const resetPassword = async (email: string, password: string) => {
     try {
-      const response = await fetch(`${API_URL}/api/v1/auth/${routes.resetPassword}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${API_URL}/api/v1/auth/${routes.resetPassword}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
         },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      );
 
       const data = await response.json();
 
