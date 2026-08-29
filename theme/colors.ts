@@ -1,56 +1,56 @@
 const lightColors = {
   // Base colors
-  background: '#FFFFFF',
-  foreground: '#000000',
+  background: '#F7FBF8',
+  foreground: '#173124',
 
   // Card colors
-  card: '#F2F2F7',
-  cardForeground: '#000000',
+  card: '#FFFFFF',
+  cardForeground: '#173124',
 
   // Popover colors
-  popover: '#F2F2F7',
-  popoverForeground: '#000000',
+  popover: '#FFFFFF',
+  popoverForeground: '#173124',
 
   // Primary colors
-  primary: '#18181b',
+  primary: '#166534',
   primaryForeground: '#FFFFFF',
 
   // Secondary colors
-  secondary: '#F2F2F7',
-  secondaryForeground: '#18181b',
+  secondary: '#EAF8EF',
+  secondaryForeground: '#14532D',
 
   // Muted colors
-  muted: '#78788033',
-  mutedForeground: '#71717a',
+  muted: '#E8EDF5',
+  mutedForeground: '#667085',
 
   // Accent colors
-  accent: '#F2F2F7',
-  accentForeground: '#18181b',
+  accent: '#EAF8EF',
+  accentForeground: '#14532D',
 
   // Destructive colors
   destructive: '#ef4444',
   destructiveForeground: '#FFFFFF',
 
   // Border and input
-  border: '#C6C6C8',
-  input: '#e4e4e7',
-  ring: '#a1a1aa',
+  border: '#DCEDE1',
+  input: '#F0F8F2',
+  ring: '#86EFAC',
 
   // Text colors
-  text: '#000000',
-  textMuted: '#71717a',
+  text: '#173124',
+  textMuted: '#668073',
 
   // Legacy support for existing components
-  tint: '#18181b',
-  icon: '#71717a',
-  tabIconDefault: '#71717a',
-  tabIconSelected: '#18181b',
+  tint: '#166534',
+  icon: '#668073',
+  tabIconDefault: '#668073',
+  tabIconSelected: '#166534',
 
   // Default buttons, links, Send button, selected tabs
-  blue: '#007AFF',
+  blue: '#15803D',
 
   // Success states, FaceTime buttons, completed tasks
-  green: '#34C759',
+  green: '#15803D',
 
   // Delete buttons, error states, critical alerts
   red: '#FF3B30',
@@ -77,18 +77,18 @@ const lightColors = {
 const darkColors = {
   // Base colors
   background: '#000000',
-  foreground: '#FFFFFF',
+  foreground: '#F8FAFC',
 
   // Card colors
   card: '#1C1C1E',
-  cardForeground: '#FFFFFF',
+  cardForeground: '#F8FAFC',
 
   // Popover colors
   popover: '#18181b',
-  popoverForeground: '#FFFFFF',
+  popoverForeground: '#F8FAFC',
 
   // Primary colors
-  primary: '#e4e4e7',
+  primary: '#22C55E',
   primaryForeground: '#18181b',
 
   // Secondary colors
@@ -110,23 +110,23 @@ const darkColors = {
   // Border and input - using alpha values for better blending
   border: '#38383A',
   input: 'rgba(255, 255, 255, 0.15)',
-  ring: '#71717a',
+  ring: '#22C55E',
 
   // Text colors
-  text: '#FFFFFF',
+  text: '#F8FAFC',
   textMuted: '#a1a1aa',
 
   // Legacy support for existing components
-  tint: '#FFFFFF',
+  tint: '#22C55E',
   icon: '#a1a1aa',
   tabIconDefault: '#a1a1aa',
-  tabIconSelected: '#FFFFFF',
+  tabIconSelected: '#22C55E',
 
   // Default buttons, links, Send button, selected tabs
-  blue: '#0A84FF',
+  blue: '#22C55E',
 
   // Success states, FaceTime buttons, completed tasks
-  green: '#30D158',
+  green: '#22C55E',
 
   // Delete buttons, error states, critical alerts
   red: '#FF453A',

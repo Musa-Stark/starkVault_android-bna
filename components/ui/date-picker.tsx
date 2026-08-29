@@ -1027,7 +1027,7 @@ export function DatePicker(props: DatePickerProps) {
     paddingHorizontal: variant === 'group' ? 0 : 16,
     borderWidth: variant === 'group' ? 0 : 1,
     borderColor: variant === 'outline' ? borderColor : cardColor,
-    borderRadius: CORNERS,
+    borderRadius: 999,
     backgroundColor: variant === 'filled' ? cardColor : 'transparent',
     minHeight: variant === 'group' ? 'auto' : HEIGHT,
   };

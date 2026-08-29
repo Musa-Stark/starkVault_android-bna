@@ -78,6 +78,8 @@ export default function SavingsGoalCard({
         padding: 18,
         borderRadius: 16,
         backgroundColor: cardColor,
+        borderWidth: 1,
+        borderColor,
         elevation: 1,
       }}
     >

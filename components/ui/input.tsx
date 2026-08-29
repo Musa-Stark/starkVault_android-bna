@@ -1,7 +1,7 @@
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { useColor } from "@/hooks/useColor";
-import { BORDER_RADIUS, CORNERS, FONT_SIZE, HEIGHT } from "@/theme/globals";
+import { BORDER_RADIUS, FONT_SIZE, HEIGHT } from "@/theme/globals";
 import { LucideProps } from "lucide-react-native";
 import React, { forwardRef, ReactElement, useState } from "react";
 import {
@@ -76,7 +76,7 @@ export const Input = forwardRef<TextInput, InputProps>(
     // Variant styles
     const getVariantStyle = (): ViewStyle => {
       const baseStyle: ViewStyle = {
-        borderRadius: isTextarea ? BORDER_RADIUS : CORNERS,
+        borderRadius: isTextarea ? BORDER_RADIUS : 999,
         flexDirection: isTextarea ? "column" : "row",
         alignItems: isTextarea ? "stretch" : "center",
         minHeight: getHeight(),
@@ -415,8 +415,6 @@ export const GroupedInputItem = forwardRef<TextInput, GroupedInputItemProps>(
     },
     ref,
   ) => {
-    const [isFocused, setIsFocused] = useState(false);
-
     const text = useColor("text");
     const muted = useColor("textMuted");
     const primary = useColor("primary");
@@ -425,12 +423,10 @@ export const GroupedInputItem = forwardRef<TextInput, GroupedInputItemProps>(
     const isTextarea = type === "textarea";
 
     const handleFocus = (e: any) => {
-      setIsFocused(true);
       onFocus?.(e);
     };
 
     const handleBlur = (e: any) => {
-      setIsFocused(false);
       onBlur?.(e);
     };
 
@@ -607,3 +603,6 @@ export const GroupedInputItem = forwardRef<TextInput, GroupedInputItemProps>(
     return renderItemContent();
   },
 );
+
+Input.displayName = "Input";
+GroupedInputItem.displayName = "GroupedInputItem";

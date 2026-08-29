@@ -6,7 +6,7 @@ import { useColor } from "@/hooks/useColor";
 import { useHaptics } from "@/hooks/useHaptics";
 import { BORDER_RADIUS, CORNERS, FONT_SIZE, HEIGHT } from "@/theme/globals";
 import { ChevronDown, LucideProps } from "lucide-react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Modal,
   Pressable,
@@ -188,7 +188,7 @@ export function Picker({
     paddingHorizontal: variant === "group" ? 0 : 16,
     borderWidth: variant === "group" ? 0 : 1,
     borderColor: variant === "outline" ? borderColor : cardColor,
-    borderRadius: CORNERS,
+    borderRadius: 999,
     backgroundColor: variant === "filled" ? cardColor : "transparent",
     minHeight: variant === "group" ? "auto" : HEIGHT,
     opacity: disabled ? 0.5 : 1,

@@ -36,8 +36,8 @@ import {
 
 import type { LucideIcon } from "lucide-react-native";
 
-const income = () => {
-  const green = useColor("green");
+const Income = () => {
+  const primary = useColor("primary");
   const apiCall = useAPICall();
   const { toast } = useToast();
 
@@ -99,7 +99,7 @@ const income = () => {
           right: {
             type: "text",
             text: `PKR ${el.amount}`,
-            textStyle: { color: green, fontSize: 15 },
+            textStyle: { color: primary, fontSize: 15 },
           },
         })),
       ]);
@@ -138,7 +138,7 @@ const income = () => {
             right: {
               type: "text",
               text: `Rs ${response.data.amount}/-`,
-              textStyle: { color: green, fontSize: 15, fontWeight: 600 },
+              textStyle: { color: primary, fontSize: 15, fontWeight: 600 },
             },
           },
         ]);
@@ -154,7 +154,7 @@ const income = () => {
                   right: {
                     type: "text",
                     text: `Rs ${response.data.amount}/-`,
-                    textStyle: { color: green, fontSize: 15, fontWeight: 600 },
+                    textStyle: { color: primary, fontSize: 15, fontWeight: 600 },
                   },
                 } satisfies Item)
               : el,
@@ -297,4 +297,4 @@ const income = () => {
   );
 };
 
-export default income;
+export default Income;

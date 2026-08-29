@@ -25,7 +25,7 @@ const SecurityControl = ({
   text: string;
 }) => {
   const [isEnabled, setIsEnabled] = useState(false);
-  const foreground = useColor("foreground");
+  const green = useColor("green");
   const borderColor = useColor("muted");
   const cardColor = useColor("card");
 
@@ -50,7 +50,7 @@ const SecurityControl = ({
           marginRight: 10,
         }}
       >
-        <Icon color={foreground} />
+        <Icon color={green} />
       </View>
       <Text numberOfLines={2} style={{ maxWidth: "65%", fontSize: 16 }}>
         {text}

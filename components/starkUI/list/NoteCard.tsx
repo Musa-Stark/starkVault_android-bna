@@ -14,7 +14,6 @@ import * as Clipboard from "expo-clipboard";
 import { Text } from "@/components/ui/text";
 import { useColor } from "@/hooks/useColor";
 import { Button } from "@/components/ui/button";
-import { useApp } from "@/providers/app-context";
 
 export type Note = {
   _id: string;
@@ -57,6 +56,7 @@ export default function NoteCard({
   const foreground = useColor("foreground");
   const background = useColor("background");
   const cardColor = useColor("card");
+  const borderColor = useColor("border");
   const mutedForeground = useColor("mutedForeground");
   const green = useColor("green");
 
@@ -119,7 +119,7 @@ export default function NoteCard({
           borderRadius: 16,
           backgroundColor: cardColor,
           borderWidth: 1,
-          borderColor: note.pin ? green : background,
+          borderColor: note.pin ? green : borderColor,
           elevation: 1,
         }}
       >

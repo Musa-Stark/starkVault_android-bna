@@ -2,7 +2,7 @@ import { Icon } from "@/components/ui/icon";
 import { ButtonSpinner, SpinnerVariant } from "@/components/ui/spinner";
 import { Text } from "@/components/ui/text";
 import { useColor } from "@/hooks/useColor";
-import { CORNERS, FONT_SIZE, HEIGHT } from "@/theme/globals";
+import { FONT_SIZE, HEIGHT } from "@/theme/globals";
 import * as Haptics from "expo-haptics";
 import { LucideProps } from "lucide-react-native";
 import { forwardRef } from "react";
@@ -81,7 +81,7 @@ export const Button = forwardRef<View, ButtonProps>(
 
     const getButtonStyle = (): ViewStyle => {
       const baseStyle: ViewStyle = {
-        borderRadius: CORNERS,
+        borderRadius: 999,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
