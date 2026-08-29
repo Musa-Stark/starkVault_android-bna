@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Pressable, } from "react-native";
+import { View, Pressable } from "react-native";
 import {
   Copy,
   Pin,
@@ -8,13 +8,13 @@ import {
   Trash2,
   Eye,
   EyeOff,
- 
 } from "lucide-react-native";
 import * as Clipboard from "expo-clipboard";
 
 import { Text } from "@/components/ui/text";
 import { useColor } from "@/hooks/useColor";
 import { Button } from "@/components/ui/button";
+import { useApp } from "@/providers/app-context";
 
 export type Note = {
   _id: string;
@@ -33,6 +33,7 @@ type NoteCardProps = {
   onEdit?: (note: Note) => void;
   onDelete?: (note: Note) => void;
   onTogglePin?: (note: Note) => void;
+  isDeleting?: boolean;
 };
 
 const formatDate = (date?: string) => {
@@ -51,6 +52,7 @@ export default function NoteCard({
   onEdit,
   onDelete,
   onTogglePin,
+  isDeleting
 }: NoteCardProps) {
   const foreground = useColor("foreground");
   const background = useColor("background");
@@ -58,7 +60,6 @@ export default function NoteCard({
   const mutedForeground = useColor("mutedForeground");
   const green = useColor("green");
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
 
   // Hide note content by default
@@ -101,17 +102,10 @@ export default function NoteCard({
    * Delete
    */
   const handleDeletePress = () => {
-    setShowDeleteModal(true);
+      onDelete?.(note);
   };
 
-  const handleConfirmDelete = () => {
-    setShowDeleteModal(false);
-    onDelete?.(note);
-  };
-
-  const handleCancelDelete = () => {
-    setShowDeleteModal(false);
-  };
+  console.log(isDeleting)
 
   return (
     <>
@@ -308,13 +302,16 @@ export default function NoteCard({
               size="icon"
               variant="ghost"
               onPress={handleDeletePress}
-              icon={Trash2}
               style={{
                 width: 44,
                 height: 44,
                 borderRadius: 999,
               }}
-            />
+              loading={isDeleting}
+              disabled={isDeleting}
+            >
+              <Trash2 size={20} color={"red"} />
+            </Button>
           )}
         </View>
       </View>
@@ -322,8 +319,6 @@ export default function NoteCard({
       {/* ====================================================== */}
       {/* Delete Modal                                            */}
       {/* ====================================================== */}
-
-      
     </>
   );
 }

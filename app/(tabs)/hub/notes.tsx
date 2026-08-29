@@ -13,6 +13,7 @@ import { Card } from "@/components/ui/card";
 import useAPICall from "@/utils/apiCall";
 import { useToast } from "@/providers/toast-provider";
 import NoteCardSkeleton from "@/components/starkUI/skeleton/NoteCardSkeleton";
+import useDeleteOne from "@/components/starkUI/DeleteOne";
 
 const notes = () => {
   const {
@@ -30,7 +31,10 @@ const notes = () => {
     pinRef,
     uploadForm,
     setUploadForm,
+    deleteOneBusy,
   } = useApp();
+
+  const deleteOne = useDeleteOne();
 
   interface Note {
     _id: string;
@@ -42,6 +46,7 @@ const notes = () => {
   }
 
   const [notes, setNotes] = useState<Note[]>([]);
+  const [deletingId, setDeletingId] = useState<string>("");
 
   const apiCall = useAPICall();
   const { toast } = useToast();
@@ -244,9 +249,19 @@ const notes = () => {
                 itemId: note._id,
               });
             }}
-            onDelete={(note) => {
-              console.log("Delete", note);
+            onDelete={async (note) => {
+              setDeletingId(note._id);
+              try {
+                await deleteOne({
+                  id: note._id,
+                  setState: setNotes,
+                  page: "notes",
+                });
+              } finally {
+                setDeletingId("");
+              }
             }}
+            isDeleting={deletingId === note._id}
             onTogglePin={(note) => handleNotePin(note._id, note.pin)}
           />
         ))}

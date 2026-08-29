@@ -36,8 +36,6 @@ const passwords = () => {
 
     uploadForm,
     setUploadForm,
-
-    deleteOneBusy,
   } = useApp();
   const deleteOne = useDeleteOne();
 
@@ -238,7 +236,7 @@ const passwords = () => {
                     variant="ghost"
                     size="icon"
                     icon={Pen}
-                    disabled={deleteOneBusy}
+                    disabled={deletingId === row._id}
                     onPress={() => {
                       const newPassword = row.password;
                       const newUsername = row.username;
@@ -286,7 +284,7 @@ const passwords = () => {
                       }
                     }}
                     loading={deletingId === row._id}
-                    disabled={deleteOneBusy}
+                    disabled={deletingId === row._id}
                   >
                     <Trash2 size={20} color={"red"} />
                   </Button>
