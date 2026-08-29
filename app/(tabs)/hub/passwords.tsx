@@ -12,6 +12,7 @@ import handlePasswordForm from "@/components/starkUI/upload/passwords.form";
 import useAPICall from "@/utils/apiCall";
 import { useToast } from "@/providers/toast-provider";
 import TableSkeleton from "@/components/starkUI/skeleton/TableSkeleton";
+import useDeleteOne from "@/components/starkUI/DeleteOne";
 
 interface Row {
   service: string;
@@ -35,7 +36,10 @@ const passwords = () => {
 
     uploadForm,
     setUploadForm,
+
+    deleteOneBusy,
   } = useApp();
+  const deleteOne = useDeleteOne();
 
   const handleRowPress = async (row: Row) => {
     await Clipboard.setStringAsync(row.password);
@@ -55,6 +59,7 @@ const passwords = () => {
   }
 
   const [passwords, setPasswords] = useState<Password[]>([]);
+  const [deletingId, setDeletingId] = useState<string>("");
 
   const apiCall = useAPICall();
   const { toast } = useToast();
@@ -90,7 +95,7 @@ const passwords = () => {
 
   // upload - POST
   useEffect(() => {
-    const upload  = async () => {
+    const upload = async () => {
       if (!uploadForm.submit) return;
 
       const response = await apiCall({
@@ -233,6 +238,7 @@ const passwords = () => {
                     variant="ghost"
                     size="icon"
                     icon={Pen}
+                    disabled={deleteOneBusy}
                     onPress={() => {
                       const newPassword = row.password;
                       const newUsername = row.username;
@@ -266,9 +272,24 @@ const passwords = () => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    icon={Trash2}
-                    onPress={() => console.log("DELETE PASSWORD:", row)}
-                  />
+                    onPress={async () => {
+                      setDeletingId(row._id);
+
+                      try {
+                        await deleteOne({
+                          id: row._id,
+                          setState: setPasswords,
+                          page: "passwords",
+                        });
+                      } finally {
+                        setDeletingId("");
+                      }
+                    }}
+                    loading={deletingId === row._id}
+                    disabled={deleteOneBusy}
+                  >
+                    <Trash2 size={20} color={"red"} />
+                  </Button>
                 </View>
               ),
             },
