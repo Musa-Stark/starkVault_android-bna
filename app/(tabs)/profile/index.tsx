@@ -1,6 +1,6 @@
 import { View } from "react-native";
 import { Text } from "@/components/ui/text";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,7 @@ import {
 import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import { ScrollView } from "react-native-gesture-handler";
 import { Switch } from "@/components/ui/switch";
+import { useAuth } from "@/providers/auth-provider";
 
 const SecurityControl = ({
   Icon,
@@ -68,9 +69,12 @@ const Profile = () => {
   const background = useColor("background");
   const green = useColor("green");
 
-  const [userName, setUserName] = useState("Muhammad Musa");
+  const { user } = useAuth();
+
+  const [userName, setUserName] = useState(`${user?.firstName} ${user?.lastName}`);
   const [newPassword, setNewPassword] = useState("");
-  const [email, setEmail] = useState("musa@gmail.com");
+  const [email, setEmail] = useState(user?.email);
+  const [avatar, setAvatar] = useState(user?.avatar)
 
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
@@ -132,7 +136,7 @@ const Profile = () => {
         </Card>
 
         {/* security controls */}
-        <Card
+        {/* <Card
           style={{
             marginTop: 20,
             ...globalStyles.flexBox,
@@ -155,7 +159,7 @@ const Profile = () => {
             Icon={Fingerprint}
             text={"Biometric Unlock"}
           />
-        </Card>
+        </Card> */}
 
         {/* logout */}
         <Button

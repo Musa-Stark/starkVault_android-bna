@@ -105,8 +105,6 @@ export default function NoteCard({
       onDelete?.(note);
   };
 
-  console.log(isDeleting)
-
   return (
     <>
       {/* ====================================================== */}

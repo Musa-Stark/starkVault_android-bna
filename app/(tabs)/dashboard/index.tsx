@@ -41,8 +41,6 @@ const DashBoard = () => {
   useEffect(() => {
     if (!uploadForm.submit) return;
 
-    console.log({ merchant, category, amount });
-
     setUploadForm((prev) => ({ ...prev, submit: false }));
     setMerchant("");
     setCategory("");

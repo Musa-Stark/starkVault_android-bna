@@ -12,7 +12,9 @@ type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 type User = {
   _id: string;
   email: string;
-  name?: string;
+  firstName: string;
+  lastName?: string;
+  avatar: string;
 };
 
 export type APIResponse = {
@@ -96,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (!response.ok) {
-        // await clearTokens();
+        await clearTokens();
 
         setStatus("unauthenticated");
         return;
@@ -113,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.log("Failed to restore authentication:", error);
 
-      // await clearTokens();
+      await clearTokens();
 
       setStatus("unauthenticated");
     }
@@ -145,9 +147,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const data = await response.json();
+    const res = await response.json();
 
-    setUser(data.user);
+    setUser(res.data);
     setStatus("authenticated");
   };
 
