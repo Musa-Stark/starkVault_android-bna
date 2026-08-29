@@ -64,7 +64,7 @@ const RootNavigator = () => {
 
   const screens = {
     loading: <Redirect href={"/loading"} />,
-    authenticated: <Redirect href={"/profile"} />,
+    authenticated: <Redirect href={"/dashboard"} />,
     unauthenticated: <Redirect href={"/(auth)/login"} />,
   };
 
