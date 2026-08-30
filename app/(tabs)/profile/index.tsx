@@ -17,6 +17,9 @@ import InputWithLabel from "@/components/starkUI/input/InputWithLabel";
 import { ScrollView } from "react-native-gesture-handler";
 import { Switch } from "@/components/ui/switch";
 import { useAuth } from "@/providers/auth-provider";
+import { MediaAsset, MediaPicker } from "@/components/ui/media-picker";
+import useAPICall from "@/utils/apiCall";
+import { useToast } from "@/providers/toast-provider";
 
 const SecurityControl = ({
   Icon,
@@ -66,15 +69,47 @@ const SecurityControl = ({
 };
 
 const Profile = () => {
-  const background = useColor("background");
-  const green = useColor("green");
-
   const { user } = useAuth();
+  const apiCall = useAPICall();
+  const { toast } = useToast();
 
-  const [userName, setUserName] = useState(`${user?.firstName} ${user?.lastName}`);
+  const [userName, setUserName] = useState(
+    `${user?.firstName} ${user?.lastName}`,
+  );
   const [newPassword, setNewPassword] = useState("");
   const [email, setEmail] = useState(user?.email);
-  const [avatar, setAvatar] = useState(user?.avatar)
+  const [updatingAvatar, setUpdatingAvatar] = useState(false);
+  const avatarArray = user?.profileImage;
+  const [avatar, setAvatar] = useState(
+    avatarArray?.[avatarArray.length - 1]?.url,
+  );
+
+  const handleUpdateProfile = async (assets: MediaAsset[]) => {
+    setUpdatingAvatar(true);
+    if (!user?._id) {
+      toast.error("user.id not found");
+      return;
+    }
+
+    try {
+      const response = await apiCall({
+        page: "users",
+        method: "POST",
+        data: { avatar: assets },
+        itemId: user?._id,
+        option: "addFile",
+        bodyType: "multipart",
+      });
+      if (!response.success)
+        toast.error(response.message || "Failed to upload Avatar");
+
+      const arr = response.data.profileImage;
+
+      setAvatar(arr[arr.length - 1].url);
+    } finally {
+      setUpdatingAvatar(false);
+    }
+  };
 
   return (
     <View style={{ ...globalStyles.globalPaddingContainer }}>
@@ -87,19 +122,27 @@ const Profile = () => {
         <Card>
           <View style={{ ...globalStyles.flexBoxHorizantal }}>
             <Avatar size={100}>
-              <AvatarImage source={require("@/assets/images/google.png")} />
-              <AvatarFallback
-                style={{ backgroundColor: green }}
-                textStyle={{ color: background, fontSize: 30 }}
-              >
-                MS
-              </AvatarFallback>
+              <AvatarImage
+                source={
+                  avatar || require("@/assets/images/avatar-fallback.png")
+                }
+              />
             </Avatar>
           </View>
-
-          <Button icon={Edit3} style={{ marginTop: 15 }}>
-            Update Avatar
-          </Button>
+          {updatingAvatar ? (
+            <Button style={{ marginTop: 15 }} disabled loading>
+              upading profile...
+            </Button>
+          ) : (
+            <MediaPicker
+              buttonText="Update Avatar"
+              style={{ marginTop: 15 }}
+              icon={Edit3}
+              onSelectionChange={handleUpdateProfile}
+              mediaType="image"
+              disabled={updatingAvatar}
+            />
+          )}
         </Card>
 
         {/* information */}

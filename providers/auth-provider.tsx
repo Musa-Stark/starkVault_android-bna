@@ -14,7 +14,9 @@ type User = {
   email: string;
   firstName: string;
   lastName?: string;
-  avatar: string;
+  profileImage: {
+    url: string;
+  }[];
 };
 
 export type APIResponse = {
