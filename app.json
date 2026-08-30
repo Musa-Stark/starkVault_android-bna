@@ -12,12 +12,6 @@
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/splash.png",
-        "backgroundImage": "./assets/images/splash.png",
-        "monochromeImage": "./assets/images/splash.png"
-      },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
       "package": "com.stark.starkVault",
@@ -47,6 +41,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "36dce588-8719-44df-8df7-7abc87de794f"
+      }
     }
   }
 }
