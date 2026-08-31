@@ -16,6 +16,7 @@ import {
 export interface InputProps extends Omit<TextInputProps, "style"> {
   label?: string;
   error?: string;
+  showError?: boolean;
   showErrorText?: boolean;
   icon?: React.ComponentType<LucideProps>;
   rightComponent?: React.ReactNode | (() => React.ReactNode);
@@ -35,6 +36,7 @@ export const Input = forwardRef<TextInput, InputProps>(
     {
       label,
       error,
+      showError = true,
       showErrorText = true,
       icon,
       rightComponent,
@@ -89,7 +91,8 @@ export const Input = forwardRef<TextInput, InputProps>(
           return {
             ...baseStyle,
             borderWidth: 1,
-            borderColor: error ? danger : isFocused ? primary : borderColor,
+            borderColor:
+              error && showError ? danger : isFocused ? primary : borderColor,
             backgroundColor: "transparent",
           };
         case "filled":
@@ -203,7 +206,9 @@ export const Input = forwardRef<TextInput, InputProps>(
                 multiline
                 numberOfLines={rows}
                 style={[getInputStyle(), inputStyle]}
-                placeholderTextColor={error ? danger + "99" : muted}
+                placeholderTextColor={
+                  error && showError ? danger + "99" : muted
+                }
                 placeholder={placeholder || "Type your message..."}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
@@ -257,7 +262,9 @@ export const Input = forwardRef<TextInput, InputProps>(
                 <TextInput
                   ref={ref}
                   style={[getInputStyle(), inputStyle]}
-                  placeholderTextColor={error ? danger + 99 : muted}
+                  placeholderTextColor={
+                    error && showError ? danger + 99 : muted
+                  }
                   onFocus={handleFocus}
                   onBlur={handleBlur}
                   editable={!disabled}
@@ -519,7 +526,7 @@ export const GroupedInputItem = forwardRef<TextInput, GroupedInputItemProps>(
                   },
                   inputStyle,
                 ]}
-                placeholderTextColor={error ? danger + "99" : muted}
+                placeholderTextColor={error ? danger + 99 : muted}
                 placeholder={placeholder || "Type your message..."}
                 editable={!disabled}
                 selectionColor={primary}
@@ -583,7 +590,7 @@ export const GroupedInputItem = forwardRef<TextInput, GroupedInputItemProps>(
                     inputStyle,
                   ]}
                   placeholder={placeholder}
-                  placeholderTextColor={error ? danger + "99" : muted}
+                  placeholderTextColor={error ? danger + 99 : muted}
                   editable={!disabled}
                   selectionColor={primary}
                   onFocus={handleFocus}

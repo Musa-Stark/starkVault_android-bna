@@ -39,6 +39,7 @@ export interface InputWithLabel {
   variant?: "filled" | "outline";
   containerStyle?: ViewStyle;
   pickerOptions?: PickerOption[];
+  showError?: boolean;
   showErrorText?: boolean;
   inputType?: "picker" | "text" | "checkbox" | "mediaPicker" | "datePicker";
   checkboxAccessibilityLabel?: string;
@@ -65,6 +66,7 @@ const InputWithLabel = ({
   variant,
   containerStyle,
   pickerOptions,
+  showError,
   showErrorText,
   inputType = "text",
   checkboxAccessibilityLabel,
@@ -169,6 +171,7 @@ const InputWithLabel = ({
         multiline={multiline}
         inputMode={inputMode ?? "text"}
         error={error}
+        showError={showError}
         showErrorText={showErrorText}
         placeholder={placeholderText}
         containerStyle={{ marginTop: 3, ...containerStyle }}

@@ -11,7 +11,7 @@ export type APIPages =
   | "cards"
   | "documents"
   | "notes"
-  | "users";
+  | "account";
 
 export type APIBodyType = "json" | "multipart";
 
