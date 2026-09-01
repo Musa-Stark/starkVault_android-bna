@@ -67,27 +67,27 @@ const passwords = () => {
   );
 
   // fetch - GET
+  const fetch = async () => {
+    const response = await apiCall({ page: "passwords", method: "GET" });
+
+    if (!response.success && response.message === "Data not found") {
+      setItemState("notFound");
+      return;
+    }
+
+    setPasswords([
+      ...response.data.map((el: any) => ({
+        _id: el._id,
+        password: el.password,
+        service: el.name,
+        username: el.username,
+      })),
+    ]);
+
+    setItemState("found");
+  };
+
   useEffect(() => {
-    const fetch = async () => {
-      const response = await apiCall({ page: "passwords", method: "GET" });
-
-      if (!response.success && response.message === "Data not found") {
-        setItemState("notFound");
-        return;
-      }
-
-      setPasswords([
-        ...response.data.map((el: any) => ({
-          _id: el._id,
-          password: el.password,
-          service: el.name,
-          username: el.username,
-        })),
-      ]);
-
-      setItemState("found");
-    };
-
     fetch();
   }, []);
 
@@ -112,30 +112,10 @@ const passwords = () => {
         return;
       }
 
-      if (uploadForm.method === "POST") {
-        setPasswords((prev) => [
-          ...prev,
-          {
-            _id: response.data._id,
-            password: response.data.password,
-            service: response.data.name,
-            username: response.data.username,
-          },
-        ]);
-      } else {
-        setPasswords((prev) => [
-          ...prev.map((el) =>
-            el._id === response.data._id
-              ? ({
-                  _id: response.data._id,
-                  password: response.data.password,
-                  service: response.data.name,
-                  username: response.data.username,
-                } satisfies Password)
-              : el,
-          ),
-        ]);
-      }
+      setItemState("fetching");
+
+      // re-fetch
+      await fetch()
 
       setItemState("found");
 

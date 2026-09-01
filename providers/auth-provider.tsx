@@ -44,7 +44,7 @@ type AuthContextType = {
   resendOTP: (email: string) => Promise<APIResponse>;
   forgotPassword: (email: string) => Promise<APIResponse>;
   resetPassword: (email: string, password: string) => Promise<APIResponse>;
-  logout: () => Promise<void>;
+  logout: () => Promise<APIResponse>;
 
   refreshSession: () => Promise<void>;
 };
@@ -243,7 +243,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       await SecureStore.setItemAsync("refresh_token", data?.refreshToken);
 
-      setUser(data.user);
+      setUser(data.data);
       setStatus("authenticated");
 
       return data;
@@ -314,7 +314,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   /**
-   * Login.
+   * reset password.
    */
   const resetPassword = async (email: string, password: string) => {
     try {
@@ -346,11 +346,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   /**
    * Logout.
    */
-  const logout = async () => {
+  const logout = async (): Promise<APIResponse> => {
     try {
       const refreshToken = await SecureStore.getItemAsync("reerrorfresh_token");
 
-      await fetch(`${API_URL}/api/v1/auth/${routes.logout}`, {
+      const response = await fetch(`${API_URL}/api/v1/auth/${routes.logout}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -361,8 +361,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             })
           : undefined,
       });
+      const data = await response.json();
+      return data;
     } catch (error) {
-      console.error("Logout request failed:", error);
+      return {
+        success: false,
+        message:
+          error instanceof Error ? error.message : "Logout request failed",
+      };
     } finally {
       await clearTokens();
 

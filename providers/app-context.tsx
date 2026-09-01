@@ -152,6 +152,9 @@ interface CreateContext {
 
   deleteOneBusy: boolean;
   setDeleteOneBusy: SetBoolean;
+
+  logoutModel: boolean;
+  setLogoutModel: SetBoolean;
 }
 const AppContext = createContext<CreateContext | undefined>(undefined);
 
@@ -203,6 +206,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [pin, setPin] = useState(false);
   const [clearSelection, setClearSelection] = useState(0);
   const [deleteOneBusy, setDeleteOneBusy] = useState(false)
+  const [logoutModel, setLogoutModel] = useState(false)
 
   const merchantRef = useRef(null);
   const categoryRef = useRef(null);
@@ -341,7 +345,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setClearSelection,
 
     deleteOneBusy,
-    setDeleteOneBusy
+    setDeleteOneBusy,
+
+    logoutModel,
+    setLogoutModel
   };
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;

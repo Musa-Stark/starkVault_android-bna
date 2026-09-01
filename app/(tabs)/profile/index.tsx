@@ -20,6 +20,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { MediaAsset, MediaPicker } from "@/components/ui/media-picker";
 import useAPICall from "@/utils/apiCall";
 import { useToast } from "@/providers/toast-provider";
+import { useApp } from "@/providers/app-context";
 
 const COOLDOWN_SECONDS = 60;
 
@@ -76,6 +77,7 @@ const Profile = () => {
   const { user } = useAuth();
   const apiCall = useAPICall();
   const { toast } = useToast();
+  const { setLogoutModel } = useApp();
 
   const [userName, setUserName] = useState(
     `${user?.firstName} ${user?.lastName}`,
@@ -301,6 +303,7 @@ const Profile = () => {
             marginTop: 20,
             marginBottom: 20,
           }}
+          onPress={() => setLogoutModel(true)}
         >
           Logout
         </Button>

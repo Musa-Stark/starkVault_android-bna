@@ -20,6 +20,7 @@ import { AuthProvider } from "@/providers/auth-provider";
 import { ToastProvider } from "@/providers/toast-provider";
 import { useAuth } from "@/providers/auth-provider";
 import DeleteModal from "@/components/starkUI/DeleteModal";
+import LogoutModal from "@/components/starkUI/LogoutModal";
 
 // SplashScreen.setOptions({
 //   duration: 200,
@@ -70,6 +71,7 @@ const RootNavigator = () => {
 
   return (
     <>
+      <LogoutModal   />
       <DeleteModal />
       <UploadForm />
       <Stack screenOptions={{ headerShown: false }}>
