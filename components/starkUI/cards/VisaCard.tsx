@@ -7,6 +7,7 @@ import {
   Text,
   View,
   useWindowDimensions,
+  ViewStyle,
 } from "react-native";
 
 type VisaCardProps = {
@@ -14,6 +15,7 @@ type VisaCardProps = {
   cardHolder?: string;
   expiry?: Date | undefined;
   cvv?: string;
+  style?: ViewStyle;
 };
 
 export default function VisaCard({
@@ -21,11 +23,15 @@ export default function VisaCard({
   cardHolder = "JOHN DOE",
   expiry = undefined,
   cvv = "123",
+  style,
 }: VisaCardProps) {
   const { width } = useWindowDimensions();
 
-  const cardWidth = Math.min(width - 32, 390);
-  const cardHeight = cardWidth * 0.63;
+  const cardWidth = Math.min(
+    style?.width ? (style?.width as number) : width - 32,
+    400,
+  );
+  const cardHeight = style?.height || cardWidth * 0.63;
 
   const [flipped, setFlipped] = useState(false);
 
@@ -61,6 +67,7 @@ export default function VisaCard({
         {
           width: cardWidth,
           height: cardHeight,
+          ...style,
         },
       ]}
     >
@@ -83,7 +90,6 @@ export default function VisaCard({
         <View style={styles.topRow}>
           <View>
             <Text style={styles.bankName}>PREMIUM</Text>
-            <Text style={styles.bankSub}>PLATINUM CARD</Text>
           </View>
 
           <Text style={styles.visa}>VISA</Text>
@@ -136,8 +142,6 @@ export default function VisaCard({
             )}
           </View>
         </View>
-
-        <Text style={styles.tapHint}>TAP TO FLIP</Text>
       </Animated.View>
 
       {/* BACK */}
@@ -176,24 +180,12 @@ export default function VisaCard({
           </View>
         </View>
 
-        <Text style={styles.backDescription}>
-          This card is issued by your bank. If found, please return to the
-          issuing institution.
-        </Text>
-
         <View style={styles.backBottom}>
           <Text style={styles.backNumber}>•••• {cardNumber.slice(-4)}</Text>
 
           <Text style={styles.visaBack}>VISA</Text>
         </View>
-
-        <Text style={styles.tapHintBack}>TAP TO FLIP BACK</Text>
       </Animated.View>
-
-      {/* IMPORTANT:
-          This is the touch layer.
-          It sits above both card faces.
-      */}
       <Pressable onPress={flipCard} style={StyleSheet.absoluteFill} />
     </View>
   );
@@ -277,6 +269,7 @@ const styles = StyleSheet.create({
   chipRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     marginTop: 18,
   },
 

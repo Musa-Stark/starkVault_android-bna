@@ -1,36 +1,44 @@
-import { View } from "react-native";
+import { View, Pressable } from "react-native";
 import { Text } from "@/components/ui/text";
 import { useColor } from "@/hooks/useColor";
 import globalStyles from "@/starkwind/globalStyle";
 import { LucideProps } from "lucide-react-native";
+import { Href, useRouter } from "expo-router";
 
 const RecentActivity = ({
   Icon,
   age,
   service,
   state,
+  route,
 }: {
   Icon: React.ComponentType<LucideProps>;
   age: string;
   service: string;
   state: string;
+  route: Href;
 }) => {
   const green = useColor("green");
   const borderColor = useColor("muted");
   const cardColor = useColor("card");
+  const router = useRouter();
 
   return (
-    <View
-      style={{
-        backgroundColor: borderColor,
-        borderRadius: 20,
-        paddingVertical: 15,
-        width: "100%",
-        ...globalStyles.flexBoxHorizantal,
-        justifyContent: "flex-start",
-        paddingLeft: 10,
-        position: "relative",
-      }}
+    <Pressable
+      style={({ pressed }) => [
+        {
+          backgroundColor: borderColor,
+          borderRadius: 20,
+          paddingVertical: 12,
+          width: "100%",
+          ...globalStyles.flexBoxHorizantal,
+          justifyContent: "flex-start",
+          paddingLeft: 10,
+          position: "relative",
+        },
+        pressed && { opacity: 0.5 },
+      ]}
+      onPress={() => router.push(`/hub${route}` as Href)}
     >
       <View
         style={{
@@ -49,12 +57,14 @@ const RecentActivity = ({
           alignItems: "flex-start",
         }}
       >
-        <Text numberOfLines={2} style={{ maxWidth: "65%", fontSize: 17 }}>
+        <Text numberOfLines={2} style={{ maxWidth: "65%", fontSize: 15 }}>
           {`${service} • ${state}`}
         </Text>
-        <Text variant="caption" style={{ fontSize: 14 }}>{`${age} ago`}</Text>
+        <Text variant="caption" style={{ fontSize: 12 }}>
+          {age}
+        </Text>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

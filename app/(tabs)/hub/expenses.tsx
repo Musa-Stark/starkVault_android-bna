@@ -83,8 +83,8 @@ const expenses = () => {
         return;
       }
 
-      setItems([
-        ...response.data.map((el: any) => ({
+      setItems(
+        response.data.map((el: any) => ({
           id: el._id,
           title: el.merchant,
           caption: el.category,
@@ -95,7 +95,7 @@ const expenses = () => {
             textStyle: { color: red, fontSize: 15 },
           },
         })),
-      ]);
+      );
 
       setItemState("found");
     };

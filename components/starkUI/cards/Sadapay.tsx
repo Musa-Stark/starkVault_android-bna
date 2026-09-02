@@ -98,8 +98,7 @@ export default function SadapayCard({
 
         <View style={styles.header}>
           <View>
-            <Text style={styles.brand}>PAY</Text>
-            <Text style={styles.brandSub}>DEMO CARD</Text>
+            <Text style={styles.brand}>SADAPAY</Text>
           </View>
 
           <View style={styles.contactless}>
@@ -151,14 +150,6 @@ export default function SadapayCard({
             )}
           </View>
         </View>
-
-        {/* Demo badge */}
-
-        <View style={styles.demoBadge}>
-          <Text style={styles.demoText}>DEMO</Text>
-        </View>
-
-        <Text style={styles.flipHint}>TAP TO FLIP</Text>
       </Animated.View>
 
       {/* =====================================================
@@ -180,22 +171,15 @@ export default function SadapayCard({
         {/* Header */}
 
         <View style={styles.backHeader}>
-          <Text style={styles.backBrand}>PAY</Text>
-
-          <Text style={styles.backDemo}>DEMO CARD</Text>
+          <Text style={styles.backBrand}>SADAPAY</Text>
         </View>
-
-        {/* Stripe */}
-
-        <View style={styles.stripe} />
-
-        {/* CVV */}
 
         <View style={styles.cvvRow}>
           <View style={styles.signature}>
             <Text style={styles.signatureText}>{cardHolder.toUpperCase()}</Text>
           </View>
 
+          {/* CVV */}
           <View style={styles.cvvContainer}>
             <Text style={styles.cvvLabel}>CVV</Text>
 
@@ -203,18 +187,6 @@ export default function SadapayCard({
               <Text style={styles.cvv}>{cvv}</Text>
             </View>
           </View>
-        </View>
-
-        {/* Information */}
-
-        <View style={styles.info}>
-          <View style={styles.infoIcon}>
-            <Text style={styles.infoIconText}>i</Text>
-          </View>
-
-          <Text style={styles.infoText}>
-            This fictional payment card is for UI demonstration purposes only.
-          </Text>
         </View>
 
         {/* Bottom */}

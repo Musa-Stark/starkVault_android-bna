@@ -5,7 +5,7 @@ import { useApp } from "@/providers/app-context";
 const useDeleteOne = () => {
   const apiCall = useAPICall();
   const { toast } = useToast();
-  const { deleteOneBusy, setDeleteOneBusy } = useApp();
+  const { setDeleteOneBusy } = useApp();
 
   return async ({
     id,

@@ -7,6 +7,7 @@ import {
   Text,
   View,
   useWindowDimensions,
+  ViewStyle,
 } from "react-native";
 
 type MastercardProps = {
@@ -14,6 +15,7 @@ type MastercardProps = {
   cardHolder?: string;
   expiry?: Date | undefined;
   cvv?: string;
+  style?: ViewStyle;
 };
 
 export default function Mastercard({
@@ -21,11 +23,15 @@ export default function Mastercard({
   cardHolder = "JOHN DOE",
   expiry = undefined,
   cvv = "123",
+  style,
 }: MastercardProps) {
   const { width } = useWindowDimensions();
 
-  const cardWidth = Math.min(width - 32, 390);
-  const cardHeight = cardWidth * 0.63;
+  const cardWidth = Math.min(
+    style?.width ? (style?.width as number) : width - 32,
+    400,
+  );
+  const cardHeight = style?.height || cardWidth * 0.63;
 
   const [flipped, setFlipped] = useState(false);
   const rotation = useRef(new Animated.Value(0)).current;
@@ -60,6 +66,7 @@ export default function Mastercard({
         {
           width: cardWidth,
           height: cardHeight,
+          ...style,
         },
       ]}
     >

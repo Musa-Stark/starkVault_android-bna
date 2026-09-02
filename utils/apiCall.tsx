@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { APIResponse } from "@/providers/auth-provider";
 
 export type APIPages =
+  | "recents"
   | "expenses"
   | "incomes"
   | "subscriptions"
@@ -44,11 +45,7 @@ const getMimeType = (file: APIFile): string => {
 
   const filename = file.name || file.filename || file.uri;
 
-  const extension = filename
-    .split("?")[0]
-    .split(".")
-    .pop()
-    ?.toLowerCase();
+  const extension = filename.split("?")[0].split(".").pop()?.toLowerCase();
 
   switch (extension) {
     case "jpg":
@@ -95,17 +92,11 @@ const getMimeType = (file: APIFile): string => {
 
 const isAPIFile = (value: any): value is APIFile => {
   return (
-    value !== null &&
-    typeof value === "object" &&
-    typeof value.uri === "string"
+    value !== null && typeof value === "object" && typeof value.uri === "string"
   );
 };
 
-const appendFile = (
-  formData: FormData,
-  fieldName: string,
-  file: APIFile,
-) => {
+const appendFile = (formData: FormData, fieldName: string, file: APIFile) => {
   const name = file.name || file.filename || "file";
   const type = getMimeType(file);
 
@@ -222,9 +213,7 @@ const useAPICall = () => {
     const res = await response.json();
 
     if (!res.success) {
-      console.log(
-        "RES: =====================================================",
-      );
+      console.log("RES: =====================================================");
       console.log(res);
     }
 

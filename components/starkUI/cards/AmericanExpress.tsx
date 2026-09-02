@@ -7,6 +7,7 @@ import {
   Text,
   View,
   useWindowDimensions,
+  type ViewStyle,
 } from "react-native";
 
 type AmericanExpressProps = {
@@ -14,6 +15,7 @@ type AmericanExpressProps = {
   cardHolder?: string;
   expiry?: Date | undefined;
   cvv?: string;
+  style?: ViewStyle;
 };
 
 export default function AmericanExpress({
@@ -21,11 +23,15 @@ export default function AmericanExpress({
   cardHolder = "JOHN DOE",
   expiry = undefined,
   cvv = "1234",
+  style,
 }: AmericanExpressProps) {
   const { width } = useWindowDimensions();
 
-  const cardWidth = Math.min(width - 32, 390);
-  const cardHeight = cardWidth * 0.63;
+  const cardWidth = Math.min(
+    style?.width ? (style?.width as number) : width - 32,
+    400,
+  );
+  const cardHeight = style?.height || cardWidth * 0.63;
 
   const [flipped, setFlipped] = useState(false);
 
@@ -61,6 +67,7 @@ export default function AmericanExpress({
         {
           width: cardWidth,
           height: cardHeight,
+          ...style,
         },
       ]}
     >
@@ -92,8 +99,8 @@ export default function AmericanExpress({
 
         <View style={styles.topRow}>
           <View>
-            <Text style={styles.memberSince}>MEMBER SINCE</Text>
-            <Text style={styles.year}>24</Text>
+            <Text style={styles.amexSmall}>AMERICAN</Text>
+            <Text style={styles.amexMain}>EXPRESS</Text>
           </View>
 
           <View style={styles.contactless}>
@@ -104,11 +111,7 @@ export default function AmericanExpress({
         </View>
 
         {/* AMEX logo */}
-
-        <View style={styles.amexLogo}>
-          <Text style={styles.amexSmall}>AMERICAN</Text>
-          <Text style={styles.amexMain}>EXPRESS</Text>
-        </View>
+        <View style={styles.amexLogo}></View>
 
         {/* Chip */}
 
@@ -144,17 +147,17 @@ export default function AmericanExpress({
           </View>
 
           <View style={styles.expiry}>
-            <Text style={styles.label}>GOOD THRU</Text>
+            <Text style={styles.label}>Expires In</Text>
 
             {expiry && (
-              <Text style={styles.value}>{new Date(expiry).toLocaleDateString("PK", {
-                dateStyle: "short"
-              })}</Text>
+              <Text style={styles.value}>
+                {new Date(expiry).toLocaleDateString("PK", {
+                  dateStyle: "short",
+                })}
+              </Text>
             )}
           </View>
         </View>
-
-        <Text style={styles.tapText}>TAP TO VIEW CARD</Text>
       </Animated.View>
 
       {/* =====================================================
@@ -192,20 +195,13 @@ export default function AmericanExpress({
           </View>
 
           <View style={styles.cvvContainer}>
-            <Text style={styles.cvvLabel}>SECURITY CODE</Text>
+            <Text style={styles.cvvLabel}>CVV</Text>
 
             <View style={styles.cvvBox}>
               <Text style={styles.cvv}>{cvv}</Text>
             </View>
           </View>
         </View>
-
-        {/* Back information */}
-
-        <Text style={styles.backInfo}>
-          Use of this card is subject to the Card Member Agreement. If found,
-          please return to the issuing institution.
-        </Text>
 
         {/* Bottom */}
 
@@ -214,10 +210,7 @@ export default function AmericanExpress({
             <Text style={styles.backLabel}>CARD MEMBER</Text>
             <Text style={styles.backName}>{cardHolder.toUpperCase()}</Text>
           </View>
-
-          <Text style={styles.amexBack}>AMEX</Text>
         </View>
-
         <Text style={styles.flipBack}>TAP TO FLIP BACK</Text>
       </Animated.View>
 
@@ -610,7 +603,7 @@ const styles = StyleSheet.create({
   ===================================================== */
 
   backLogo: {
-    alignItems: "flex-end",
+    alignItems: "flex-start",
 
     marginBottom: 8,
   },
