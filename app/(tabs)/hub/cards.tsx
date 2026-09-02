@@ -49,9 +49,15 @@ const Cards = () => {
     setBank,
     bankRef,
 
+    primaryCard,
+    setPrimaryCard,
+    primaryCardRef,
+
     uploadForm,
     setUploadForm,
   } = useApp();
+
+  const [hasPrimary, setHasPrimary] = useState(false);
 
   const cardBrands = [
     { label: "Visa", value: "Visa" },
@@ -73,9 +79,9 @@ const Cards = () => {
 
   const [cards, setCards] = useState<Card[]>([]);
 
-  const [itemState, setItemState] = useState<
-    "found" | "notFound" | "fetching"
-  >("fetching");
+  const [itemState, setItemState] = useState<"found" | "notFound" | "fetching">(
+    "fetching",
+  );
 
   const apiCall = useAPICall();
   const { toast } = useToast();
@@ -103,6 +109,10 @@ const Cards = () => {
         setCards([]);
         setItemState("notFound");
         return;
+      }
+
+      for (const card of response.data) {
+        if (card.isPrimary) setHasPrimary(true);
       }
 
       const fetchedCards = response.data ?? [];
@@ -141,6 +151,7 @@ const Cards = () => {
             expiryDate,
             cvv,
             bank,
+            isPrimary: primaryCard,
           },
           method: "POST",
         });
@@ -172,8 +183,6 @@ const Cards = () => {
          * Refetch cards so the newly added card appears
          */
         await fetchCards();
-
-        toast.success("Card added successfully");
       } catch (error) {
         toast.error("Failed to add card");
       }
@@ -289,7 +298,13 @@ const Cards = () => {
       setBank,
       bankRef,
 
+      primaryCard,
+      setPrimaryCard,
+      primaryCardRef,
+
       setUploadForm,
+
+      disablePrimary: hasPrimary,
     });
   };
 
@@ -307,11 +322,7 @@ const Cards = () => {
           {cards.length} {cards.length === 1 ? "card" : "cards"} in vault
         </Text>
 
-        <Button
-          icon={Plus}
-          style={{ marginTop: 20 }}
-          onPress={handleAddCard}
-        >
+        <Button icon={Plus} style={{ marginTop: 20 }} onPress={handleAddCard}>
           Add Card
         </Button>
 
@@ -323,11 +334,21 @@ const Cards = () => {
           }}
         >
           {itemState === "fetching" && (
-            <Text variant="caption">Loading cards...</Text>
+            <Text
+              variant="caption"
+              style={{ marginTop: 20, textAlign: "center" }}
+            >
+              Loading cards...
+            </Text>
           )}
 
           {itemState === "notFound" && (
-            <Text variant="caption">No cards added yet.</Text>
+            <Text
+              variant="caption"
+              style={{ marginTop: 20, textAlign: "center" }}
+            >
+              No cards added yet.
+            </Text>
           )}
 
           {itemState === "found" && cards.map(getCard)}

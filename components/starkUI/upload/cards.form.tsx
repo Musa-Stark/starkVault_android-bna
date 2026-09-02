@@ -1,4 +1,10 @@
-import type { SetUploadForm, SetString, Ref, SetDate } from "@/providers/app-context";
+import type {
+  SetUploadForm,
+  SetString,
+  SetBoolean,
+  Ref,
+  SetDate,
+} from "@/providers/app-context";
 
 export interface CardForm {
   setUploadForm: SetUploadForm;
@@ -30,6 +36,12 @@ export interface CardForm {
   bank: string;
   setBank: SetString;
   bankRef: Ref;
+
+  primaryCard: boolean;
+  setPrimaryCard: SetBoolean;
+  primaryCardRef: Ref;
+
+  disablePrimary: boolean;
 }
 
 const handleCardForm = ({
@@ -55,11 +67,15 @@ const handleCardForm = ({
   bank,
   setBank,
   bankRef,
+  primaryCard,
+  primaryCardRef,
+  setPrimaryCard,
+  disablePrimary,
 }: CardForm) => {
   setUploadForm((prev) => ({
     ...prev,
     show: true,
-    name: "Card",
+    name: "",
 
     inputs: [
       {
@@ -149,7 +165,6 @@ const handleCardForm = ({
         secureTextEntry: true,
         showErrorText: false,
       },
-
       {
         label: "Bank",
         placeholderText: "e.g. Meezan Bank",
@@ -157,6 +172,14 @@ const handleCardForm = ({
         setStringValue: setBank,
         ref: bankRef,
         showErrorText: false,
+      },
+      {
+        checkboxAccessibilityLabel: "Primary Card",
+        inputType: "checkbox",
+        disabled: disablePrimary,
+        value: primaryCard,
+        setBooleanValue: setPrimaryCard,
+        ref: primaryCardRef,
       },
     ],
   }));

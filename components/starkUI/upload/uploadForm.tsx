@@ -160,15 +160,16 @@ const UploadForm = () => {
               position: "relative",
             }}
           >
-            <CardHeader>
-              <CardTitle style={{ textAlign: "center" }}>
-                {uploadForm.name}
-              </CardTitle>
-            </CardHeader>
+            {uploadForm.name && (
+              <CardHeader>
+                <CardTitle style={{ textAlign: "center" }}>
+                  {uploadForm.name}
+                </CardTitle>
+              </CardHeader>
+            )}
 
             <CardContent>
               <View>
-                {/* Email */}
                 {uploadForm.inputs?.map((el, idx) => (
                   <InputWithLabel
                     containerStyle={{

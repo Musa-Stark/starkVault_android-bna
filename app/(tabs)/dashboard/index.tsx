@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useColor } from "@/hooks/useColor";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
@@ -23,13 +23,16 @@ import SadapayCard from "@/components/starkUI/cards/Sadapay";
 import { ScrollView } from "react-native-gesture-handler";
 import RecentActivity from "./recentActivity";
 import handleExpenseForm from "@/components/starkUI/upload/expenses.form";
-import useAPICall from "@/utils/apiCall";
+import useAPICall, { APIPages } from "@/utils/apiCall";
 import { RelativePathString } from "expo-router";
 import RecentActivitySkeleton from "@/components/starkUI/skeleton/RecentsSkeleton";
 import SadapayCardSkeleton from "@/components/starkUI/skeleton/CardSkeleton";
 import VisaCard from "@/components/starkUI/cards/VisaCard";
 import Mastercard from "@/components/starkUI/cards/MasterCard";
 import AmericanExpress from "@/components/starkUI/cards/AmericanExpress";
+import handleCardForm from "@/components/starkUI/upload/cards.form";
+import handlePasswordForm from "@/components/starkUI/upload/passwords.form";
+import { useToast } from "@/providers/toast-provider";
 
 const DashBoard = () => {
   const background = useColor("background");
@@ -45,10 +48,43 @@ const DashBoard = () => {
     merchantRef,
     categoryRef,
     amountRef,
+    bank,
+    bankRef,
+    brand,
+    brandRef,
+    cardHolder,
+    cardHolderRef,
+    cardNumber,
+    cardNumberRef,
+    cvv,
+    cvvRef,
+    expiryDate,
+    expiryDateRef,
+    label,
+    labelRef,
+    setBank,
+    setBrand,
+    setCardHolder,
+    setCardNumber,
+    setCvv,
+    setExpiryDate,
+    primaryCard,
+    setPrimaryCard,
+    primaryCardRef,
+    setLabel,
+    password,
+    passwordRef,
+    service,
+    serviceRef,
+    setPassword,
+    setService,
+    setUsername,
+    username,
+    usernameRef,
   } = useApp();
 
   const apiCall = useAPICall();
-  const primary = useColor("primary");
+  const { toast } = useToast();
   const mutedForeground = useColor("mutedForeground");
 
   interface Recent {
@@ -60,7 +96,7 @@ const DashBoard = () => {
     card?: any;
   }
 
-  interface PrimaryCard {
+  interface primaryType {
     _id: string;
     label: string;
     brand: string;
@@ -73,23 +109,81 @@ const DashBoard = () => {
   }
 
   const [recents, setRecents] = useState<Recent[]>([]);
-  const [primaryCard, setPrimaryCard] = useState<PrimaryCard>();
-  const [showViewMore, setshowViewMore] = useState(false);
+  const [primary, setPrimary] = useState<primaryType>();
+  // const [showViewMore, setshowViewMore] = useState(false);
 
   // submit
   useEffect(() => {
-    if (!uploadForm.submit) return;
+    const upload = async () => {
+      if (!uploadForm.submit) return;
 
-    setUploadForm((prev) => ({ ...prev, submit: false }));
-    setMerchant("");
-    setCategory("");
-    setAmount("");
+      let page: APIPages = "passwords";
+      if (merchant) {
+        page = "expenses";
+      } else if (cardNumber) {
+        page = "cards";
+      }
+
+      const dataMap = {
+        expenses: { amount, category, merchant },
+        cards: {
+          bank,
+          brand,
+          cardHolder,
+          cardNumber,
+          cvv,
+          expiryDate,
+          label,
+          isPrimary: primaryCard,
+        },
+        passwords: { password, service, username },
+      };
+
+      const response = await apiCall({
+        page,
+        method: "POST",
+        data: dataMap[page],
+      });
+
+      if (!response.success) {
+        toast.error(response.message || "Something went wrong");
+        return;
+      }
+
+      toast.success(response.message || "Item added successfully!");
+
+      setUploadForm(() => ({
+        inputs: undefined,
+        name: "",
+        show: false,
+        itemId: "",
+        method: "POST",
+        submit: false,
+      }));
+
+      setMerchant("");
+      setCategory("");
+      setAmount("");
+      setBank("");
+      setBrand("");
+      setCardHolder("");
+      setCardNumber("");
+      setCvv("");
+      setExpiryDate(undefined);
+      setLabel("");
+      setPrimaryCard(false);
+      setPassword("");
+      setService("");
+      setUsername("");
+    };
+
+    upload();
   }, [uploadForm.submit]);
 
   const [itemState, setItemState] = useState<"found" | "notFound" | "fetching">(
     "fetching",
   );
-  const [primaryCardState, setPrimaryCardState] = useState<
+  const [primaryState, setprimaryState] = useState<
     "found" | "notFound" | "fetching"
   >("fetching");
 
@@ -100,13 +194,14 @@ const DashBoard = () => {
 
       if (!response.success && response.message === "Data not found") {
         setItemState("notFound");
+        setprimaryState("notFound");
         return;
       }
 
       // setRecents
       setRecents(
         response.data
-          .filter((item: any) => !item.card)
+          .filter((item: any) => item._id)
           .map((item: Recent) => ({
             _id: item._id,
             title: item.title,
@@ -118,15 +213,15 @@ const DashBoard = () => {
 
       setItemState("found");
 
-      const primaryCardItem = response.data.find(
+      const primaryItem = response.data.find(
         (item: any) => item.card?.isPrimary,
       );
-      if (primaryCardItem) {
-        setPrimaryCard(primaryCardItem.card);
-        setPrimaryCardState("found");
+      if (primaryItem) {
+        setPrimary(primaryItem.card);
+        setprimaryState("found");
         return;
       }
-      setPrimaryCardState("notFound");
+      setprimaryState("notFound");
     };
 
     fetch();
@@ -150,9 +245,10 @@ const DashBoard = () => {
       <>
         {recents.map((item, idx) => {
           if (idx > 4) {
-            setshowViewMore(true);
+            //   setshowViewMore(true);
             return;
           }
+
           return (
             <RecentActivity
               key={item._id}
@@ -178,8 +274,8 @@ const DashBoard = () => {
   type CardBrand = keyof typeof cardsMap;
 
   const CardComponent =
-    primaryCard?.brand && primaryCard.brand in cardsMap
-      ? cardsMap[primaryCard.brand as CardBrand]
+    primary?.brand && primary.brand in cardsMap
+      ? cardsMap[primary.brand as CardBrand]
       : null;
 
   // cardScreens
@@ -201,11 +297,11 @@ const DashBoard = () => {
         {CardComponent ? (
           <CardComponent
             style={{ marginTop: 15, width: 335 }}
-            cardHolder={primaryCard?.cardHolder}
-            cardNumber={primaryCard?.cardNumber}
-            cvv={primaryCard?.cvv}
-            expiry={primaryCard?.expiryDate}
-            key={primaryCard?._id}
+            cardHolder={primary?.cardHolder}
+            cardNumber={primary?.cardNumber}
+            cvv={primary?.cvv}
+            expiry={primary?.expiryDate}
+            key={primary?._id}
           />
         ) : (
           <Text
@@ -263,13 +359,64 @@ const DashBoard = () => {
             <Text>Expense</Text>
           </Button>
 
-          <Button icon={Plus} variant="outline">
+          <Button
+            icon={Plus}
+            variant="outline"
+            onPress={() =>
+              handleCardForm({
+                setUploadForm,
+                bank,
+                brand,
+                cardHolder,
+                cardNumber,
+                cvv,
+                expiryDate,
+                label,
+                cvvRef,
+                brandRef,
+                cardHolderRef,
+                cardNumberRef,
+                expiryDateRef,
+                bankRef,
+                labelRef,
+                setBank,
+                setBrand,
+                setCardHolder,
+                setCardNumber,
+                setCvv,
+                setExpiryDate,
+                setLabel,
+                primaryCard,
+                primaryCardRef,
+                setPrimaryCard,
+                disablePrimary: primaryState === "found",
+              })
+            }
+          >
             <Text>Card</Text>
           </Button>
         </View>
 
         {/* add password */}
-        <Button icon={Sparkles} variant="default" style={{ marginTop: 15 }}>
+        <Button
+          icon={Sparkles}
+          variant="default"
+          style={{ marginTop: 15 }}
+          onPress={() =>
+            handlePasswordForm({
+              setUploadForm,
+              password,
+              service,
+              username,
+              setPassword,
+              setService,
+              setUsername,
+              passwordRef,
+              serviceRef,
+              usernameRef,
+            })
+          }
+        >
           <Text style={{ color: background }}>Add Password</Text>
         </Button>
 
@@ -277,9 +424,9 @@ const DashBoard = () => {
         <Card style={{ marginTop: 20 }}>
           <CardTitle children="Primary Card" />
 
-          {cardScreen[primaryCardState]}
+          {cardScreen[primaryState]}
 
-          {primaryCardState === "found" && (
+          {primaryState === "found" && (
             <Button
               icon={CreditCard}
               variant="default"
@@ -301,7 +448,7 @@ const DashBoard = () => {
             }}
           >
             <CardTitle children="Recent Activity" />
-            {showViewMore && (
+            {/* {showViewMore && (
               <Pressable
                 style={({ pressed }) => [pressed && { opacity: 0.5 }]}
                 onPress={() => console.log("View More")}
@@ -309,7 +456,7 @@ const DashBoard = () => {
               >
                 <Text style={{ color: primary, fontSize: 13 }}>VIew More</Text>
               </Pressable>
-            )}
+            )} */}
           </View>
           <View style={{ ...globalStyles.flexBox, marginTop: 10, gap: 10 }}>
             {recentScreens[itemState]}

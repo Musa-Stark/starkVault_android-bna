@@ -147,6 +147,7 @@ const InputWithLabel = ({
         onValueChange={handleEditing}
         showErrorText={showErrorText}
         error={pickerError}
+        disabled={disabled}
         onClose={() => {
           if (!value) setPickerError(`${label} is required`);
         }}
@@ -157,6 +158,7 @@ const InputWithLabel = ({
         // label={"Select a date"}
         style={{ marginTop: 3, ...containerStyle }}
         placeholder={placeholderText}
+        disabled={disabled}
         haptic={true}
         value={(value as Date) || (value as undefined)}
         onChange={setDateValue!}

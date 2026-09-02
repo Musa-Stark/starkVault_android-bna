@@ -11,7 +11,7 @@ import type { APIPages } from "@/utils/apiCall";
 
 interface UploadFormInput {
   show: boolean;
-  name: string;
+  name?: string;
   inputs: InputWithLabel[] | undefined;
   submit: boolean;
   method?: "POST" | "PATCH";
@@ -110,27 +110,31 @@ interface CreateContext {
   brand: string;
   setBrand: SetString;
   brandRef: Ref;
-
+  
   cardNumber: string;
   setCardNumber: SetString;
   cardNumberRef: Ref;
-
+  
   cardHolder: string;
   setCardHolder: SetString;
   cardHolderRef: Ref;
-
+  
   expiryDate: Date | undefined;
   setExpiryDate: SetDate;
   expiryDateRef: Ref;
-
+  
   cvv: string;
   setCvv: SetString;
   cvvRef: Ref;
-
+  
   bank: string;
   setBank: SetString;
   bankRef: Ref;
 
+  primaryCard: boolean;
+  setPrimaryCard: SetBoolean;
+  primaryCardRef: Ref;
+  
   file: MediaAsset;
   setFile: SetFile;
   fileRef: Ref;
@@ -146,6 +150,7 @@ interface CreateContext {
   pin: boolean;
   setPin: SetBoolean;
   pinRef: Ref;
+  
 
   clearSelection: number;
   setClearSelection: SetNumber;
@@ -161,7 +166,7 @@ const AppContext = createContext<CreateContext | undefined>(undefined);
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [uploadForm, setUploadForm] = useState<UploadFormInput>({
     show: false,
-    name: "Service Name",
+    name: "",
     inputs: undefined,
     submit: false,
     method: "POST",
@@ -194,6 +199,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [cardHolder, setCardHolder] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [cvv, setCvv] = useState("");
+  const [primaryCard, setPrimaryCard] = useState(false);
   const [label, setLabel] = useState("");
   const [expiryDate, setExpiryDate] = useState<Date | undefined>(undefined);
   const [file, setFile] = useState<MediaAsset>({
@@ -228,6 +234,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const cardHolderRef = useRef<any>(null);
   const cardNumberRef = useRef<any>(null);
   const cvvRef = useRef<any>(null);
+  const primaryCardRef  = useRef<any>(null);
   const expiryDateRef = useRef<any>(null);
   const fileRef = useRef<any>(null);
   const noteTitleRef = useRef<any>(null);
@@ -320,6 +327,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     expiryDate,
     setExpiryDate,
     expiryDateRef,
+
+    primaryCard,
+    setPrimaryCard,
+    primaryCardRef,
 
     label,
     setLabel,
