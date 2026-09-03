@@ -71,35 +71,40 @@ const expenses = () => {
   );
 
   const [items, setItems] = useState<Item[]>([]);
+  const [totalSpent, setTotalSpent] = useState<number>(0);
 
   // fetch
-  useEffect(() => {
-    const fetchExpenses = async () => {
-      const response = await apiCall({ page: "expenses", method: "GET" });
+  const fetchExpenses = async () => {
+    const response = await apiCall({ page: "expenses", method: "GET" });
 
-      if (!response.success && response.message === "Data not found") {
-        setItems([]);
-        setItemState("notFound");
-        return;
-      }
+    if (!response.success && response.message === "Data not found") {
+      setItems([]);
+      setItemState("notFound");
+      return;
+    }
 
-      setItems(
-        response.data.map((el: any) => ({
+    setTotalSpent(0);
+    setItems(
+      response.data.map((el: any) => {
+        setTotalSpent((prev) => prev + Number(el.amount));
+
+        return {
           id: el._id,
           title: el.merchant,
           caption: el.category,
           Icon: categoryIcons[el.category],
           right: {
             type: "text",
-            text: `PKR ${el.amount}`,
+            text: `Rs ${el.amount}/-`,
             textStyle: { color: red, fontSize: 15 },
           },
-        })),
-      );
+        };
+      }),
+    );
 
-      setItemState("found");
-    };
-
+    setItemState("found");
+  };
+  useEffect(() => {
     fetchExpenses();
   }, []);
 
@@ -120,40 +125,9 @@ const expenses = () => {
         return;
       }
 
-      if (uploadForm.method === "POST") {
-        setItems((prev) => [
-          ...prev,
-          {
-            id: response.data._id,
-            title: response.data.merchant,
-            caption: response.data.category,
-            Icon: categoryIcons[response.data.category],
-            right: {
-              type: "text",
-              text: `Rs ${response.data.amount}/-`,
-              textStyle: { color: red, fontSize: 15, fontWeight: 600 },
-            },
-          },
-        ]);
-      } else {
-        setItems((prev) => [
-          ...prev.map((el) =>
-            el.id === response.data._id
-              ? ({
-                  id: response.data._id,
-                  title: response.data.merchant,
-                  caption: response.data.category,
-                  Icon: categoryIcons[response.data.category],
-                  right: {
-                    type: "text",
-                    text: `Rs ${response.data.amount}/-`,
-                    textStyle: { color: red, fontSize: 15, fontWeight: 600 },
-                  },
-                } satisfies Item)
-              : el,
-          ),
-        ]);
+      fetchExpenses();
 
+      if (uploadForm.method === "PATCH") {
         setClearSelection((prev) => prev + 1);
       }
 
@@ -175,7 +149,7 @@ const expenses = () => {
     uploadExpense();
   }, [uploadForm.submit]);
 
-  // sections
+  // sections ----------------------------------------------------------------
   const itemSections = {
     found: (
       <ViewAll
@@ -212,6 +186,15 @@ const expenses = () => {
             ids: selectedItems.map((item) => item.id),
             page: "expenses",
             setState: setItems,
+            onDone: () => {
+              for (const item of selectedItems) {
+                setTotalSpent(
+                  (prev) =>
+                    prev -
+                    Number(item.right?.text?.replace(/[^0-9.]/g, "") ?? 0),
+                );
+              }
+            },
           });
         }}
         style={{ marginVertical: 20 }}
@@ -259,25 +242,25 @@ const expenses = () => {
         {/* total spent */}
         <Card style={{ marginTop: 20 }}>
           <CardHeader>
-            <Text variant="caption" style={{ fontSize: 15 }}>
+            <Text variant="caption" style={{ fontSize: 15, marginBottom: 10 }}>
               Total Spent
             </Text>
-            <CardTitle>Rs 0</CardTitle>
+            <CardTitle>Rs {totalSpent}</CardTitle>
           </CardHeader>
         </Card>
 
         {/* average per transaction */}
-        <Card style={{ marginTop: 20 }}>
+        {/* <Card style={{ marginTop: 20 }}>
           <CardHeader>
             <Text variant="caption" style={{ fontSize: 15 }}>
               Average per transaction
             </Text>
             <CardTitle>Rs 0</CardTitle>
           </CardHeader>
-        </Card>
+        </Card> */}
 
         {/* top category */}
-        <Card style={{ marginTop: 20 }}>
+        {/* <Card style={{ marginTop: 20 }}>
           <CardHeader>
             <Text variant="caption" style={{ fontSize: 15 }}>
               Top category
@@ -287,7 +270,7 @@ const expenses = () => {
               Top category
             </Text>
           </CardHeader>
-        </Card>
+        </Card> */}
 
         {/* expenses */}
         {itemSections[itemState]}

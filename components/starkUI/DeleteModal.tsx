@@ -22,11 +22,12 @@ const DeleteModal = () => {
       ids: [],
       page: undefined,
       setState: undefined,
+      onDone: () => {},
     });
   };
 
   const handleConfirmDelete = async () => {
-    const { ids, page, setState } = deleteModal;
+    const { ids, page, setState, onDone } = deleteModal;
 
     setBusy(true);
 
@@ -43,6 +44,7 @@ const DeleteModal = () => {
       return;
     }
 
+    onDone();
     setState((prev: any) => prev.filter((item: any) => !ids.includes(item.id)));
 
     setClearSelection((prev) => prev + 1);
@@ -52,6 +54,7 @@ const DeleteModal = () => {
       ids: [],
       page: undefined,
       setState: undefined,
+      onDone: () => {},
     });
   };
 

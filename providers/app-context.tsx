@@ -23,6 +23,7 @@ interface DeleteModalInput {
   ids: string[];
   page: APIPages | undefined;
   setState: any;
+  onDone: () => void;
 }
 
 export type SetString = React.Dispatch<React.SetStateAction<string>>;
@@ -110,23 +111,23 @@ interface CreateContext {
   brand: string;
   setBrand: SetString;
   brandRef: Ref;
-  
+
   cardNumber: string;
   setCardNumber: SetString;
   cardNumberRef: Ref;
-  
+
   cardHolder: string;
   setCardHolder: SetString;
   cardHolderRef: Ref;
-  
+
   expiryDate: Date | undefined;
   setExpiryDate: SetDate;
   expiryDateRef: Ref;
-  
+
   cvv: string;
   setCvv: SetString;
   cvvRef: Ref;
-  
+
   bank: string;
   setBank: SetString;
   bankRef: Ref;
@@ -134,7 +135,7 @@ interface CreateContext {
   primaryCard: boolean;
   setPrimaryCard: SetBoolean;
   primaryCardRef: Ref;
-  
+
   file: MediaAsset;
   setFile: SetFile;
   fileRef: Ref;
@@ -150,7 +151,6 @@ interface CreateContext {
   pin: boolean;
   setPin: SetBoolean;
   pinRef: Ref;
-  
 
   clearSelection: number;
   setClearSelection: SetNumber;
@@ -178,6 +178,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     ids: [],
     page: undefined,
     setState: undefined,
+    onDone: () => {},
   });
 
   const [merchant, setMerchant] = useState("");
@@ -211,8 +212,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [content, setContent] = useState("");
   const [pin, setPin] = useState(false);
   const [clearSelection, setClearSelection] = useState(0);
-  const [deleteOneBusy, setDeleteOneBusy] = useState(false)
-  const [logoutModel, setLogoutModel] = useState(false)
+  const [deleteOneBusy, setDeleteOneBusy] = useState(false);
+  const [logoutModel, setLogoutModel] = useState(false);
 
   const merchantRef = useRef(null);
   const categoryRef = useRef(null);
@@ -234,7 +235,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const cardHolderRef = useRef<any>(null);
   const cardNumberRef = useRef<any>(null);
   const cvvRef = useRef<any>(null);
-  const primaryCardRef  = useRef<any>(null);
+  const primaryCardRef = useRef<any>(null);
   const expiryDateRef = useRef<any>(null);
   const fileRef = useRef<any>(null);
   const noteTitleRef = useRef<any>(null);
@@ -359,7 +360,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setDeleteOneBusy,
 
     logoutModel,
-    setLogoutModel
+    setLogoutModel,
   };
 
   return <AppContext.Provider value={values}>{children}</AppContext.Provider>;
