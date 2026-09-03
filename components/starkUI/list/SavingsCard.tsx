@@ -10,8 +10,8 @@ type SavingsGoal = {
   _id: string;
   goalName: string;
   category: string;
-  targetAmount: number | string;
-  currentAmount: number | string;
+  targetAmount: number;
+  currentAmount: number;
   deadline: Date | undefined;
 };
 
@@ -302,7 +302,7 @@ export default function SavingsGoalCard({
       </View>
 
       {/* Contribute */}
-      <Pressable
+      <Button
         onPress={() => onContribute(goal)}
         style={{
           height: 46,
@@ -311,7 +311,7 @@ export default function SavingsGoalCard({
           alignItems: "center",
           justifyContent: "center",
           gap: 7,
-          borderRadius: 10,
+          borderRadius: 999,
           backgroundColor: foreground,
         }}
       >
@@ -326,7 +326,7 @@ export default function SavingsGoalCard({
         >
           Contribute
         </Text>
-      </Pressable>
+      </Button>
     </View>
   );
 }

@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Text } from "@/components/ui/text";
 import globalStyles from "@/starkwind/globalStyle";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import useAPICall from "@/utils/apiCall";
 import { useToast } from "@/providers/toast-provider";
 import SavingsGoalCardSkeleton from "@/components/starkUI/skeleton/SavingsGoalsSkeleton";
 import useDeleteOne from "@/components/starkUI/DeleteOne";
+import savingsContribute from "@/components/starkUI/upload/savingsContribute.form";
 
 const savingsGoals = () => {
   const {
@@ -98,7 +99,46 @@ const savingsGoals = () => {
     deadline: Date | undefined;
   }
 
+  interface Progress {
+    currentAmount: number;
+    totalAmount: number;
+  }
+
   const [savings, setSavings] = useState<SavingsGoal[]>([]);
+  // const progress: Progress = useMemo(
+  //   () =>
+  //     savings.reduce(
+  //       (acc, goal) => ({
+  //         currentAmount: acc.currentAmount + Number(goal.currentAmount),
+  //         totalAmount: acc.totalAmount + Number(goal.targetAmount),
+  //       }),
+  //       {
+  //         currentAmount: 0,
+  //         totalAmount: 0,
+  //       },
+  //     ),
+  //   [savings],
+  // );
+
+  const progress: Progress = useMemo(
+    () =>
+      savings.reduce(
+        (acc: Progress, goal: SavingsGoal) => ({
+          currentAmount: acc.currentAmount + goal.currentAmount,
+          totalAmount: acc.totalAmount + goal.targetAmount,
+        }),
+        {
+          currentAmount: 0,
+          totalAmount: 0,
+        },
+      ),
+    [savings],
+  );
+
+  const percentAge = (
+    ((progress?.currentAmount ?? 0) / (progress?.totalAmount || 100)) *
+    100
+  ).toFixed(0);
 
   const apiCall = useAPICall();
   const { toast } = useToast();
@@ -108,36 +148,36 @@ const savingsGoals = () => {
   );
 
   // fetch - GET
+  const fetch = async () => {
+    const response = await apiCall({ page: "savings-goals", method: "GET" });
+
+    if (!response.success && response.message === "Data not found") {
+      setItemState("notFound");
+      return;
+    }
+
+    const savings = response.data.map((el: SavingsGoal) => ({
+      _id: el._id,
+      category: el.category,
+      currentAmount: el.currentAmount,
+      deadline: el.deadline,
+      goalName: el.goalName,
+      targetAmount: el.targetAmount,
+    }));
+
+    setSavings(savings);
+
+    setItemState("found");
+  };
   useEffect(() => {
-    const fetchSubscriptions = async () => {
-      const response = await apiCall({ page: "savings-goals", method: "GET" });
-
-      if (!response.success && response.message === "Data not found") {
-        setItemState("notFound");
-        return;
-      }
-
-      setSavings([
-        ...response.data.map((el: SavingsGoal) => ({
-          _id: el._id,
-          category: el.category,
-          currentAmount: el.currentAmount,
-          deadline: el.deadline,
-          goalName: el.goalName,
-          targetAmount: el.targetAmount,
-        })),
-      ]);
-
-      setItemState("found");
-    };
-
-    fetchSubscriptions();
+    fetch();
   }, []);
 
   // upload - POST
   useEffect(() => {
     const uploadSubscription = async () => {
       if (!uploadForm.submit) return;
+      if (uploadForm.option === "contribute") return;
 
       const response = await apiCall({
         page: "savings-goals",
@@ -157,34 +197,36 @@ const savingsGoals = () => {
         return;
       }
 
-      if (uploadForm.method === "POST") {
-        setSavings((prev) => [
-          ...prev,
-          {
-            _id: response.data._id,
-            category: response.data.category,
-            currentAmount: response.data.currentAmount,
-            deadline: response.data.deadline,
-            goalName: response.data.goalName,
-            targetAmount: response.data.targetAmount,
-          },
-        ]);
-      } else {
-        setSavings((prev) => [
-          ...prev.map((el) =>
-            el._id === response.data._id
-              ? ({
-                  _id: response.data._id,
-                  category: response.data.category,
-                  currentAmount: response.data.currentAmount,
-                  deadline: response.data.deadline,
-                  goalName: response.data.goalName,
-                  targetAmount: response.data.targetAmount,
-                } satisfies SavingsGoal)
-              : el,
-          ),
-        ]);
-      }
+      // if (uploadForm.method === "POST") {
+      //   setSavings((prev) => [
+      //     ...prev,
+      //     {
+      //       _id: response.data._id,
+      //       category: response.data.category,
+      //       currentAmount: response.data.currentAmount,
+      //       deadline: response.data.deadline,
+      //       goalName: response.data.goalName,
+      //       targetAmount: response.data.targetAmount,
+      //     },
+      //   ]);
+      // } else {
+      //   setSavings((prev) => [
+      //     ...prev.map((el) =>
+      //       el._id === response.data._id
+      //         ? ({
+      //             _id: response.data._id,
+      //             category: response.data.category,
+      //             currentAmount: response.data.currentAmount,
+      //             deadline: response.data.deadline,
+      //             goalName: response.data.goalName,
+      //             targetAmount: response.data.targetAmount,
+      //           } satisfies SavingsGoal)
+      //         : el,
+      //     ),
+      //   ]);
+      // }
+
+      fetch();
 
       setItemState("found");
 
@@ -205,6 +247,70 @@ const savingsGoals = () => {
     uploadSubscription();
   }, [uploadForm.submit]);
 
+  // contribute useEffect
+  useEffect(() => {
+    const uploadContribute = async () => {
+      if (!uploadForm.submit) return;
+      if (uploadForm.option !== "contribute") return;
+
+      const response = await apiCall({
+        page: "savings-goals",
+        data: {
+          currentAmount,
+        },
+        method: uploadForm.method!,
+        itemId: uploadForm.itemId,
+      });
+
+      if (!response.success) {
+        toast.error(response.message || "Something went wrong");
+        return;
+      }
+
+      setSavings((prev) =>
+        prev.map((item) =>
+          item._id === response.data._id
+            ? {
+                ...item,
+                currentAmount: response.data.currentAmount,
+              }
+            : item,
+        ),
+      );
+
+      setCurrentAmount("")
+      setUploadForm({
+        inputs: undefined,
+        show: false,
+        submit: false,
+        itemId: "",
+        method: "POST",
+        name: "",
+        option: ""
+      })
+    };
+
+    uploadContribute();
+  }, [uploadForm.submit]);
+
+  // handle Contribute
+  const handleContribute = (goal: SavingsGoal) => {
+    const newCurrentAmount = goal.currentAmount.toString();
+
+    setCurrentAmount(newCurrentAmount);
+
+    savingsContribute({
+      setUploadForm,
+      currentAmount: newCurrentAmount,
+      currentAmountRef,
+      setCurrentAmount,
+      itemId: goal._id,
+      method: "PATCH",
+      option: "contribute",
+    });
+  };
+
+  // screens --------------------------------------------------------------------
   const savingsGoalsScreens = {
     found: (
       <View style={{ gap: 12, marginVertical: 20 }}>
@@ -258,11 +364,10 @@ const savingsGoals = () => {
                 id: goal._id,
                 page: "savings-goals",
                 setState: setSavings,
+                onDone: () => {},
               })
             }
-            onContribute={(goal) => {
-              console.log("Contribute:", goal);
-            }}
+            onContribute={handleContribute}
           />
         ))}
       </View>
@@ -339,18 +444,24 @@ const savingsGoals = () => {
                   marginTop: 10,
                 }}
               >
-                <CardTitle>Rs 0</CardTitle>
-                <Text variant="caption">of Rs 0</Text>
+                <CardTitle>Rs {progress?.currentAmount ?? "N/A"}</CardTitle>
+                <Text variant="caption">
+                  of Rs {progress?.totalAmount ?? "N/A"}
+                </Text>
               </View>
             </View>
             <View>
-              <Text variant="heading">33%</Text>
+              <Text variant="heading">{percentAge ?? "N/A"}%</Text>
               <Text variant="caption" style={{ fontSize: 15 }}>
                 on track
               </Text>
             </View>
           </CardContent>
-          <Progress value={33} height={7} style={{ marginTop: 10 }} />
+          <Progress
+            value={Number(percentAge) ?? 0}
+            height={7}
+            style={{ marginTop: 10 }}
+          />
         </Card>
 
         {/* savings goals */}
