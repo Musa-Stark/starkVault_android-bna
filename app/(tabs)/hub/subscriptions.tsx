@@ -254,24 +254,24 @@ const Subscriptions = () => {
         </Button>
 
         {/* This month */}
-        <Card style={{ marginTop: 20 }}>
+        {/* <Card style={{ marginTop: 20 }}>
           <CardHeader>
             <Text variant="caption" style={{ fontSize: 15 }}>
               Monthly burn
             </Text>
             <CardTitle>Rs 0</CardTitle>
           </CardHeader>
-        </Card>
+        </Card> */}
 
         {/* Yearly equivalent */}
-        <Card style={{ marginTop: 20 }}>
+        {/* <Card style={{ marginTop: 20 }}>
           <CardHeader>
             <Text variant="caption" style={{ fontSize: 15 }}>
               Yearly equivalent
             </Text>
             <CardTitle>Rs 0</CardTitle>
           </CardHeader>
-        </Card>
+        </Card> */}
 
         {/* Total subscriptions */}
         <Card style={{ marginTop: 20 }}>
@@ -279,7 +279,7 @@ const Subscriptions = () => {
             <Text variant="caption" style={{ fontSize: 15 }}>
               Total Subscriptions
             </Text>
-            <CardTitle>0</CardTitle>
+            <CardTitle>{subscriptions.length}</CardTitle>
           </CardHeader>
         </Card>
 
