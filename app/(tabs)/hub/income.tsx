@@ -78,20 +78,24 @@ const Income = () => {
   };
 
   const [items, setItems] = useState<Item[]>([]);
+  const [thisMonth, setThisMonth] = useState<number>(0);
 
   // fetch
-  useEffect(() => {
-    const fetchIncomes = async () => {
-      const response = await apiCall({ page: "incomes", method: "GET" });
+  const fetchIncomes = async () => {
+    const response = await apiCall({ page: "incomes", method: "GET" });
 
-      if (!response.success && response.message === "Data not found") {
-        setItems([]);
-        setItemState("notFound");
-        return;
-      }
+    if (!response.success && response.message === "Data not found") {
+      setItems([]);
+      setItemState("notFound");
+      return;
+    }
 
-      setItems([
-        ...response.data.map((el: any) => ({
+    setThisMonth(0);
+    setItems([
+      ...response.data.map((el: any) => {
+        setThisMonth((prev) => prev + Number(el.amount));
+
+        return {
           id: el._id,
           title: el.source,
           caption: el.type,
@@ -101,12 +105,13 @@ const Income = () => {
             text: `PKR ${el.amount}`,
             textStyle: { color: primary, fontSize: 15 },
           },
-        })),
-      ]);
+        };
+      }),
+    ]);
 
-      setItemState("found");
-    };
-
+    setItemState("found");
+  };
+  useEffect(() => {
     fetchIncomes();
   }, []);
 
@@ -127,43 +132,45 @@ const Income = () => {
         return;
       }
 
-      if (uploadForm.method === "POST") {
-        setItems((prev) => [
-          ...prev,
-          {
-            id: response.data._id,
-            title: response.data.source,
-            caption: response.data.type,
-            Icon: categoryIcons[response.data.type],
-            right: {
-              type: "text",
-              text: `Rs ${response.data.amount}/-`,
-              textStyle: { color: primary, fontSize: 15, fontWeight: 600 },
-            },
-          },
-        ]);
-      } else {
-        setItems((prev) => [
-          ...prev.map((el) =>
-            el.id === response.data._id
-              ? ({
-                  id: response.data._id,
-                  title: response.data.source,
-                  caption: response.data.type,
-                  Icon: categoryIcons[response.data.type],
-                  right: {
-                    type: "text",
-                    text: `Rs ${response.data.amount}/-`,
-                    textStyle: { color: primary, fontSize: 15, fontWeight: 600 },
-                  },
-                } satisfies Item)
-              : el,
-          ),
-        ]);
+      // if (uploadForm.method === "POST") {
+      //   setItems((prev) => [
+      //     ...prev,
+      //     {
+      //       id: response.data._id,
+      //       title: response.data.source,
+      //       caption: response.data.type,
+      //       Icon: categoryIcons[response.data.type],
+      //       right: {
+      //         type: "text",
+      //         text: `Rs ${response.data.amount}/-`,
+      //         textStyle: { color: primary, fontSize: 15, fontWeight: 600 },
+      //       },
+      //     },
+      //   ]);
+      // } else {
+      //   setItems((prev) => [
+      //     ...prev.map((el) =>
+      //       el.id === response.data._id
+      //         ? ({
+      //             id: response.data._id,
+      //             title: response.data.source,
+      //             caption: response.data.type,
+      //             Icon: categoryIcons[response.data.type],
+      //             right: {
+      //               type: "text",
+      //               text: `Rs ${response.data.amount}/-`,
+      //               textStyle: { color: primary, fontSize: 15, fontWeight: 600 },
+      //             },
+      //           } satisfies Item)
+      //         : el,
+      //     ),
+      //   ]);
 
-        setClearSelection((prev) => prev + 1);
-      }
+      //   setClearSelection((prev) => prev + 1);
+      // }
 
+      fetchIncomes();
+      setClearSelection((prev) => prev + 1);
       setItemState("found");
 
       setUploadForm({
@@ -217,6 +224,15 @@ const Income = () => {
             ids: selectedItems.map((item) => item.id),
             page: "incomes",
             setState: setItems,
+            onDone: () => {
+              for (const item of selectedItems) {
+                setThisMonth(
+                  (prev) =>
+                    prev -
+                    Number(item.right?.text?.replace(/[^0-9.]/g, "") ?? 0),
+                );
+              }
+            },
           });
         }}
         style={{ marginVertical: 20 }}
@@ -267,29 +283,29 @@ const Income = () => {
             <Text variant="caption" style={{ fontSize: 15 }}>
               This month
             </Text>
-            <CardTitle>Rs 0</CardTitle>
+            <CardTitle>Rs {thisMonth}</CardTitle>
           </CardHeader>
         </Card>
 
         {/* regular income */}
-        <Card style={{ marginTop: 20 }}>
+        {/* <Card style={{ marginTop: 20 }}>
           <CardHeader>
             <Text variant="caption" style={{ fontSize: 15 }}>
               Recurring streams
             </Text>
             <CardTitle>Rs 0</CardTitle>
           </CardHeader>
-        </Card>
+        </Card> */}
 
         {/* average per entry */}
-        <Card style={{ marginTop: 20 }}>
+        {/* <Card style={{ marginTop: 20 }}>
           <CardHeader>
             <Text variant="caption" style={{ fontSize: 15 }}>
               Average per entry
             </Text>
             <CardTitle>Rs 0</CardTitle>
           </CardHeader>
-        </Card>
+        </Card> */}
 
         {itemSections[itemState]}
       </ScrollView>
