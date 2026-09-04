@@ -1,4 +1,5 @@
 import type { SetUploadForm, SetString, Ref } from "@/providers/app-context";
+import { APIPages } from "@/utils/apiCall";
 
 export interface PasswordForm {
   setUploadForm: SetUploadForm;
@@ -13,6 +14,7 @@ export interface PasswordForm {
   passwordRef: Ref;
   method?: "POST" | "PATCH";
   itemId?: string;
+  page: APIPages
 }
 
 const handlePasswordForm = ({
@@ -28,6 +30,7 @@ const handlePasswordForm = ({
   passwordRef,
   method = "POST",
   itemId = "",
+  page
 }: PasswordForm) => {
   setUploadForm((prev) => ({
     ...prev,
@@ -35,6 +38,7 @@ const handlePasswordForm = ({
     name: "Password",
     method,
     itemId,
+    page,
 
     inputs: [
       {

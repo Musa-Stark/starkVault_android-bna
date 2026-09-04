@@ -71,6 +71,7 @@ export default function Layout() {
       <Tabs.Screen
         name="hub"
         options={{
+          popToTopOnBlur: true,
           tabBarIcon: ({ focused }) => (
             <View
               style={{

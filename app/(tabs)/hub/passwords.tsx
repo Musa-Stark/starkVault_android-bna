@@ -66,8 +66,9 @@ const passwords = () => {
     "fetching",
   );
 
-  // fetch - GET
+  // fetch - GET -------------------------------------------------------------
   const fetch = async () => {
+    console.log("starting get")
     const response = await apiCall({ page: "passwords", method: "GET" });
 
     if (!response.success && response.message === "Data not found") {
@@ -75,14 +76,17 @@ const passwords = () => {
       return;
     }
 
-    setPasswords([
-      ...response.data.map((el: any) => ({
+
+    console.log("get response data: ", response.data)
+
+    setPasswords(
+      response.data.map((el: any) => ({
         _id: el._id,
         password: el.password,
         service: el.name,
         username: el.username,
       })),
-    ]);
+    );
 
     setItemState("found");
   };
@@ -91,45 +95,49 @@ const passwords = () => {
     fetch();
   }, []);
 
-  // upload - POST
+  // upload - POST -------------------------------------------------------------
   useEffect(() => {
     const upload = async () => {
       if (!uploadForm.submit) return;
 
-      const response = await apiCall({
-        page: "passwords",
-        data: {
-          name: service,
-          username,
-          password,
-        },
-        method: uploadForm.method!,
-        itemId: uploadForm.itemId,
-      });
+      if (uploadForm.page === "passwords") {
+        const response = await apiCall({
+          page: "passwords",
+          data: {
+            name: service,
+            username,
+            password,
+          },
+          method: uploadForm.method!,
+          itemId: uploadForm.itemId,
+        });
 
-      if (!response.success) {
-        toast.error(response.message || "Something went wrong");
-        return;
+        if (!response.success) {
+          toast.error(response.message || "Something went wrong");
+          return;
+        }
+
+        console.log("post data: ", response.data)
+
+        setItemState("fetching");
+
+        setItemState("found");
+
+        setUploadForm({
+          inputs: undefined,
+          name: "",
+          show: false,
+          submit: false,
+          page: "passwords",
+        });
+
+        setService("");
+        setUsername("");
+        setPassword("");
       }
-
-      setItemState("fetching");
 
       // re-fetch
       await fetch();
-
-      setItemState("found");
-
-      setUploadForm({
-        inputs: undefined,
-        name: "",
-        show: false,
-        submit: false,
-        page: "passwords",
-      });
-
-      setService("");
-      setUsername("");
-      setPassword("");
     };
 
     upload();
@@ -161,6 +169,7 @@ const passwords = () => {
             passwordRef,
 
             setUploadForm,
+            page: "passwords",
           })
         }
       >
@@ -244,6 +253,7 @@ const passwords = () => {
 
                         method: "PATCH",
                         itemId: row._id,
+                        page: "passwords",
                       });
                     }}
                   />

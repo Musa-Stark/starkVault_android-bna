@@ -136,7 +136,7 @@ const DashBoard = () => {
           label,
           isPrimary: primaryCard,
         },
-        passwords: { password, service, username },
+        passwords: { password, name: service, username },
       };
 
       const response = await apiCall({
@@ -159,7 +159,7 @@ const DashBoard = () => {
         itemId: "",
         method: "POST",
         submit: false,
-        page: undefined
+        page: undefined,
       });
 
       setMerchant("");
@@ -352,7 +352,7 @@ const DashBoard = () => {
                 merchantRef,
                 categoryRef,
                 amountRef,
-                page: "dashboard"
+                page: "dashboard",
               })
             }
             icon={Plus}
@@ -392,7 +392,7 @@ const DashBoard = () => {
                 primaryCardRef,
                 setPrimaryCard,
                 disablePrimary: primaryState === "found",
-                page: "dashboard"
+                page: "dashboard",
               })
             }
           >
@@ -417,7 +417,7 @@ const DashBoard = () => {
               passwordRef,
               serviceRef,
               usernameRef,
-              page: "dashboard"
+              page: "dashboard",
             })
           }
         >

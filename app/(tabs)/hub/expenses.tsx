@@ -148,7 +148,7 @@ const expenses = () => {
         setCategory("");
       }
 
-      fetchExpenses();
+      await fetchExpenses();
     };
 
     uploadExpense();
