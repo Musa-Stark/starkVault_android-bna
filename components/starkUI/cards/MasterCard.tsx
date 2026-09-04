@@ -95,7 +95,7 @@ export default function Mastercard({
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.brand}>NOVA</Text>
+            <Text style={styles.brand}>MASTERCARD</Text>
             <Text style={styles.cardType}>WORLD ELITE</Text>
           </View>
 
@@ -166,7 +166,7 @@ export default function Mastercard({
       >
         {/* Back header */}
         <View style={styles.backHeader}>
-          <Text style={styles.backBrand}>NOVA</Text>
+          <Text style={styles.backBrand}>MASTERCARD</Text>
 
           <Text style={styles.backCardType}>WORLD ELITE</Text>
         </View>
@@ -188,12 +188,6 @@ export default function Mastercard({
             </View>
           </View>
         </View>
-
-        {/* Info */}
-        <Text style={styles.info}>
-          This card is issued by NOVA. Use of this card is subject to the terms
-          and conditions of the issuing institution.
-        </Text>
 
         {/* Bottom logo */}
         <View style={styles.backBottom}>

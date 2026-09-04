@@ -114,7 +114,6 @@ const expenses = () => {
       if (!uploadForm.submit) return;
 
       if (uploadForm.page === "expenses") {
-        console.log("2nd");
         const response = await apiCall({
           page: "expenses",
           data: { merchant, amount, category },
@@ -126,6 +125,8 @@ const expenses = () => {
           toast.error(response.message || "Something went wrong");
           return;
         }
+
+        toast.success("Expense added successfully!");
 
         if (uploadForm.method === "PATCH") {
           setClearSelection((prev) => prev + 1);

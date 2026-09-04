@@ -115,7 +115,7 @@ const passwords = () => {
       setItemState("fetching");
 
       // re-fetch
-      await fetch()
+      await fetch();
 
       setItemState("found");
 
@@ -124,6 +124,7 @@ const passwords = () => {
         name: "",
         show: false,
         submit: false,
+        page: "passwords",
       });
 
       setService("");

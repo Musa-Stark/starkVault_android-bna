@@ -5,6 +5,7 @@ import type {
   Ref,
   SetDate,
 } from "@/providers/app-context";
+import { APIPages } from "@/utils/apiCall";
 
 export interface CardForm {
   setUploadForm: SetUploadForm;
@@ -42,6 +43,8 @@ export interface CardForm {
   primaryCardRef: Ref;
 
   disablePrimary: boolean;
+
+  page: APIPages
 }
 
 const handleCardForm = ({
@@ -71,11 +74,13 @@ const handleCardForm = ({
   primaryCardRef,
   setPrimaryCard,
   disablePrimary,
+  page,
 }: CardForm) => {
   setUploadForm((prev) => ({
     ...prev,
     show: true,
     name: "",
+    page,
 
     inputs: [
       {

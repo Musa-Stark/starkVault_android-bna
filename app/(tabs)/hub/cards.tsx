@@ -319,45 +319,48 @@ const Cards = () => {
       if (!uploadForm.submit) return;
 
       try {
-        const response = await apiCall({
-          page: "cards",
+        if (uploadForm.page === "cards") {
+          const response = await apiCall({
+            page: "cards",
 
-          data: {
-            label,
-            brand,
-            cardNumber,
-            cardHolder,
-            expiryDate,
-            cvv,
-            bank,
-            isPrimary: primaryCard,
-          },
+            data: {
+              label,
+              brand,
+              cardNumber,
+              cardHolder,
+              expiryDate,
+              cvv,
+              bank,
+              isPrimary: primaryCard,
+            },
 
-          method: "POST",
-        });
+            method: "POST",
+          });
 
-        if (!response.success) {
-          toast.error(response.message || "Something went wrong");
-          return;
+          if (!response.success) {
+            toast.error(response.message || "Something went wrong");
+            return;
+          }
+
+          /**
+           * Reset upload form
+           */
+          setUploadForm({
+            inputs: undefined,
+            name: "",
+            show: false,
+            submit: false,
+            page: undefined,
+          });
+
+          setLabel("");
+          setBrand("");
+          setCardNumber("");
+          setCardHolder("");
+          setExpiryDate(undefined);
+          setCvv("");
+          setBank("");
         }
-
-        /**
-         * Reset upload form
-         */
-        setUploadForm({
-          inputs: undefined,
-          name: "",
-          show: false,
-          submit: false,
-        });
-
-        setLabel("");
-        setBrand("");
-        setCardNumber("");
-        setCardHolder("");
-        setExpiryDate(undefined);
-        setCvv("");
-        setBank("");
 
         /**
          * Refetch cards
@@ -369,28 +372,7 @@ const Cards = () => {
     };
 
     uploadCard();
-  }, [
-    uploadForm.submit,
-    apiCall,
-    label,
-    brand,
-    cardNumber,
-    cardHolder,
-    expiryDate,
-    cvv,
-    bank,
-    primaryCard,
-    setUploadForm,
-    setLabel,
-    setBrand,
-    setCardNumber,
-    setCardHolder,
-    setExpiryDate,
-    setCvv,
-    setBank,
-    fetchCards,
-    toast,
-  ]);
+  }, [uploadForm.submit]);
 
   /**
    * Render the actual card based on brand.
@@ -403,48 +385,56 @@ const Cards = () => {
     switch (card.brand) {
       case "American Express":
         return (
-          <View style={{paddingVertical: 1}}>
+          <View style={{ paddingVertical: 1 }}>
             <AmericanExpress
               cardHolder={card.cardHolder}
               cardNumber={card.cardNumber}
               cvv={card.cvv}
               expiry={card.expiryDate}
-              style={{width: 360}}
+              style={{ width: 360 }}
             />
           </View>
         );
 
       case "Visa":
         return (
-          <VisaCard
-            cardHolder={card.cardHolder}
-            cardNumber={card.cardNumber}
-            cvv={card.cvv}
-            expiry={card.expiryDate}
-          />
+          <View style={{ paddingVertical: 1 }}>
+            <VisaCard
+              cardHolder={card.cardHolder}
+              cardNumber={card.cardNumber}
+              cvv={card.cvv}
+              expiry={card.expiryDate}
+              style={{ width: 360 }}
+            />
+          </View>
         );
 
       case "Mastercard":
         return (
-          <Mastercard
-            cardHolder={card.cardHolder}
-            cardNumber={card.cardNumber}
-            cvv={card.cvv}
-            expiry={card.expiryDate}
-            style={{
-              width: 360,
-            }}
-          />
+          <View style={{ paddingVertical: 1 }}>
+            <Mastercard
+              cardHolder={card.cardHolder}
+              cardNumber={card.cardNumber}
+              cvv={card.cvv}
+              expiry={card.expiryDate}
+              style={{
+                width: 360,
+              }}
+            />
+          </View>
         );
 
       case "SadaPay":
         return (
-          <SadapayCard
-            cardHolder={card.cardHolder}
-            cardNumber={card.cardNumber}
-            cvv={card.cvv}
-            expiry={card.expiryDate}
-          />
+          <View style={{ paddingVertical: 1 }}>
+            <SadapayCard
+              cardHolder={card.cardHolder}
+              cardNumber={card.cardNumber}
+              cvv={card.cvv}
+              expiry={card.expiryDate}
+              style={{ width: 360 }}
+            />
+          </View>
         );
 
       default:
@@ -527,6 +517,7 @@ const Cards = () => {
       setUploadForm,
 
       disablePrimary: hasPrimary,
+      page: "cards",
     });
   };
 
@@ -558,7 +549,7 @@ const Cards = () => {
         <Button
           icon={Plus}
           style={{
-            marginTop: 20,
+            marginVertical: 20,
           }}
           onPress={handleAddCard}
         >

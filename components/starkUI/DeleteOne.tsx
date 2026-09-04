@@ -11,12 +11,10 @@ const useDeleteOne = () => {
     id,
     setState,
     page,
-    onDone,
   }: {
     id: string;
     setState: any;
     page: APIPages;
-    onDone: () => void;
   }) => {
     setDeleteOneBusy(true);
 

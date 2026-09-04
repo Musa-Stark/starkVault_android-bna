@@ -392,6 +392,7 @@ const DashBoard = () => {
                 primaryCardRef,
                 setPrimaryCard,
                 disablePrimary: primaryState === "found",
+                page: "dashboard"
               })
             }
           >
@@ -416,6 +417,7 @@ const DashBoard = () => {
               passwordRef,
               serviceRef,
               usernameRef,
+              page: "dashboard"
             })
           }
         >
