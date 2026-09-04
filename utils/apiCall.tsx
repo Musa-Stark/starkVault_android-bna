@@ -12,7 +12,8 @@ export type APIPages =
   | "cards"
   | "documents"
   | "notes"
-  | "account";
+  | "account"
+  | "dashboard"
 
 export type APIBodyType = "json" | "multipart";
 

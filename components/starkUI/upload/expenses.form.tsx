@@ -1,4 +1,5 @@
 import type { SetUploadForm, SetString, Ref } from "@/providers/app-context";
+import { APIPages } from "@/utils/apiCall";
 
 export interface ExpenseForm {
   setUploadForm: SetUploadForm;
@@ -13,6 +14,7 @@ export interface ExpenseForm {
   amountRef: Ref;
   method?: "POST" | "PATCH";
   itemId?: string;
+  page: APIPages
 }
 
 const handleExpenseForm = ({
@@ -27,7 +29,8 @@ const handleExpenseForm = ({
   setAmount,
   amountRef,
   method = "POST",
-  itemId = ""
+  itemId = "",
+  page
 }: ExpenseForm) => {
   setUploadForm((prev) => ({
     ...prev,
@@ -35,6 +38,7 @@ const handleExpenseForm = ({
     name: "Expense",
     method,
     itemId,
+    page,
 
     inputs: [
       {

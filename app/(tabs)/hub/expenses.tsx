@@ -73,7 +73,7 @@ const expenses = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [totalSpent, setTotalSpent] = useState<number>(0);
 
-  // fetch
+  // fetch --------------------------------------------------------------
   const fetchExpenses = async () => {
     const response = await apiCall({ page: "expenses", method: "GET" });
 
@@ -108,42 +108,46 @@ const expenses = () => {
     fetchExpenses();
   }, []);
 
-  // upload
+  // upload ----------------------------------------------------------------
   useEffect(() => {
     const uploadExpense = async () => {
       if (!uploadForm.submit) return;
 
-      const response = await apiCall({
-        page: "expenses",
-        data: { merchant, amount, category },
-        method: uploadForm.method!,
-        itemId: uploadForm.itemId,
-      });
+      if (uploadForm.page === "expenses") {
+        console.log("2nd");
+        const response = await apiCall({
+          page: "expenses",
+          data: { merchant, amount, category },
+          method: uploadForm.method!,
+          itemId: uploadForm.itemId,
+        });
 
-      if (!response.success) {
-        toast.error(response.message || "Something went wrong");
-        return;
+        if (!response.success) {
+          toast.error(response.message || "Something went wrong");
+          return;
+        }
+
+        if (uploadForm.method === "PATCH") {
+          setClearSelection((prev) => prev + 1);
+        }
+
+        setItemState("found");
+
+        setUploadForm({
+          inputs: undefined,
+          name: "",
+          show: false,
+          submit: false,
+          method: "POST",
+          page: undefined,
+        });
+
+        setMerchant("");
+        setAmount("");
+        setCategory("");
       }
 
       fetchExpenses();
-
-      if (uploadForm.method === "PATCH") {
-        setClearSelection((prev) => prev + 1);
-      }
-
-      setItemState("found");
-
-      setUploadForm({
-        inputs: undefined,
-        name: "",
-        show: false,
-        submit: false,
-        method: "POST",
-      });
-
-      setMerchant("");
-      setAmount("");
-      setCategory("");
     };
 
     uploadExpense();
@@ -178,6 +182,7 @@ const expenses = () => {
             setUploadForm,
             method: "PATCH",
             itemId: item.id,
+            page: "expenses",
           });
         }}
         onDelete={(selectedItems: Item[]) => {
@@ -234,6 +239,7 @@ const expenses = () => {
               setMerchant,
               setUploadForm,
               method: "POST",
+              page: "expenses",
             })
           }
         >

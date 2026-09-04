@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Animated, Easing, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Plus } from "lucide-react-native";
 
@@ -18,6 +18,176 @@ import Mastercard from "@/components/starkUI/cards/MasterCard";
 import CNIC from "@/components/starkUI/cards/CNIC";
 import SadapayCard from "@/components/starkUI/cards/Sadapay";
 import VisaCard from "@/components/starkUI/cards/VisaCard";
+
+/**
+ * Animated Gemini-style background
+ *
+ * This wrapper can be used for ANY card brand.
+ * The animation itself does not care whether the
+ * card is Visa, Mastercard, Amex, SadaPay, etc.
+ */
+const AnimatedPrimaryCard = ({ children }: { children: React.ReactNode }) => {
+  const animation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(animation, {
+          toValue: 1,
+          duration: 4500,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+
+        Animated.timing(animation, {
+          toValue: 0,
+          duration: 4500,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+
+    loop.start();
+
+    return () => {
+      loop.stop();
+    };
+  }, [animation]);
+
+  /**
+   * Blue / Purple
+   */
+  const blob1TranslateX = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-25, 35],
+  });
+
+  const blob1TranslateY = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [10, -25],
+  });
+
+  /**
+   * Pink
+   */
+  const blob2TranslateX = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [30, -30],
+  });
+
+  const blob2TranslateY = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-20, 30],
+  });
+
+  /**
+   * Cyan
+   */
+  const blob3TranslateX = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-20, 30],
+  });
+
+  const blob3TranslateY = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [25, -15],
+  });
+
+  return (
+    <View
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: 30,
+        paddingVertical: 5,
+        backgroundColor: "#EEF2FF",
+      }}
+    >
+      {/* Blue / Purple blob */}
+      <Animated.View
+        style={{
+          position: "absolute",
+          width: 180,
+          height: 180,
+          borderRadius: 90,
+          backgroundColor: "#6366F1",
+          opacity: 0.75,
+          top: -80,
+          left: -50,
+          transform: [
+            { translateX: blob1TranslateX },
+            { translateY: blob1TranslateY },
+          ],
+        }}
+      />
+
+      {/* Pink blob */}
+      <Animated.View
+        style={{
+          position: "absolute",
+          width: 170,
+          height: 170,
+          borderRadius: 85,
+          backgroundColor: "#EC4899",
+          opacity: 0.7,
+          top: -50,
+          right: -55,
+          transform: [
+            { translateX: blob2TranslateX },
+            { translateY: blob2TranslateY },
+          ],
+        }}
+      />
+
+      {/* Cyan blob */}
+      <Animated.View
+        style={{
+          position: "absolute",
+          width: 190,
+          height: 190,
+          borderRadius: 95,
+          backgroundColor: "#06B6D4",
+          opacity: 0.65,
+          bottom: -100,
+          left: 80,
+          transform: [
+            { translateX: blob3TranslateX },
+            { translateY: blob3TranslateY },
+          ],
+        }}
+      />
+
+      {/* Purple glow */}
+      <Animated.View
+        style={{
+          position: "absolute",
+          width: 140,
+          height: 140,
+          borderRadius: 70,
+          backgroundColor: "#A855F7",
+          opacity: 0.45,
+          bottom: -70,
+          right: -30,
+          transform: [
+            { translateX: blob2TranslateX },
+            { translateY: blob1TranslateY },
+          ],
+        }}
+      />
+
+      {/* Actual card */}
+      <View
+        style={{
+          position: "relative",
+          zIndex: 10,
+        }}
+      >
+        {children}
+      </View>
+    </View>
+  );
+};
 
 const Cards = () => {
   const {
@@ -75,6 +245,7 @@ const Cards = () => {
     cvv: string;
     expiryDate: Date;
     label: string;
+    isPrimary?: boolean;
   }
 
   const [cards, setCards] = useState<Card[]>([]);
@@ -101,27 +272,34 @@ const Cards = () => {
       if (!response.success) {
         if (response.message === "Data not found") {
           setCards([]);
+          setHasPrimary(false);
           setItemState("notFound");
           return;
         }
 
         toast.error(response.message || "Failed to fetch cards");
+
         setCards([]);
+        setHasPrimary(false);
         setItemState("notFound");
         return;
       }
 
-      for (const card of response.data) {
-        if (card.isPrimary) setHasPrimary(true);
-      }
-
       const fetchedCards = response.data ?? [];
 
+      /**
+       * Check whether ANY card is primary.
+       */
+      setHasPrimary(fetchedCards.some((card: Card) => card.isPrimary === true));
+
       setCards(fetchedCards);
+
       setItemState(fetchedCards.length > 0 ? "found" : "notFound");
     } catch (error) {
       toast.error("Failed to fetch cards");
+
       setCards([]);
+      setHasPrimary(false);
       setItemState("notFound");
     }
   }, [apiCall, toast]);
@@ -143,6 +321,7 @@ const Cards = () => {
       try {
         const response = await apiCall({
           page: "cards",
+
           data: {
             label,
             brand,
@@ -153,6 +332,7 @@ const Cards = () => {
             bank,
             isPrimary: primaryCard,
           },
+
           method: "POST",
         });
 
@@ -180,7 +360,7 @@ const Cards = () => {
         setBank("");
 
         /**
-         * Refetch cards so the newly added card appears
+         * Refetch cards
          */
         await fetchCards();
       } catch (error) {
@@ -199,6 +379,7 @@ const Cards = () => {
     expiryDate,
     cvv,
     bank,
+    primaryCard,
     setUploadForm,
     setLabel,
     setBrand,
@@ -212,25 +393,30 @@ const Cards = () => {
   ]);
 
   /**
-   * Render card based on brand
+   * Render the actual card based on brand.
+   *
+   * This function ONLY creates the card.
+   * The primary animation is applied later,
+   * regardless of the card brand.
    */
-  const getCard = (card: Card) => {
+  const getCardComponent = (card: Card) => {
     switch (card.brand) {
       case "American Express":
         return (
-          <AmericanExpress
-            key={card._id}
-            cardHolder={card.cardHolder}
-            cardNumber={card.cardNumber}
-            cvv={card.cvv}
-            expiry={card.expiryDate}
-          />
+          <View style={{paddingVertical: 1}}>
+            <AmericanExpress
+              cardHolder={card.cardHolder}
+              cardNumber={card.cardNumber}
+              cvv={card.cvv}
+              expiry={card.expiryDate}
+              style={{width: 360}}
+            />
+          </View>
         );
 
       case "Visa":
         return (
           <VisaCard
-            key={card._id}
             cardHolder={card.cardHolder}
             cardNumber={card.cardNumber}
             cvv={card.cvv}
@@ -241,18 +427,19 @@ const Cards = () => {
       case "Mastercard":
         return (
           <Mastercard
-            key={card._id}
             cardHolder={card.cardHolder}
             cardNumber={card.cardNumber}
             cvv={card.cvv}
             expiry={card.expiryDate}
+            style={{
+              width: 360,
+            }}
           />
         );
 
       case "SadaPay":
         return (
           <SadapayCard
-            key={card._id}
             cardHolder={card.cardHolder}
             cardNumber={card.cardNumber}
             cvv={card.cvv}
@@ -263,6 +450,41 @@ const Cards = () => {
       default:
         return null;
     }
+  };
+
+  /**
+   * Render card.
+   *
+   * IMPORTANT:
+   * If card.isPrimary is true, the animation
+   * is applied to ANY card brand.
+   */
+  const getCard = (card: Card) => {
+    const cardComponent = getCardComponent(card);
+
+    if (!cardComponent) {
+      return null;
+    }
+
+    if (card.isPrimary === true) {
+      return (
+        <AnimatedPrimaryCard key={card._id}>
+          {cardComponent}
+        </AnimatedPrimaryCard>
+      );
+    }
+
+    return (
+      <View
+        key={card._id}
+        style={{
+          paddingVertical: 5,
+          borderRadius: 30,
+        }}
+      >
+        {cardComponent}
+      </View>
+    );
   };
 
   /**
@@ -309,20 +531,37 @@ const Cards = () => {
   };
 
   return (
-    <View style={{ ...globalStyles.globalPaddingContainer }}>
-      <Text variant="heading" style={{ marginBottom: 20 }}>
+    <View
+      style={{
+        ...globalStyles.globalPaddingContainer,
+      }}
+    >
+      <Text
+        variant="heading"
+        style={{
+          marginBottom: 20,
+        }}
+      >
         Cards
       </Text>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{
+          paddingBottom: 20,
+        }}
       >
         <Text variant="caption">
           {cards.length} {cards.length === 1 ? "card" : "cards"} in vault
         </Text>
 
-        <Button icon={Plus} style={{ marginTop: 20 }} onPress={handleAddCard}>
+        <Button
+          icon={Plus}
+          style={{
+            marginTop: 20,
+          }}
+          onPress={handleAddCard}
+        >
           Add Card
         </Button>
 
@@ -336,7 +575,10 @@ const Cards = () => {
           {itemState === "fetching" && (
             <Text
               variant="caption"
-              style={{ marginTop: 20, textAlign: "center" }}
+              style={{
+                marginTop: 20,
+                textAlign: "center",
+              }}
             >
               Loading cards...
             </Text>
@@ -345,7 +587,10 @@ const Cards = () => {
           {itemState === "notFound" && (
             <Text
               variant="caption"
-              style={{ marginTop: 20, textAlign: "center" }}
+              style={{
+                marginTop: 20,
+                textAlign: "center",
+              }}
             >
               No cards added yet.
             </Text>

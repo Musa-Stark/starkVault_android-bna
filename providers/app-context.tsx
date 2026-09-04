@@ -16,7 +16,8 @@ interface UploadFormInput {
   submit: boolean;
   method?: "POST" | "PATCH";
   itemId?: string;
-  option?: string
+  option?: string;
+  page: APIPages | undefined
 }
 
 interface DeleteModalInput {
@@ -172,7 +173,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     submit: false,
     method: "POST",
     itemId: "",
-    option: ""
+    option: "",
+    page: undefined
   });
 
   const [deleteModal, setDeleteModal] = useState<DeleteModalInput>({

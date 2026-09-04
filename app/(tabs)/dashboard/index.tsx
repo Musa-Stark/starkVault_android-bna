@@ -112,10 +112,10 @@ const DashBoard = () => {
   const [primary, setPrimary] = useState<primaryType>();
   // const [showViewMore, setshowViewMore] = useState(false);
 
-  // submit
+  // submit -----------------------------------------------------------------
   useEffect(() => {
     const upload = async () => {
-      if (!uploadForm.submit) return;
+      if (!uploadForm.submit || uploadForm.page !== "dashboard") return;
 
       let page: APIPages = "passwords";
       if (merchant) {
@@ -152,14 +152,15 @@ const DashBoard = () => {
 
       toast.success(response.message || "Item added successfully!");
 
-      setUploadForm(() => ({
+      setUploadForm({
         inputs: undefined,
         name: "",
         show: false,
         itemId: "",
         method: "POST",
         submit: false,
-      }));
+        page: undefined
+      });
 
       setMerchant("");
       setCategory("");
@@ -187,7 +188,7 @@ const DashBoard = () => {
     "found" | "notFound" | "fetching"
   >("fetching");
 
-  // fetch
+  // fetch ---------------------------------------------------------------------
   useEffect(() => {
     const fetch = async () => {
       const response = await apiCall({ page: "recents", method: "GET" });
@@ -308,7 +309,7 @@ const DashBoard = () => {
             variant="caption"
             style={{ marginVertical: 25, textAlign: "center" }}
           >
-            Unsupported card brand.{" "}
+            Unsupported card brand.
           </Text>
         )}
       </>
@@ -351,6 +352,7 @@ const DashBoard = () => {
                 merchantRef,
                 categoryRef,
                 amountRef,
+                page: "dashboard"
               })
             }
             icon={Plus}
