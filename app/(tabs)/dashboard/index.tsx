@@ -24,7 +24,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import RecentActivity from "./recentActivity";
 import handleExpenseForm from "@/components/starkUI/upload/expenses.form";
 import useAPICall, { APIPages } from "@/utils/apiCall";
-import { RelativePathString } from "expo-router";
+import { RelativePathString, router } from "expo-router";
 import RecentActivitySkeleton from "@/components/starkUI/skeleton/RecentsSkeleton";
 import SadapayCardSkeleton from "@/components/starkUI/skeleton/CardSkeleton";
 import VisaCard from "@/components/starkUI/cards/VisaCard";
@@ -435,6 +435,7 @@ const DashBoard = () => {
               icon={CreditCard}
               variant="default"
               style={{ marginTop: 15 }}
+              onPress={() => router.push("/hub/cards")}
             >
               <Text variant="body" style={{ color: background }}>
                 Cards

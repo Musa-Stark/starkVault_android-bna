@@ -18,6 +18,7 @@ import Mastercard from "@/components/starkUI/cards/MasterCard";
 import CNIC from "@/components/starkUI/cards/CNIC";
 import SadapayCard from "@/components/starkUI/cards/Sadapay";
 import VisaCard from "@/components/starkUI/cards/VisaCard";
+import SadapayCardSkeleton from "@/components/starkUI/skeleton/CardSkeleton";
 
 /**
  * Animated Gemini-style background
@@ -563,17 +564,7 @@ const Cards = () => {
             marginBottom: 20,
           }}
         >
-          {itemState === "fetching" && (
-            <Text
-              variant="caption"
-              style={{
-                marginTop: 20,
-                textAlign: "center",
-              }}
-            >
-              Loading cards...
-            </Text>
-          )}
+          {itemState === "fetching" && <SadapayCardSkeleton />}
 
           {itemState === "notFound" && (
             <Text
