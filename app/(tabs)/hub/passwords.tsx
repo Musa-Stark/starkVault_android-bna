@@ -68,7 +68,6 @@ const passwords = () => {
 
   // fetch - GET -------------------------------------------------------------
   const fetch = async () => {
-    console.log("starting get")
     const response = await apiCall({ page: "passwords", method: "GET" });
 
     if (!response.success && response.message === "Data not found") {
@@ -76,8 +75,6 @@ const passwords = () => {
       return;
     }
 
-
-    console.log("get response data: ", response.data)
 
     setPasswords(
       response.data.map((el: any) => ({
@@ -116,8 +113,6 @@ const passwords = () => {
           toast.error(response.message || "Something went wrong");
           return;
         }
-
-        console.log("post data: ", response.data)
 
         setItemState("fetching");
 

@@ -78,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   /**
-   * Restore existing session.
+   * Restore existing session using the refresh token.
    */
   const restoreSession = async () => {
     try {
@@ -99,34 +99,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }),
       });
 
+      
       if (!response.ok) {
         await clearTokens();
+        setStatus("unauthenticated");
+        return;
+      }
+      
+      const data = await response.json();
 
+      if (!data.success || !data.accessToken) {
+        await clearTokens();
         setStatus("unauthenticated");
         return;
       }
 
-      const data = await response.json();
-
       await SecureStore.setItemAsync("access_token", data.accessToken);
 
       /**
-       * Get the current user.
+       * Get the current user using the new access token.
        */
-      await getCurrentUser();
+      await getCurrentUser(true);
     } catch (error) {
-      console.log("Failed to restore authentication:", error);
-
       await clearTokens();
-
       setStatus("unauthenticated");
     }
   };
 
   /**
    * Get current authenticated user.
+   *
+   * `isRestoring` prevents an infinite loop:
+   *
+   * getCurrentUser()
+   *   -> access token expired
+   *   -> restoreSession()
+   *   -> getCurrentUser()
+   *   -> access token still invalid
+   *   -> stop
    */
-  const getCurrentUser = async () => {
+  const getCurrentUser = async (isRestoring = false) => {
     const accessToken = await SecureStore.getItemAsync("access_token");
 
     if (!accessToken) {
@@ -134,25 +146,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const response = await fetch(`${API_URL}/api/v1/account/${routes.me}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ accessToken }),
-    });
+    try {
+      const response = await fetch(`${API_URL}/api/v1/account/${routes.me}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ accessToken }),
+      });
 
-    if (!response.ok) {
+      const res = await response.json();
+
+      /**
+       * Access token is invalid/expired.
+       * Try restoring the session using the refresh token.
+       */
+      if (!res.success) {
+        if (!isRestoring) {
+          await restoreSession();
+          return;
+        }
+
+        /**
+         * The access token obtained from the refresh token
+         * also failed. The session is no longer valid.
+         */
+        await clearTokens();
+        setStatus("unauthenticated");
+        return;
+      }
+
+      setUser(res.data);
+      setStatus("authenticated");
+    } catch (error) {
       await clearTokens();
-
       setStatus("unauthenticated");
-      return;
     }
-
-    const res = await response.json();
-
-    setUser(res.data);
-    setStatus("authenticated");
   };
 
   /**
@@ -348,7 +377,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    */
   const logout = async (): Promise<APIResponse> => {
     try {
-      const refreshToken = await SecureStore.getItemAsync("reerrorfresh_token");
+      const refreshToken = await SecureStore.getItemAsync("refresh_token");
+      const accessToken = await SecureStore.getItemAsync("access_token")
 
       const response = await fetch(`${API_URL}/api/v1/auth/${routes.logout}`, {
         method: "POST",
@@ -358,6 +388,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         body: refreshToken
           ? JSON.stringify({
               refreshToken,
+              accessToken
             })
           : undefined,
       });

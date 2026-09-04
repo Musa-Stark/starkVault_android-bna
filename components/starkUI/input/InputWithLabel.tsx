@@ -223,7 +223,6 @@ const InputWithLabel = ({
         selectedAssets={assets}
         onSelectionChange={(newAssets) => {
           setAssets(newAssets);
-          console.log("Assets with preview:", newAssets);
         }}
       />
     ),
