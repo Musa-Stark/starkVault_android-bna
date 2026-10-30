@@ -13,6 +13,7 @@ export default function Layout() {
     <Tabs
       screenOptions={{
         headerShown: false,
+        sceneStyle: { backgroundColor: background },
 
         // Entire bottom navigation
         tabBarStyle: {

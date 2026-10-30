@@ -11,15 +11,17 @@ import { useApp } from "@/providers/app-context";
 import { View } from "@/components/ui/view";
 import { useColor } from "@/hooks/useColor";
 import { BlurView } from "expo-blur";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Animated,
   Easing,
+  KeyboardAvoidingView,
+  Modal,
   Platform,
+  ScrollView,
   StyleSheet,
-  TouchableWithoutFeedback,
 } from "react-native";
-import InputWithLabel from "../input/InputWithLabel";
+import FormField from "../input/InputWithLabel";
 
 const UploadForm = () => {
   const { uploadForm, setUploadForm } = useApp();
@@ -44,30 +46,32 @@ const UploadForm = () => {
 
   const isDark = backgroundColor.toLowerCase() === "#000000";
 
-  const opacity = useRef(new Animated.Value(uploadForm.show ? 1 : 0)).current;
-  const scale = useRef(new Animated.Value(uploadForm.show ? 1 : 0.92)).current;
+  const [opacity] = useState(() => new Animated.Value(uploadForm.show ? 1 : 0));
+  const [scale] = useState(() => new Animated.Value(uploadForm.show ? 1 : 0.92));
 
   useEffect(() => {
     if (uploadForm.show) {
-      // Mount first, then animate in
-      setMounted(true);
+      const frame = requestAnimationFrame(() => {
+        setMounted(true);
+        Animated.parallel([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 220,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
 
-      Animated.parallel([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 220,
-          easing: Easing.out(Easing.ease),
-          useNativeDriver: true,
-        }),
+          Animated.spring(scale, {
+            toValue: 1,
+            damping: 18,
+            stiffness: 180,
+            mass: 0.8,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      });
 
-        Animated.spring(scale, {
-          toValue: 1,
-          damping: 18,
-          stiffness: 180,
-          mass: 0.8,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      return () => cancelAnimationFrame(frame);
     } else {
       // Animate out first
       Animated.parallel([
@@ -90,45 +94,53 @@ const UploadForm = () => {
         }
       });
     }
-  }, [uploadForm.show]);
+  }, [uploadForm.show, opacity, scale]);
 
   if (!mounted) {
     return null;
   }
 
   return (
-    <Animated.View
-      style={[
-        StyleSheet.absoluteFillObject,
-        {
-          zIndex: 999,
-          elevation: 999,
-          justifyContent: "center",
-          alignItems: "center",
-          opacity,
-        },
-      ]}
+    <Modal
+      visible={mounted}
+      transparent
+      animationType="none"
+      statusBarTranslucent
+      onRequestClose={() =>
+        setUploadForm((prev) => ({ ...prev, show: false }))
+      }
     >
-      {/* Full-screen blurred background */}
-      <BlurView
-        intensity={50}
-        tint={isDark ? "dark" : "light"}
-        experimentalBlurMethod={
-          Platform.OS === "android" ? "dimezisBlurView" : undefined
-        }
-        style={StyleSheet.absoluteFill}
-      />
+      <Animated.View style={{ flex: 1, opacity }}>
+        {/* Full-screen blurred, non-interactive background */}
+        <BlurView
+          pointerEvents="none"
+          intensity={50}
+          tint={isDark ? "dark" : "light"}
+          blurMethod={
+            Platform.OS === "android" ? "dimezisBlurView" : undefined
+          }
+          style={StyleSheet.absoluteFill}
+        />
+        <View
+          pointerEvents="none"
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: isDark ? "rgba(0, 0, 0, 0.28)" : "rgba(0, 0, 0, 0.08)" },
+          ]}
+        />
 
-      <View pointerEvents="none" />
-
-      {/* Glass card */}
-      <TouchableWithoutFeedback>
-        <Animated.View
-          style={{
-            width: "90%",
-            maxWidth: 500,
-            borderRadius: 30,
-            overflow: "hidden",
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: 20, paddingVertical: 32 }}
+        >
+          {/* Glass card */}
+          <Animated.View
+            style={{
+              width: "100%",
+              maxWidth: 500,
+              maxHeight: "100%",
+              borderRadius: 30,
+              overflow: "hidden",
 
             transform: [{ scale }],
 
@@ -150,16 +162,21 @@ const UploadForm = () => {
             },
             shadowOpacity: isDark ? 0.35 : 0.15,
             shadowRadius: 20,
-          }}
-        >
-          <Card
-            style={{
-              borderWidth: 0,
-              shadowOpacity: 0,
-              elevation: 0,
-              position: "relative",
             }}
           >
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ flexGrow: 1 }}
+            >
+            <Card
+              style={{
+                borderWidth: 0,
+                shadowOpacity: 0,
+                elevation: 0,
+                position: "relative",
+              }}
+            >
             {uploadForm.name && (
               <CardHeader>
                 <CardTitle style={{ textAlign: "center" }}>
@@ -171,7 +188,7 @@ const UploadForm = () => {
             <CardContent>
               <View>
                 {uploadForm.inputs?.map((el, idx) => (
-                  <InputWithLabel
+                  <FormField
                     containerStyle={{
                       borderWidth: 1,
                       borderColor: isDark
@@ -273,10 +290,12 @@ const UploadForm = () => {
                 Submit
               </Button>
             </CardFooter>
-          </Card>
+            </Card>
+          </ScrollView>
         </Animated.View>
-      </TouchableWithoutFeedback>
-    </Animated.View>
+        </KeyboardAvoidingView>
+      </Animated.View>
+    </Modal>
   );
 };
 

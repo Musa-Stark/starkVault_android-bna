@@ -169,6 +169,9 @@ const Profile = () => {
 
       // Start cooldown ONLY after successful API call
       setAvatarCooldown(COOLDOWN_SECONDS);
+    } catch (error) {
+      console.error("Failed to update avatar:", error);
+      toast.error("Could not upload the selected image. Please try again.");
     } finally {
       setUpdatingAvatar(false);
     }

@@ -1,11 +1,9 @@
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useColor } from "@/hooks/useColor";
 import { Colors } from "@/theme/colors";
 import { ThemeProvider } from "@/theme/theme-provider";
-import { osName } from "expo-device";
-import { isLiquidGlassAvailable } from "expo-glass-effect";
 import * as NavigationBar from "expo-navigation-bar";
 import { Stack, Redirect } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { setBackgroundColorAsync } from "expo-system-ui";
 import React, { useEffect } from "react";
@@ -16,9 +14,8 @@ import Toast from "react-native-toast-message";
 import toastConfig from "@/components/starkUI/StarkToast";
 import UploadForm from "@/components/starkUI/upload/uploadForm";
 import { AppProvider } from "@/providers/app-context";
-import { AuthProvider } from "@/providers/auth-provider";
+import { AuthProvider, useAuth } from "@/providers/auth-provider";
 import { ToastProvider } from "@/providers/toast-provider";
-import { useAuth } from "@/providers/auth-provider";
 import DeleteModal from "@/components/starkUI/DeleteModal";
 import LogoutModal from "@/components/starkUI/LogoutModal";
 
@@ -29,9 +26,11 @@ import LogoutModal from "@/components/starkUI/LogoutModal";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme() || "light";
+  const background =
+    colorScheme === "dark" ? Colors.dark.background : Colors.light.background;
   useEffect(() => {
     if (Platform.OS === "android") {
-      NavigationBar.setButtonStyleAsync(
+      NavigationBar.setStyle(
         colorScheme === "light" ? "dark" : "light",
       );
     }
@@ -45,7 +44,7 @@ export default function RootLayout() {
   }, [colorScheme]);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: background }}>
       <ThemeProvider>
         <StatusBar style={colorScheme === "dark" ? "light" : "dark"} animated />
         <AuthProvider>
@@ -62,6 +61,7 @@ export default function RootLayout() {
 
 const RootNavigator = () => {
   const { status } = useAuth();
+  const background = useColor("background");
 
   const screens = {
     loading: <Redirect href={"/loading"} />,
@@ -74,7 +74,12 @@ const RootNavigator = () => {
       <LogoutModal   />
       <DeleteModal />
       <UploadForm />
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: background },
+        }}
+      >
         <Stack.Screen name="loading" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>

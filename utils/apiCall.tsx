@@ -1,7 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 import { useRouter } from "expo-router";
-import { APIResponse } from "@/providers/auth-provider";
-import { useAuth } from "@/providers/auth-provider";
+import { APIResponse, useAuth } from "@/providers/auth-provider";
+import { File as ExpoFile } from "expo-file-system";
 
 export type APIPages =
   | "recents"
@@ -80,25 +80,30 @@ const getMimeType = (file: APIFile): string => {
 
 const isAPIFile = (value: any): value is APIFile => {
   return (
-    value !== null &&
-    typeof value === "object" &&
-    typeof value.uri === "string"
+    value !== null && typeof value === "object" && typeof value.uri === "string"
   );
 };
 
-const appendFile = (
+const appendFile = async (
   formData: FormData,
   fieldName: string,
   file: APIFile,
 ) => {
   const name = file.name || file.filename || "file";
+
   const type = getMimeType(file);
 
-  formData.append(fieldName, {
-    uri: file.uri,
-    name,
-    type,
-  } as any);
+  const localFile = new ExpoFile(file.uri);
+
+  if (!localFile.exists) {
+    throw new Error(`File does not exist: ${file.uri}`);
+  }
+
+  if (!localFile.size) {
+    throw new Error(`File is empty: ${name}`);
+  }
+
+  formData.append(fieldName, localFile, name);
 };
 
 const useAPICall = () => {
@@ -155,7 +160,7 @@ const useAPICall = () => {
 
             // SINGLE FILE
             if (isAPIFile(value)) {
-              appendFile(formData, key, value);
+              await appendFile(formData, key, value);
               continue;
             }
 
@@ -163,7 +168,7 @@ const useAPICall = () => {
             if (Array.isArray(value)) {
               if (value.length > 0 && value.every(isAPIFile)) {
                 for (const file of value) {
-                  appendFile(formData, key, file);
+                  await appendFile(formData, key, file);
                 }
 
                 continue;
@@ -193,7 +198,6 @@ const useAPICall = () => {
           });
         }
       }
-
       const response = await fetch(url, {
         method,
         headers,

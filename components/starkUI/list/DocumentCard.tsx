@@ -197,7 +197,7 @@ export default function DocumentCard({
           <BlurView
             intensity={20}
             tint="dark"
-            experimentalBlurMethod="dimezisBlurView"
+            blurMethod="dimezisBlurView"
             style={{
               position: "absolute",
               top: 0,
