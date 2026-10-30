@@ -7,12 +7,10 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
       "package": "com.stark.starkVault",
       "versionCode": 1
@@ -28,12 +26,12 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/light.png",
+          "image": "./assets/images/light.jpeg",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#FFFFFF",
           "dark": {
-            "image": "./assets/images/dark.png",
+            "image": "./assets/images/dark.jpeg",
             "backgroundColor": "#000000"
           }
         }

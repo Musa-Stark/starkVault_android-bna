@@ -1,4 +1,5 @@
 {
+  "packageManager": "pnpm@11.22.0",
   "name": "android-bna",
   "main": "expo-router/entry",
   "version": "1.0.0",
@@ -21,6 +22,7 @@
     "expo-blur": "~58.0.5",
     "expo-clipboard": "~58.0.4",
     "expo-constants": "~58.0.14",
+    "expo-dev-client": "~58.0.17",
     "expo-device": "~58.0.5",
     "expo-file-system": "~58.0.13",
     "expo-font": "~58.0.11",

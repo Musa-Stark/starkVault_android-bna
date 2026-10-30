@@ -233,6 +233,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }),
       });
 
+      console.log(response)
+
       const data = await response.json();
 
       return data;
